@@ -30,7 +30,7 @@ const priorityConfig = {
 export default function AiSuggestPage() {
   const router = useRouter();
   const { addPackage } = usePackages();
-  const [mountain, setMountain] = useState("槍ヶ岳");
+  const [mountain, setMountain] = useState("");
   const [month, setMonth] = useState(8);
   const [nights, setNights] = useState(2);
   const [isLoading, setIsLoading] = useState(false);
