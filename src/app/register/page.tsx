@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { createClient } from "@/lib/supabase/client";
@@ -15,7 +14,6 @@ const features = [
 ];
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +39,7 @@ export default function RegisterPage() {
       setLoading(false);
     } else {
       setSuccess(true);
-      setTimeout(() => { router.push("/onboarding"); router.refresh(); }, 1500);
+      setLoading(false);
     }
   };
 
@@ -69,8 +67,13 @@ export default function RegisterPage() {
             </div>
           )}
           {success && (
-            <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3.5 py-3 text-sm text-green-700">
-              <CheckCircle className="h-4 w-4 shrink-0" />登録完了！はじめての設定に進みます...
+            <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-3.5 py-3 text-sm text-green-700">
+              <div className="flex items-center gap-2 font-semibold mb-1">
+                <CheckCircle className="h-4 w-4 shrink-0" />確認メールを送信しました
+              </div>
+              <p className="text-green-600 text-xs leading-relaxed">
+                <strong>{email}</strong> に届いたメールのリンクをクリックして登録を完了してください。
+              </p>
             </div>
           )}
 
