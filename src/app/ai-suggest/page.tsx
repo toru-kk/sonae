@@ -355,7 +355,7 @@ export default function AiSuggestPage() {
               value={mountain}
               onChange={(e) => setMountain(e.target.value)}
               placeholder="例：槍ヶ岳、富士山、高尾山"
-              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -366,7 +366,7 @@ export default function AiSuggestPage() {
               <select
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 {[...Array(12)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>{i + 1}月</option>
@@ -380,7 +380,7 @@ export default function AiSuggestPage() {
               <select
                 value={nights}
                 onChange={(e) => setNights(Number(e.target.value))}
-                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value={0}>日帰り</option>
                 <option value={1}>1泊2日</option>
@@ -623,7 +623,7 @@ export default function AiSuggestPage() {
                 value={saveName}
                 onChange={(e) => setSaveName(e.target.value)}
                 placeholder="例: 槍ヶ岳 8月 2泊 セット"
-                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring mb-3"
+                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring mb-3"
                 autoFocus
               />
               <button
