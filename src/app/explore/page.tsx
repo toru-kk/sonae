@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Globe, Weight, Compass } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Globe, Weight, Compass, Search, X } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
+import { cn } from "@/lib/utils";
 
 function formatWeight(g: number) {
   return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
@@ -18,6 +19,7 @@ type PublicPackage = {
   mountain_type: string | null;
   total_weight_g: number;
   user_id: string;
+  created_at: string;
   users: { display_name: string | null; avatar_url: string | null } | null;
   gear_package_items: { count: number }[];
 };
@@ -35,26 +37,87 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
   );
 }
 
+const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "テント泊", "冬山", "沢登り", "その他"];
+type SortKey = "new" | "light" | "follow";
+
 export default function ExplorePage() {
-  const [packages, setPackages] = useState<PublicPackage[]>([]);
+  const [allPackages, setAllPackages] = useState<PublicPackage[]>([]);
+  const [followedUserIds, setFollowedUserIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  const [sort, setSort] = useState<SortKey>("new");
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setIsLoggedIn(!!data.user));
+
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id ?? null;
+      setCurrentUserId(uid);
+
+      if (uid) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: follows } = await (supabase as any)
+          .from("follows")
+          .select("following_id")
+          .eq("follower_id", uid);
+        setFollowedUserIds(new Set((follows ?? []).map((f: { following_id: string }) => f.following_id)));
+      }
+    });
 
     supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, user_id, users(display_name, avatar_url), gear_package_items(count)")
+      .select("id, name, description, mountain_type, total_weight_g, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
-      .limit(30)
+      .limit(60)
       .then(({ data }) => {
-        setPackages((data ?? []) as unknown as PublicPackage[]);
+        setAllPackages((data ?? []) as unknown as PublicPackage[]);
         setLoading(false);
       });
   }, []);
+
+  const packages = useMemo(() => {
+    let list = [...allPackages];
+
+    // フォロー中フィルター
+    if (sort === "follow") {
+      list = list.filter((p) => followedUserIds.has(p.user_id));
+    }
+
+    // 山タイプフィルター
+    if (selectedType) {
+      list = list.filter((p) => p.mountain_type === selectedType);
+    }
+
+    // テキスト検索
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          p.users?.display_name?.toLowerCase().includes(q)
+      );
+    }
+
+    // ソート
+    if (sort === "light") {
+      list = list
+        .filter((p) => p.total_weight_g > 0)
+        .sort((a, b) => a.total_weight_g - b.total_weight_g);
+    }
+
+    return list;
+  }, [allPackages, sort, selectedType, query, followedUserIds]);
+
+  const tabs: { key: SortKey; label: string; loginRequired?: boolean }[] = [
+    { key: "new", label: "新着" },
+    { key: "light", label: "軽量順" },
+    { key: "follow", label: "フォロー中", loginRequired: true },
+  ];
 
   return (
     <div className="min-h-[calc(100vh-56px)] bg-background">
@@ -74,13 +137,76 @@ export default function ExplorePage() {
             <Globe className="h-5 w-5 text-green-400 shrink-0" />
           </div>
           <p className="text-sm text-white/60 max-w-lg">
-            登山者たちが公開した装備パッケージを参考にしよう。気に入ったセットをベースに、自分の装備を作れます。
+            登山者たちが公開した装備パッケージを参考にしよう。
           </p>
-          {!loading && (
-            <div className="mt-4 text-xs text-white/35">
-              {packages.length} パッケージ公開中
+        </div>
+      </div>
+
+      {/* フィルターバー */}
+      <div className="sticky top-14 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 space-y-3">
+
+          {/* タブ */}
+          <div className="flex gap-1">
+            {tabs.map(({ key, label, loginRequired }) => {
+              const disabled = loginRequired && !currentUserId;
+              return (
+                <button
+                  key={key}
+                  onClick={() => !disabled && setSort(key)}
+                  disabled={disabled}
+                  className={cn(
+                    "rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                    sort === key
+                      ? "bg-primary text-primary-foreground"
+                      : disabled
+                      ? "text-muted-foreground/40 cursor-not-allowed"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  )}
+                >
+                  {label}
+                  {loginRequired && !currentUserId && (
+                    <span className="ml-1 text-[10px]">要ログイン</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 山タイプチップ + 検索 */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-[160px] max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="パッケージ名・ユーザーで検索"
+                className="w-full rounded-lg border border-border bg-card pl-8 pr-3 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              {query && (
+                <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
-          )}
+            <div className="flex flex-wrap gap-1.5">
+              {MOUNTAIN_TYPES.map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedType(selectedType === type ? null : type)}
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                    selectedType === type
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  )}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -98,108 +224,112 @@ export default function ExplorePage() {
         {!loading && packages.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-24 text-center">
             <Compass className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
-            <p className="text-sm font-semibold text-foreground mb-1">まだ公開パッケージがありません</p>
-            <p className="text-xs text-muted-foreground mb-6">あなたが最初に公開してみよう</p>
-            <Link href={isLoggedIn ? "/packages" : "/register"}
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
-              {isLoggedIn ? "パッケージを公開する" : "無料で始める"}
-            </Link>
+            {sort === "follow" ? (
+              <>
+                <p className="text-sm font-semibold text-foreground mb-1">フォロー中のユーザーの公開パッケージがありません</p>
+                <p className="text-xs text-muted-foreground mb-6">「みんなの装備」からユーザーをフォローしよう</p>
+                <button onClick={() => setSort("new")} className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+                  新着を見る
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-semibold text-foreground mb-1">
+                  {query || selectedType ? "条件に合うパッケージが見つかりません" : "まだ公開パッケージがありません"}
+                </p>
+                {(query || selectedType) && (
+                  <button
+                    onClick={() => { setQuery(""); setSelectedType(null); }}
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <X className="h-3.5 w-3.5" />フィルターをリセット
+                  </button>
+                )}
+              </>
+            )}
           </div>
         )}
 
         {!loading && packages.length > 0 && (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {packages.map((pkg) => {
-              const w = pkg.total_weight_g ?? 0;
-              const itemCount = pkg.gear_package_items?.[0]?.count ?? 0;
-              const creator = pkg.users;
-              const creatorName = creator?.display_name ?? "匿名ユーザー";
-              return (
-                <Link key={pkg.id} href={`/packages/${pkg.id}/public`}
-                  className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden">
-
-                  <div className="flex-1 p-4 pb-3">
-                    {/* クリエイター */}
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Avatar name={creatorName} avatarUrl={creator?.avatar_url} size="sm" />
-                      <span className="text-xs text-muted-foreground truncate">{creatorName}</span>
-                    </div>
-
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h2 className="text-sm font-bold text-foreground leading-snug line-clamp-2 flex-1">{pkg.name}</h2>
-                    </div>
-
-                    {pkg.description && (
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">{pkg.description}</p>
-                    )}
-
-                    {/* 統計バッジ */}
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {pkg.mountain_type && (
-                        <span className="rounded-full border border-border bg-accent/50 px-2 py-0.5 text-[10px] font-medium text-primary">
-                          {pkg.mountain_type}
-                        </span>
+          <>
+            <p className="text-xs text-muted-foreground mb-4">{packages.length} 件</p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {packages.map((pkg) => {
+                const w = pkg.total_weight_g ?? 0;
+                const itemCount = pkg.gear_package_items?.[0]?.count ?? 0;
+                const creator = pkg.users;
+                const creatorName = creator?.display_name ?? "匿名ユーザー";
+                return (
+                  <Link key={pkg.id} href={`/packages/${pkg.id}/public`}
+                    className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden">
+                    <div className="flex-1 p-4 pb-3">
+                      <Link
+                        href={`/u/${pkg.user_id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1.5 mb-3 hover:opacity-80 transition-opacity w-fit"
+                      >
+                        <Avatar name={creatorName} avatarUrl={creator?.avatar_url} size="sm" />
+                        <span className="text-xs text-muted-foreground truncate">{creatorName}</span>
+                      </Link>
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <h2 className="text-sm font-bold text-foreground leading-snug line-clamp-2 flex-1">{pkg.name}</h2>
+                      </div>
+                      {pkg.description && (
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">{pkg.description}</p>
                       )}
-                      {w > 0 && <ULScore weightG={w} />}
-                    </div>
-                  </div>
-
-                  {/* 重量・アイテム数フッター */}
-                  <div className="border-t border-border px-4 py-3 bg-secondary/20">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-foreground tabular-nums">
-                          {w > 0 ? formatWeight(w) : "—"}
-                        </span>
-                        {itemCount > 0 && (
-                          <span className="text-xs text-muted-foreground">{itemCount} 点</span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {pkg.mountain_type && (
+                          <span className="rounded-full border border-border bg-accent/50 px-2 py-0.5 text-[10px] font-medium text-primary">
+                            {pkg.mountain_type}
+                          </span>
                         )}
+                        {w > 0 && <ULScore weightG={w} />}
                       </div>
-                      <span className="text-[10px] font-semibold text-primary group-hover:underline">
-                        詳細を見る →
-                      </span>
                     </div>
-                    {w > 0 && (
-                      <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
-                        <div
-                          className="h-full rounded-full bg-primary"
-                          style={{ width: `${Math.min(100, (w / 12000) * 100)}%` }}
-                        />
+                    <div className="border-t border-border px-4 py-3 bg-secondary/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-foreground tabular-nums">
+                            {w > 0 ? formatWeight(w) : "—"}
+                          </span>
+                          {itemCount > 0 && (
+                            <span className="text-xs text-muted-foreground">{itemCount} 点</span>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-semibold text-primary group-hover:underline">詳細を見る →</span>
                       </div>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                      {w > 0 && (
+                        <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
+                          <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (w / 12000) * 100)}%` }} />
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-border bg-card p-6 text-center">
           <Weight className="mx-auto h-8 w-8 text-primary mb-3" />
           <h3 className="text-base font-bold text-foreground mb-1">自分の装備を管理しよう</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            AIが山に合わせた装備セットを提案。荷物忘れゼロを目指そう。
-          </p>
-          {isLoggedIn ? (
+          <p className="text-sm text-muted-foreground mb-4">AIが山に合わせた装備セットを提案。荷物忘れゼロを目指そう。</p>
+          {currentUserId ? (
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/packages"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+              <Link href="/packages" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
                 マイパッケージを見る
               </Link>
-              <Link href="/ai-suggest"
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
+              <Link href="/ai-suggest" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
                 AI提案を試す
               </Link>
             </div>
           ) : (
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+              <Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
                 無料で始める
               </Link>
-              <Link href="/login"
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
+              <Link href="/login" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
                 ログインして使う
               </Link>
             </div>
