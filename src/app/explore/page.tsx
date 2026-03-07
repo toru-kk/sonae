@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Globe, Weight, Compass, Search, X } from "lucide-react";
+import { Globe, Weight, Compass, Search, X, Users } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
@@ -38,7 +38,21 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
 }
 
 const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "テント泊", "冬山", "沢登り", "その他"];
-type SortKey = "new" | "light" | "follow";
+type SortKey = "new" | "light" | "follow" | "users";
+
+const EXPERIENCE_LABEL: Record<string, string> = {
+  under1: "1年未満", "1to3": "1〜3年", "3to10": "3〜10年", over10: "10年以上",
+};
+
+type PublicUser = {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  experience_level: string | null;
+  home_area: string | null;
+  packageCount: number;
+};
 
 export default function ExplorePage() {
   const [allPackages, setAllPackages] = useState<PublicPackage[]>([]);
@@ -49,6 +63,10 @@ export default function ExplorePage() {
   const [sort, setSort] = useState<SortKey>("new");
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+
+  const [allUsers, setAllUsers] = useState<PublicUser[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersFetched, setUsersFetched] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -78,6 +96,46 @@ export default function ExplorePage() {
         setLoading(false);
       });
   }, []);
+
+  // ユーザータブ選択時にユーザー詳細を取得
+  useEffect(() => {
+    if (sort !== "users" || usersFetched || loading) return;
+    setUsersLoading(true);
+    const supabase = createClient();
+    const userIds = [...new Set(allPackages.map((p) => p.user_id))];
+    if (userIds.length === 0) { setUsersLoading(false); setUsersFetched(true); return; }
+
+    const pkgCountMap = new Map<string, number>();
+    allPackages.forEach((p) => pkgCountMap.set(p.user_id, (pkgCountMap.get(p.user_id) ?? 0) + 1));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from("users")
+      .select("id, display_name, avatar_url, bio, experience_level, home_area")
+      .in("id", userIds)
+      .then(({ data }: { data: Omit<PublicUser, "packageCount">[] | null }) => {
+        const users: PublicUser[] = (data ?? []).map((u) => ({
+          ...u,
+          packageCount: pkgCountMap.get(u.id) ?? 0,
+        })).sort((a, b) => b.packageCount - a.packageCount);
+        setAllUsers(users);
+        setUsersLoading(false);
+        setUsersFetched(true);
+      });
+  }, [sort, usersFetched, loading, allPackages]);
+
+  const filteredUsers = useMemo(() => {
+    let list = [...allUsers];
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter((u) =>
+        u.display_name?.toLowerCase().includes(q) ||
+        u.bio?.toLowerCase().includes(q) ||
+        u.home_area?.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [allUsers, query]);
 
   const packages = useMemo(() => {
     let list = [...allPackages];
@@ -113,10 +171,11 @@ export default function ExplorePage() {
     return list;
   }, [allPackages, sort, selectedType, query, followedUserIds]);
 
-  const tabs: { key: SortKey; label: string; loginRequired?: boolean }[] = [
+  const tabs: { key: SortKey; label: string; loginRequired?: boolean; icon?: React.ReactNode }[] = [
     { key: "new", label: "新着" },
     { key: "light", label: "軽量順" },
     { key: "follow", label: "フォロー中", loginRequired: true },
+    { key: "users", label: "ユーザー", icon: <Users className="h-3.5 w-3.5" /> },
   ];
 
   return (
@@ -148,15 +207,15 @@ export default function ExplorePage() {
 
           {/* タブ */}
           <div className="flex gap-1">
-            {tabs.map(({ key, label, loginRequired }) => {
+            {tabs.map(({ key, label, loginRequired, icon }) => {
               const disabled = loginRequired && !currentUserId;
               return (
                 <button
                   key={key}
-                  onClick={() => !disabled && setSort(key)}
+                  onClick={() => { if (!disabled) { setSort(key); setQuery(""); setSelectedType(null); } }}
                   disabled={disabled}
                   className={cn(
-                    "rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                    "inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors",
                     sort === key
                       ? "bg-primary text-primary-foreground"
                       : disabled
@@ -164,7 +223,7 @@ export default function ExplorePage() {
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   )}
                 >
-                  {label}
+                  {icon}{label}
                   {loginRequired && !currentUserId && (
                     <span className="ml-1 text-[10px]">要ログイン</span>
                   )}
@@ -181,7 +240,7 @@ export default function ExplorePage() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="パッケージ名・ユーザーで検索"
+                placeholder={sort === "users" ? "ユーザー名・エリアで検索" : "パッケージ名・ユーザーで検索"}
                 className="w-full rounded-lg border border-border bg-card pl-8 pr-3 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
               {query && (
@@ -190,30 +249,96 @@ export default function ExplorePage() {
                 </button>
               )}
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {MOUNTAIN_TYPES.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setSelectedType(selectedType === type ? null : type)}
-                  className={cn(
-                    "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
-                    selectedType === type
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                  )}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
+            {sort !== "users" && (
+              <div className="flex flex-wrap gap-1.5">
+                {MOUNTAIN_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setSelectedType(selectedType === type ? null : type)}
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                      selectedType === type
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    )}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* パッケージグリッド */}
+      {/* コンテンツエリア */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
 
-        {loading && (
+        {/* ユーザー一覧 */}
+        {sort === "users" && (
+          <>
+            {usersLoading && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[1,2,3,4].map((i) => <div key={i} className="h-24 rounded-xl border border-border bg-card animate-pulse" />)}
+              </div>
+            )}
+            {!usersLoading && filteredUsers.length === 0 && (
+              <div className="rounded-xl border border-dashed border-border py-24 text-center">
+                <Users className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
+                <p className="text-sm font-semibold text-foreground mb-1">
+                  {query ? "条件に合うユーザーが見つかりません" : "まだ公開ユーザーがいません"}
+                </p>
+                {query && (
+                  <button onClick={() => setQuery("")} className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <X className="h-3.5 w-3.5" />検索をリセット
+                  </button>
+                )}
+              </div>
+            )}
+            {!usersLoading && filteredUsers.length > 0 && (
+              <>
+                <p className="text-xs text-muted-foreground mb-4">{filteredUsers.length} 人</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {filteredUsers.map((user) => {
+                    const name = user.display_name ?? "Sonaeユーザー";
+                    const initial = name.slice(0, 1).toUpperCase();
+                    return (
+                      <Link key={user.id} href={`/u/${user.id}`}
+                        className="flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:border-primary/30 hover:shadow-sm transition-all group">
+                        {user.avatar_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={user.avatar_url} alt={name} className="h-12 w-12 rounded-full object-cover shrink-0 ring-2 ring-border" />
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#14532d] to-[#22c55e] text-lg font-black text-white select-none">
+                            {initial}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">{name}</p>
+                          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            {user.experience_level && (
+                              <span className="text-xs text-muted-foreground">{EXPERIENCE_LABEL[user.experience_level]}</span>
+                            )}
+                            {user.home_area && (
+                              <span className="text-xs text-muted-foreground">{user.home_area}</span>
+                            )}
+                            <span className="text-xs text-muted-foreground">{user.packageCount} 件のパッケージ</span>
+                          </div>
+                          {user.bio && (
+                            <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{user.bio}</p>
+                          )}
+                        </div>
+                        <span className="shrink-0 text-[10px] font-semibold text-primary group-hover:underline whitespace-nowrap">見る →</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {sort !== "users" && loading && (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="h-48 rounded-xl border border-border bg-card animate-pulse" />
@@ -221,7 +346,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {!loading && packages.length === 0 && (
+        {sort !== "users" && !loading && packages.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-24 text-center">
             <Compass className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
             {sort === "follow" ? (
@@ -249,7 +374,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {!loading && packages.length > 0 && (
+        {sort !== "users" && !loading && packages.length > 0 && (
           <>
             <p className="text-xs text-muted-foreground mb-4">{packages.length} 件</p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
