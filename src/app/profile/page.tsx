@@ -13,6 +13,10 @@ const EXPERIENCE_LEVELS = [
   { value: "over10",   label: "10年以上" },
 ];
 
+const EXPERIENCE_LABEL: Record<string, string> = {
+  under1: "登山歴1年未満", "1to3": "登山歴1〜3年", "3to10": "登山歴3〜10年", over10: "登山歴10年以上",
+};
+
 const HOME_AREAS = [
   "北海道", "東北", "関東", "中部・北アルプス",
   "近畿", "中国・四国", "九州・沖縄", "海外",
@@ -35,6 +39,10 @@ export default function ProfilePage() {
   const [mountainInput, setMountainInput] = useState("");
 
   const [plan, setPlan] = useState<"free" | "standard" | "premium">("free");
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [packageCount, setPackageCount] = useState(0);
+  const [gearCount, setGearCount] = useState(0);
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -53,12 +61,18 @@ export default function ProfilePage() {
       setEmail(data.user.email ?? "");
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: profile } = await (supabase as any)
-        .from("users")
-        .select("display_name, avatar_url, bio, experience_level, favorite_mountains, home_area, plan")
-        .eq("id", uid)
-        .single();
+      const [profileRes, followerRes, followingRes, pkgRes, gearRes] = await Promise.all([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from("users").select("display_name, avatar_url, bio, experience_level, favorite_mountains, home_area, plan").eq("id", uid).single(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from("follows").select("id", { count: "exact", head: true }).eq("following_id", uid),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from("follows").select("id", { count: "exact", head: true }).eq("follower_id", uid),
+        supabase.from("gear_packages").select("id", { count: "exact", head: true }).eq("user_id", uid),
+        supabase.from("gear_items").select("id", { count: "exact", head: true }).eq("user_id", uid),
+      ]);
 
+      const profile = profileRes.data;
       setDisplayName(profile?.display_name ?? data.user.user_metadata?.full_name ?? data.user.email?.split("@")[0] ?? "");
       setAvatarUrl(profile?.avatar_url ?? data.user.user_metadata?.avatar_url ?? null);
       setBio(profile?.bio ?? "");
@@ -66,6 +80,10 @@ export default function ProfilePage() {
       setFavoriteMountains(profile?.favorite_mountains ?? []);
       setHomeArea(profile?.home_area ?? "");
       setPlan(profile?.plan ?? "free");
+      setFollowerCount(followerRes.count ?? 0);
+      setFollowingCount(followingRes.count ?? 0);
+      setPackageCount(pkgRes.count ?? 0);
+      setGearCount(gearRes.count ?? 0);
       setLoading(false);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,7 +104,6 @@ export default function ProfilePage() {
     setSaving(false);
     if (authErr || dbErr) {
       setSaveError("保存に失敗しました。もう一度お試しください。");
-      console.error("save error:", authErr, dbErr);
       return;
     }
     setSaved(true);
@@ -96,28 +113,16 @@ export default function ProfilePage() {
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !userId) return;
-
     setUploading(true);
     const ext = file.name.split(".").pop();
     const path = `${userId}/avatar.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, { upsert: true });
-
-    if (uploadError) {
-      console.error("upload error:", uploadError);
-      setUploading(false);
-      return;
-    }
-
+    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (uploadError) { setUploading(false); return; }
     const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
     const urlWithCacheBust = `${publicUrl}?t=${Date.now()}`;
-
     await supabase.auth.updateUser({ data: { avatar_url: urlWithCacheBust } });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (supabase as any).from("users").update({ avatar_url: urlWithCacheBust }).eq("id", userId);
-
     setAvatarUrl(urlWithCacheBust);
     setUploading(false);
   };
@@ -130,9 +135,7 @@ export default function ProfilePage() {
     mountainInputRef.current?.focus();
   };
 
-  const removeMountain = (m: string) => {
-    setFavoriteMountains(favoriteMountains.filter((x) => x !== m));
-  };
+  const removeMountain = (m: string) => setFavoriteMountains(favoriteMountains.filter((x) => x !== m));
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
@@ -159,63 +162,85 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">マイページ</h1>
-        <p className="mt-1 text-sm text-muted-foreground">アカウント情報の確認・変更</p>
-      </div>
+    <div className="mx-auto max-w-2xl px-4 sm:px-6">
 
-      {/* アバター */}
-      <div className="mb-6 flex items-center gap-4">
+      {/* プロフィールカード（ヒーロー） */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] -mx-4 sm:-mx-6 px-4 sm:px-6 py-8 mb-8">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(20,75,44,0.4),transparent)]" />
         <div className="relative">
-          {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarUrl} alt={displayName} className="h-16 w-16 rounded-full object-cover" />
-          ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-black text-primary-foreground select-none">
-              {initials}
+
+          {/* アバター + 名前 */}
+          <div className="flex items-start gap-4 mb-5">
+            <div className="relative shrink-0">
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt={displayName} className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20" />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#14532d] to-[#22c55e] ring-2 ring-white/20 text-2xl font-black text-white select-none">
+                  {initials}
+                </div>
+              )}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#071d13] bg-white/20 text-white hover:bg-white/30 transition-colors disabled:opacity-50">
+                {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarChange} className="hidden" />
             </div>
-          )}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-background bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50">
-            {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleAvatarChange}
-            className="hidden"
-          />
-        </div>
-        <div>
-          <p className="font-semibold text-foreground">{displayName}</p>
-          <p className="text-sm text-muted-foreground">{email}</p>
-          <div className="mt-1 flex items-center gap-3">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="text-xs text-primary hover:underline disabled:opacity-50">
-              {uploading ? "アップロード中..." : "画像を変更"}
-            </button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl font-bold text-white leading-tight">{displayName}</h1>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                {experienceLevel && (
+                  <span className="rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-0.5 text-xs font-semibold text-green-300">
+                    {EXPERIENCE_LABEL[experienceLevel] ?? experienceLevel}
+                  </span>
+                )}
+                <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
+                  plan === "premium" ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
+                  : plan === "standard" ? "border-green-400/40 bg-green-400/10 text-green-300"
+                  : "border-white/20 bg-white/5 text-white/50"
+                }`}>
+                  {plan === "premium" ? "Premium" : plan === "standard" ? "Standard" : "Free"}
+                </span>
+              </div>
+              {bio && <p className="mt-2 text-sm text-white/60 leading-relaxed line-clamp-2">{bio}</p>}
+            </div>
+          </div>
+
+          {/* 統計 */}
+          <div className="flex gap-6 mb-5">
+            {[
+              { label: "フォロワー", value: followerCount },
+              { label: "フォロー中", value: followingCount },
+              { label: "パッケージ", value: packageCount },
+              { label: "装備",       value: gearCount },
+            ].map(({ label, value }) => (
+              <div key={label}>
+                <p className="text-lg font-bold text-white tabular-nums">{value}</p>
+                <p className="text-[11px] text-white/50">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* アクション */}
+          <div className="flex flex-wrap gap-2">
             {userId && (
               <Link
                 href={`/u/${userId}`}
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                <ExternalLink className="h-3 w-3" />公開ページを見る
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/20 transition-colors whitespace-nowrap">
+                <ExternalLink className="h-3.5 w-3.5" />
+                公開ページを見る
               </Link>
             )}
           </div>
         </div>
       </div>
 
-      {/* 基本情報 */}
+      {/* プロフィール設定 */}
       <div className="space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">基本情報</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">プロフィール設定</h2>
 
-        {/* 表示名 */}
         <div className="rounded-xl border border-border bg-card p-5">
           <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <User className="h-4 w-4 text-muted-foreground" />
@@ -230,7 +255,6 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* 自己紹介 */}
         <div className="rounded-xl border border-border bg-card p-5">
           <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -252,7 +276,6 @@ export default function ProfilePage() {
       <div className="mt-6 space-y-4">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">山のスタイル</h2>
 
-        {/* 経験レベル */}
         <div className="rounded-xl border border-border bg-card p-5">
           <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
             <Mountain className="h-4 w-4 text-muted-foreground" />
@@ -275,7 +298,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 好きな山 */}
         <div className="rounded-xl border border-border bg-card p-5">
           <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <Mountain className="h-4 w-4 text-muted-foreground" />
@@ -311,7 +333,6 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* 活動エリア */}
         <div className="rounded-xl border border-border bg-card p-5">
           <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
             <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -348,9 +369,7 @@ export default function ProfilePage() {
             <Check className="h-4 w-4" />保存しました
           </span>
         )}
-        {saveError && (
-          <span className="text-sm text-red-500">{saveError}</span>
-        )}
+        {saveError && <span className="text-sm text-red-500">{saveError}</span>}
       </div>
 
       {/* アカウント情報 */}
@@ -398,7 +417,7 @@ export default function ProfilePage() {
       </div>
 
       {/* アカウント削除 */}
-      <div className="mt-10 space-y-4">
+      <div className="mt-10 mb-10 space-y-4">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">危険な操作</h2>
         <div className="rounded-xl border border-red-200 bg-red-50/50 p-5">
           <div className="flex items-start justify-between gap-4">
@@ -426,9 +445,7 @@ export default function ProfilePage() {
             <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
               装備・パッケージを含む全データが完全に削除されます。この操作は取り消せません。
             </p>
-            {deleteError && (
-              <p className="mb-4 text-sm text-red-600">{deleteError}</p>
-            )}
+            {deleteError && <p className="mb-4 text-sm text-red-600">{deleteError}</p>}
             <div className="flex gap-3">
               <button
                 onClick={() => { setShowDeleteConfirm(false); setDeleteError(null); }}
