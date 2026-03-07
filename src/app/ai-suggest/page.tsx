@@ -119,7 +119,7 @@ export default function AiSuggestPage() {
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-8">
 
       {/* ブランドヘッダー */}
-      <div className="sticky top-14 z-10 mb-8 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-3 pt-1 bg-background/80 backdrop-blur-sm">
+      <div className="mb-8 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-3 pt-1">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] px-5 py-4">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(20,75,44,0.4),transparent)]" />
           <div className="absolute right-5 top-1/2 -translate-y-1/2 opacity-10">

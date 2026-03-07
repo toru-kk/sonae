@@ -21,14 +21,14 @@ export function UserProfileCTA() {
         <div className="flex justify-center gap-3">
           <Link
             href="/packages"
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             <Layers className="h-4 w-4" />
             マイパッケージへ
           </Link>
           <Link
             href="/ai-suggest"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors whitespace-nowrap"
           >
             <Sparkles className="h-4 w-4" />
             AI提案を試す

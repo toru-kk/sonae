@@ -143,7 +143,7 @@ export default function ExplorePage() {
       </div>
 
       {/* フィルターバー */}
-      <div className="sticky top-14 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="bg-background/95 border-b border-border">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 space-y-3">
 
           {/* タブ */}
@@ -317,10 +317,10 @@ export default function ExplorePage() {
           <p className="text-sm text-muted-foreground mb-4">AIが山に合わせた装備セットを提案。荷物忘れゼロを目指そう。</p>
           {currentUserId ? (
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/packages" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+              <Link href="/packages" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap">
                 マイパッケージを見る
               </Link>
-              <Link href="/ai-suggest" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
+              <Link href="/ai-suggest" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors whitespace-nowrap">
                 AI提案を試す
               </Link>
             </div>

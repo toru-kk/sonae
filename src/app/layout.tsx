@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body className={`${geist.variable} font-sans min-h-screen`}>
-        <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm">
+        <header className="border-b border-border bg-white/95 backdrop-blur-sm">
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
             <Link href="/" className="flex items-center gap-2.5">
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NavBar />
           </div>
         </header>
-        <div className="pt-14 pb-16 md:pb-0">{children}</div>
+        <div className="pb-16 md:pb-0">{children}</div>
         <MobileNav />
         <Analytics />
       </body>

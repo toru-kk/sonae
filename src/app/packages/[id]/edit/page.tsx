@@ -127,19 +127,19 @@ export default function PackageEditPage() {
             パッケージ名<span className="ml-1 text-xs text-red-500">必須</span>
           </label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition" />
+            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition" />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-1.5">説明</label>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
-            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition resize-none" />
+            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition resize-none" />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-1.5">山タイプ</label>
           <select value={mountainType ?? ""} onChange={(e) => setMountainType(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition">
+            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition">
             {MOUNTAIN_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
         </div>

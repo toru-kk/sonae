@@ -39,7 +39,7 @@ export function PublicPackageCTA({ packageId, ownerId }: { packageId: string; ow
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-4">
         {isLoggedIn && isOwner ? (
           <>
-            <p className="mb-3 text-center text-xs text-muted-foreground">
+            <p className="mb-3 text-center text-xs text-muted-foreground whitespace-nowrap">
               あなたのパッケージです
             </p>
             <div className="flex gap-3">
@@ -61,7 +61,7 @@ export function PublicPackageCTA({ packageId, ownerId }: { packageId: string; ow
           </>
         ) : isLoggedIn ? (
           <>
-            <p className="mb-3 text-center text-xs text-muted-foreground">
+            <p className="mb-3 text-center text-xs text-muted-foreground" style={{ wordBreak: 'normal' }}>
               この装備リストをそのまま自分用にコピーして編集できます
             </p>
             <div className="flex gap-3">
@@ -87,7 +87,7 @@ export function PublicPackageCTA({ packageId, ownerId }: { packageId: string; ow
           </>
         ) : (
           <>
-            <p className="mb-3 text-center text-xs text-muted-foreground">
+            <p className="mb-3 text-center text-xs text-muted-foreground" style={{ wordBreak: 'normal' }}>
               この装備リストをベースに、自分だけの装備を管理する
             </p>
             <div className="flex gap-3">
@@ -100,7 +100,7 @@ export function PublicPackageCTA({ packageId, ownerId }: { packageId: string; ow
                 ログイン
               </Link>
             </div>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            <p className="mt-2 text-center text-[11px] text-muted-foreground whitespace-nowrap">
               <Weight className="inline h-3 w-3 mr-0.5 -mt-0.5" />
               装備30点・パッケージ3つまで無料
             </p>

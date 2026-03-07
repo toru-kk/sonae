@@ -83,7 +83,7 @@ export default function PackageDetailPage() {
   if (!pkg) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-8">
-        <Link href="/packages" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/packages" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
           <ArrowLeft className="h-4 w-4" />パッケージ
         </Link>
         <p className="mt-8 text-center text-muted-foreground">パッケージが見つかりません</p>
@@ -143,7 +143,7 @@ export default function PackageDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-8">
-      <Link href="/packages" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+      <Link href="/packages" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap mb-6">
         <ArrowLeft className="h-4 w-4" />パッケージ
       </Link>
 

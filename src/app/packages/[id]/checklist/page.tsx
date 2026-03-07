@@ -208,7 +208,7 @@ export default function ChecklistPage() {
     )}
     <div className="min-h-screen bg-stone-50">
       {/* スティッキーヘッダー */}
-      <header className="sticky top-14 z-10 bg-white/95 backdrop-blur-sm border-b border-stone-200">
+      <header className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-stone-200">
         <div className="max-w-2xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href={`/packages/${id}`} className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800 transition-colors">

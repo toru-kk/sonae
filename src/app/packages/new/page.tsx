@@ -100,7 +100,7 @@ export default function PackageNewPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="例: 北アルプス縦走セット"
-            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
+            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
           />
         </div>
 
@@ -112,7 +112,7 @@ export default function PackageNewPage() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="パッケージの目的や特徴を入力..."
             rows={3}
-            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition resize-none"
+            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition resize-none"
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function PackageNewPage() {
           <select
             value={mountainType}
             onChange={(e) => setMountainType(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
+            className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
           >
             {MOUNTAIN_TYPES.map((type) => (
               <option key={type} value={type}>{type}</option>
