@@ -11,7 +11,7 @@ import { usePackages } from "@/hooks/usePackages";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
 
-type AiResult = typeof mockAiResult & {
+type AiResult = Omit<typeof mockAiResult, 'recommended_items'> & {
   recommended_items: Array<{
     name: string;
     category: string;
