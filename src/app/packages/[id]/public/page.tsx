@@ -96,13 +96,14 @@ export default async function PublicPackagePage(
   const creatorInitial = creatorName.slice(0, 1).toUpperCase();
 
   // カテゴリ別グループ化
-  const categoryGroups = Object.entries(
-    items.reduce((acc: Record<string, typeof items>, item: { category_id: string }) => {
-      if (!acc[item.category_id]) acc[item.category_id] = [];
-      acc[item.category_id].push(item);
-      return acc;
-    }, {})
-  )
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const grouped: Record<string, any[]> = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (items as any[]).forEach((item: { category_id: string }) => {
+    if (!grouped[item.category_id]) grouped[item.category_id] = [];
+    grouped[item.category_id].push(item);
+  });
+  const categoryGroups = Object.entries(grouped)
     .map(([catId, catItems], idx) => ({
       catId, catItems,
       cat: CATEGORIES[catId],
