@@ -119,7 +119,7 @@ export default function GearPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="装備名で検索..."
-            className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
           {query && (
             <button onClick={() => setQuery("")}

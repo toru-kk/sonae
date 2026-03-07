@@ -181,14 +181,14 @@ export default function GearEditPage() {
               装備名 <span className="text-red-500">*</span>
             </label>
             <input type="text" required value={name} onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-muted-foreground mb-1.5">ブランド</label>
             <input type="text" value={brand} onChange={(e) => setBrand(e.target.value)}
               placeholder="例：mont-bell、OSPREY、PETZL"
-              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
 
           <div>
@@ -197,7 +197,7 @@ export default function GearEditPage() {
               <input type="number" min={0} step={1}
                 value={weightValue} onChange={(e) => setWeightValue(e.target.value)}
                 placeholder="285"
-                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
               <div className="inline-flex items-center rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm font-semibold text-muted-foreground">
                 g
               </div>
@@ -208,7 +208,7 @@ export default function GearEditPage() {
             <label className="block text-xs font-semibold text-muted-foreground mb-1.5">メモ</label>
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)}
               placeholder="例：Mサイズ / 購入日：2024-05"
-              className="w-full resize-none rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+              className="w-full resize-none rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
 
           <div className="flex items-center justify-between pt-1">

@@ -228,7 +228,7 @@ export default function GearNewPage() {
             </label>
             <input type="text" required value={name} onChange={(e) => setName(e.target.value)}
               placeholder="例：モンベル レインダンサー ジャケット"
-              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
 
           {/* ブランド（サジェスト付き） */}
@@ -246,7 +246,7 @@ export default function GearNewPage() {
               onBlur={() => setTimeout(() => setShowBrandList(false), 150)}
               placeholder="例：mont-bell、THE NORTH FACE..."
               autoComplete="off"
-              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
             {showBrandList && filteredBrands.length > 0 && (
               <ul className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-white shadow-lg overflow-hidden">
@@ -289,7 +289,7 @@ export default function GearNewPage() {
               <input type="number" min={0} step={weightUnit === "g" ? 1 : 0.001}
                 value={weightValue} onChange={(e) => setWeightValue(e.target.value)}
                 placeholder={weightUnit === "g" ? "285" : "0.285"}
-                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
               <button type="button" onClick={() => setWeightUnit(weightUnit === "g" ? "kg" : "g")}
                 className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm font-semibold hover:bg-secondary transition-colors min-w-[60px]">
                 {weightUnit}
@@ -302,7 +302,7 @@ export default function GearNewPage() {
             <label className="block text-xs font-semibold text-muted-foreground mb-1.5">メモ</label>
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)}
               placeholder="例：Mサイズ / 購入日：2024-05"
-              className="w-full resize-none rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+              className="w-full resize-none rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
 
           {/* 必須トグル */}
