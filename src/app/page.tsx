@@ -276,7 +276,7 @@ export default function Home() {
       {/* 機能セクション */}
       <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 md:py-20">
         <div className="mb-8 md:mb-12 text-center">
-          <h2 className="text-3xl font-bold text-foreground">3つのステップで万全の準備を</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">3つのステップで万全の準備を</h2>
           <p className="mt-3 text-muted-foreground">登山の準備を、もっとシンプルに、もっと確実に。</p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">

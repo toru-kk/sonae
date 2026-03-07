@@ -30,7 +30,12 @@
 @layer base {
   * { @apply border-border; }
   body { @apply bg-background text-foreground antialiased; }
-  h1, h2, h3, h4 { @apply tracking-tight; }
+  h1, h2, h3, h4 {
+    @apply tracking-tight;
+    text-wrap: balance;
+    word-break: auto-phrase;
+  }
+  p { word-break: auto-phrase; }
 }
 
 @layer components {
