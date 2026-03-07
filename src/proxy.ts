@@ -5,7 +5,7 @@ const PROTECTED = ["/gear", "/ai-suggest"];
 const PROTECTED_PACKAGES = /^\/packages(?!\/[^/]+\/public).*$/; // /packages/[id]/public は除外
 const AUTH_PAGES = ["/login", "/register"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
