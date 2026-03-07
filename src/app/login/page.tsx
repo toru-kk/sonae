@@ -56,7 +56,7 @@ export default function LoginPage() {
               <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">メールアドレス</label>
               <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email" placeholder="example@mail.com"
-                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -65,7 +65,7 @@ export default function LoginPage() {
               </div>
               <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password" placeholder="••••••••"
-                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
             </div>
             <button type="submit" disabled={loading}
               className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors mt-2 disabled:opacity-70 disabled:cursor-not-allowed">
