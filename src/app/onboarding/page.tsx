@@ -74,7 +74,7 @@ export default function OnboardingPage() {
             <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight mb-3">
               {displayName ? `${displayName}さん、` : ""}はじめましょう。
             </h1>
-            <p className="text-white/60 text-sm leading-relaxed">
+            <p className="text-white/80 text-sm leading-relaxed">
               sonaeは3ステップで使えます。まず装備を登録して、パッケージにまとめて、あとはAIにお任せ。
             </p>
           </div>
@@ -86,24 +86,24 @@ export default function OnboardingPage() {
         <div className="space-y-4">
           {steps.map(({ number, icon: Icon, title, desc, cta, href, color, bg, border }, idx) => (
             <div key={number}
-              className={`relative rounded-2xl border ${border} bg-card p-6 flex items-start gap-5 group hover:shadow-md transition-all`}>
+              className={`relative rounded-2xl border ${border} bg-card p-5 group hover:shadow-md transition-all`}>
 
-              {/* ステップ番号 */}
-              <div className={`shrink-0 flex h-10 w-10 items-center justify-center rounded-xl ${bg}`}>
-                <Icon className={`h-5 w-5 ${color}`} />
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">STEP {number}</span>
+              <div className="flex items-start gap-4 mb-4">
+                {/* アイコン */}
+                <div className={`shrink-0 flex h-10 w-10 items-center justify-center rounded-xl ${bg}`}>
+                  <Icon className={`h-5 w-5 ${color}`} />
                 </div>
-                <h2 className="text-base font-bold text-foreground mb-1">{title}</h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">STEP {number}</span>
+                  <h2 className="text-base font-bold text-foreground mt-0.5">{title}</h2>
+                </div>
               </div>
 
-              {/* CTAボタン (右端) */}
+              <p className="text-sm text-foreground/70 leading-relaxed mb-4">{desc}</p>
+
+              {/* CTAボタン（全幅） */}
               <Link href={href}
-                className={`shrink-0 self-center inline-flex items-center gap-1.5 rounded-xl ${bg} border ${border} px-4 py-2 text-sm font-semibold ${color} hover:opacity-80 transition-opacity`}>
+                className={`w-full inline-flex items-center justify-center gap-1.5 rounded-xl ${bg} border ${border} px-4 py-2.5 text-sm font-semibold ${color} hover:opacity-80 transition-opacity`}>
                 {cta}
                 <ChevronRight className="h-3.5 w-3.5" />
               </Link>
