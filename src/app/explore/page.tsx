@@ -1,5 +1,6 @@
 "use client";
 
+// Force Vercel rebuild - clear cache
 import Link from "next/link";
 import { Globe, Weight, Compass, Search, X, Users, Loader2 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
