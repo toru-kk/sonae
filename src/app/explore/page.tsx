@@ -12,6 +12,7 @@ import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
 import { cn } from "@/lib/utils";
 import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
+import { PtarmiganMascot } from "@/components/PtarmiganMascot";
 
 const PAGE_SIZE = 24;
 
@@ -217,20 +218,23 @@ export default function ExplorePage() {
       {/* ヘッダー */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-14">
-          <div className="flex items-center gap-2.5 mb-6">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/20">
-              <SonaeLogoIcon className="h-5 w-5" />
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-14 flex items-end justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2.5 mb-6">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/20">
+                <SonaeLogoIcon className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-bold text-white/70">Sonae</span>
             </div>
-            <span className="text-sm font-bold text-white/70">Sonae</span>
+            <div className="flex items-baseline gap-3 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-black text-white">みんなの装備</h1>
+              <Globe className="h-5 w-5 text-green-400 shrink-0" />
+            </div>
+            <p className="text-sm text-white/60 max-w-lg">
+              登山者たちが公開した装備パッケージを参考にしよう。
+            </p>
           </div>
-          <div className="flex items-baseline gap-3 mb-2">
-            <h1 className="text-2xl sm:text-3xl font-black text-white">みんなの装備</h1>
-            <Globe className="h-5 w-5 text-green-400 shrink-0" />
-          </div>
-          <p className="text-sm text-white/60 max-w-lg">
-            登山者たちが公開した装備パッケージを参考にしよう。
-          </p>
+          <PtarmiganMascot className="h-32 sm:h-40 shrink-0 drop-shadow-lg" />
         </div>
       </div>
 
