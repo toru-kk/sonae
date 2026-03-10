@@ -215,7 +215,12 @@ export default function PackageNewPage() {
                             className="shrink-0"
                           />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                              {item.is_essential && (
+                                <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-500 border border-red-100">必須</span>
+                              )}
+                            </div>
                             {item.brand && <p className="text-xs text-muted-foreground">{item.brand}</p>}
                           </div>
                           <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">

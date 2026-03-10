@@ -12,16 +12,16 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const CATEGORY_META: Record<string, { name_ja: string; icon: string; sort_order: number }> = {
-  shelter:    { name_ja: "シェルター",   icon: "⛺", sort_order: 1 },
-  sleeping:   { name_ja: "シュラフ",     icon: "🛏",  sort_order: 2 },
-  clothing:   { name_ja: "衣類",         icon: "👕",  sort_order: 3 },
-  footwear:   { name_ja: "靴・足回り",   icon: "👟",  sort_order: 4 },
-  backpack:   { name_ja: "バックパック", icon: "🎒",  sort_order: 5 },
-  navigation: { name_ja: "ナビ",         icon: "🗺️",  sort_order: 6 },
-  safety:     { name_ja: "安全装備",     icon: "🦺",  sort_order: 7 },
-  cooking:    { name_ja: "調理",         icon: "🍳",  sort_order: 8 },
-  food:       { name_ja: "食料",         icon: "🍫",  sort_order: 9 },
-  tools:      { name_ja: "道具・他",     icon: "🔧",  sort_order: 10 },
+  shelter:    { name_ja: "シェルター",   icon: "Tent",        sort_order: 1 },
+  sleeping:   { name_ja: "シュラフ",     icon: "BedDouble",   sort_order: 2 },
+  clothing:   { name_ja: "衣類",         icon: "Shirt",       sort_order: 3 },
+  footwear:   { name_ja: "靴・足回り",   icon: "Footprints",  sort_order: 4 },
+  backpack:   { name_ja: "バックパック", icon: "Backpack",    sort_order: 5 },
+  navigation: { name_ja: "ナビ",         icon: "Compass",     sort_order: 6 },
+  safety:     { name_ja: "安全装備",     icon: "ShieldCheck", sort_order: 7 },
+  cooking:    { name_ja: "調理",         icon: "Flame",       sort_order: 8 },
+  food:       { name_ja: "食料",         icon: "Apple",       sort_order: 9 },
+  tools:      { name_ja: "道具・他",     icon: "Wrench",      sort_order: 10 },
 };
 
 function formatWeight(g: number | null) {

@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- 背景：ダークグリーン丸角 -->
-  <rect width="32" height="32" rx="7" fill="#14432a"/>
-  <!-- ツインピーク山シルエット -->
-  <path d="M3 26 L10 13 L15 19 L21 6 L29 26 Z" fill="white"/>
-  <!-- 頂上アンバードット -->
-  <circle cx="21" cy="6" r="2.8" fill="#f59e0b"/>
-</svg>

@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFrom = any;
 
 const categoryNames: Record<string, string> = {
   shelter:    "シェルター",
@@ -15,9 +17,6 @@ const categoryNames: Record<string, string> = {
   tools:      "道具・その他",
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyClient = any;
-
 function buildCacheKey(userId: string, mountain: string, month: number, nights: number) {
   const normalizedMountain = mountain.trim().replace(/\s+/g, "");
   return `${userId}:${normalizedMountain}:${month}:${nights}`;
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { mountain, month, nights } = await req.json();
+  const { mountain, month, nights, accommodation, difficulty } = await req.json();
   if (!mountain || !month) {
     return NextResponse.json({ error: "mountain and month are required" }, { status: 400 });
   }
@@ -36,42 +35,58 @@ export async function POST(req: NextRequest) {
   const cacheKey = buildCacheKey(user.id, mountain, month, nights);
 
   // キャッシュチェック（72時間以内）
-  const { data: cached } = await (supabase as AnyClient)
+  const { data: cached } = await (supabase as AnyFrom)
     .from("ai_suggest_cache")
     .select("result")
     .eq("cache_key", cacheKey)
     .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
+    .maybeSingle() as { data: { result: Record<string, unknown> } | null };
 
   if (cached?.result) {
     return NextResponse.json({ ...cached.result, mountain, month, nights, cached: true });
   }
 
-  // 月間利用制限チェック（Free: 3回/月）
-  const FREE_LIMIT = 3;
+  // プランに応じた月間制限
+  const PLAN_LIMITS: Record<string, number | null> = {
+    free: 3,
+    standard: 30,
+    premium: null, // 無制限
+  };
+
+  const { data: userRow } = await supabase
+    .from("users")
+    .select("plan")
+    .eq("id", user.id)
+    .maybeSingle() as { data: { plan: string } | null };
+
+  const userPlan = userRow?.plan ?? "free";
+  const monthlyLimit = PLAN_LIMITS[userPlan] ?? 3;
+
   const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
-  const { data: usage } = await (supabase as AnyClient)
+  const { data: usage } = await supabase
     .from("ai_suggest_usage")
     .select("count")
     .eq("user_id", user.id)
     .eq("month", currentMonth)
-    .maybeSingle();
+    .maybeSingle() as { data: { count: number } | null };
 
   const currentCount = usage?.count ?? 0;
-  if (currentCount >= FREE_LIMIT) {
+  if (monthlyLimit !== null && currentCount >= monthlyLimit) {
     return NextResponse.json(
-      { error: "月間AI提案の上限（3回）に達しました。来月またご利用ください。", limit_reached: true },
+      { error: `月間AI提案の上限（${monthlyLimit}回）に達しました。来月またご利用ください。`, limit_reached: true, plan: userPlan },
       { status: 429 }
     );
   }
 
   // ユーザーの装備一覧を取得（idを含む）
-  const { data: gearItems } = await (supabase as AnyClient)
+  const { data: gearItems } = await supabase
     .from("gear_items")
     .select("id, name, category_id, weight_g, is_essential, brand, notes")
     .eq("user_id", user.id);
 
   const nightsLabel = nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`;
+  const accommodationLabel = accommodation === "hut" ? "小屋泊" : accommodation === "day" ? "日帰り装備" : "テント泊";
+  const difficultyLabel = difficulty === "easy" ? "初心者向け" : difficulty === "hard" ? "上級者向け" : "中級者向け";
   const gearList = (gearItems ?? []).map((g: { name: string; category_id: string; weight_g?: number | null; is_essential?: boolean; brand?: string | null; notes?: string | null }) =>
     `- ${g.name}${g.brand ? ` (${g.brand})` : ""}｜カテゴリ: ${categoryNames[g.category_id] ?? g.category_id}｜重量: ${g.weight_g ? `${g.weight_g}g` : "不明"}${g.is_essential ? "｜必須装備" : ""}${g.notes ? `｜メモ: ${g.notes}` : ""}`
   ).join("\n");
@@ -82,6 +97,8 @@ export async function POST(req: NextRequest) {
 - 山名: ${mountain}
 - 時期: ${month}月
 - 行程: ${nightsLabel}
+- スタイル: ${accommodationLabel}
+- 難易度: ${difficultyLabel}
 
 ## ユーザーの所持装備（${(gearItems ?? []).length}点）
 ${gearList || "（装備が登録されていません）"}
@@ -148,7 +165,7 @@ ${gearList || "（装備が登録されていません）"}
     };
 
     // キャッシュに保存（既存があればupsert）
-    await (supabase as AnyClient)
+    await (supabase as AnyFrom)
       .from("ai_suggest_cache")
       .upsert(
         { cache_key: cacheKey, result: enriched, expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString() },
@@ -156,14 +173,18 @@ ${gearList || "（装備が登録されていません）"}
       );
 
     // 月間利用カウントを更新
-    await (supabase as AnyClient)
+    await (supabase as AnyFrom)
       .from("ai_suggest_usage")
       .upsert(
         { user_id: user.id, month: currentMonth, count: currentCount + 1 },
         { onConflict: "user_id,month" }
       );
 
-    return NextResponse.json({ ...enriched, mountain, month, nights, remaining: FREE_LIMIT - currentCount - 1 });
+    return NextResponse.json({
+      ...enriched, mountain, month, nights,
+      remaining: monthlyLimit === null ? null : monthlyLimit - currentCount - 1,
+      plan: userPlan,
+    });
   } catch (err) {
     console.error("AI suggest error:", err);
     return NextResponse.json({ error: "AI service error" }, { status: 500 });

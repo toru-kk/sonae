@@ -23,9 +23,11 @@ export function PlanCTA({ plan }: { plan: Plan }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const href = isLoggedIn ? "/gear" : plan.href;
+  const href = isLoggedIn
+    ? plan.name === "Free" ? "/gear" : "/plans"
+    : plan.href;
   const label = isLoggedIn
-    ? plan.name === "Free" ? "マイ装備を見る" : "アップグレード（近日公開）"
+    ? plan.name === "Free" ? "マイ装備を見る" : "プランを見る・アップグレード"
     : plan.cta;
 
   return (

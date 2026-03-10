@@ -12,16 +12,16 @@ import { cn } from "@/lib/utils";
 const MOUNTAIN_TYPES = ["高山・縦走", "低山・ハイキング", "富士山", "雪山", "沢登り", "その他"] as const;
 
 const CATEGORY_META: Record<string, { name_ja: string; icon: string; sort_order: number }> = {
-  shelter:    { name_ja: "シェルター",   icon: "⛺", sort_order: 1 },
-  sleeping:   { name_ja: "シュラフ",     icon: "🛏",  sort_order: 2 },
-  clothing:   { name_ja: "衣類",         icon: "👕",  sort_order: 3 },
-  footwear:   { name_ja: "靴・足回り",   icon: "👟",  sort_order: 4 },
-  backpack:   { name_ja: "バックパック", icon: "🎒",  sort_order: 5 },
-  navigation: { name_ja: "ナビ",         icon: "🗺️",  sort_order: 6 },
-  safety:     { name_ja: "安全装備",     icon: "🦺",  sort_order: 7 },
-  cooking:    { name_ja: "調理",         icon: "🍳",  sort_order: 8 },
-  food:       { name_ja: "食料",         icon: "🍫",  sort_order: 9 },
-  tools:      { name_ja: "道具・他",     icon: "🔧",  sort_order: 10 },
+  shelter:    { name_ja: "シェルター",   icon: "Tent",        sort_order: 1 },
+  sleeping:   { name_ja: "シュラフ",     icon: "BedDouble",   sort_order: 2 },
+  clothing:   { name_ja: "衣類",         icon: "Shirt",       sort_order: 3 },
+  footwear:   { name_ja: "靴・足回り",   icon: "Footprints",  sort_order: 4 },
+  backpack:   { name_ja: "バックパック", icon: "Backpack",    sort_order: 5 },
+  navigation: { name_ja: "ナビ",         icon: "Compass",     sort_order: 6 },
+  safety:     { name_ja: "安全装備",     icon: "ShieldCheck", sort_order: 7 },
+  cooking:    { name_ja: "調理",         icon: "Flame",       sort_order: 8 },
+  food:       { name_ja: "食料",         icon: "Apple",       sort_order: 9 },
+  tools:      { name_ja: "道具・他",     icon: "Wrench",      sort_order: 10 },
 };
 
 function formatWeight(g: number) {
@@ -203,7 +203,12 @@ export default function PackageEditPage() {
                           </div>
                           <CategoryIcon categoryId={item.category_id} iconName={CATEGORY_META[item.category_id]?.icon} size="sm" variant="flat" className="shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                              {item.is_essential && (
+                                <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-500 border border-red-100">必須</span>
+                              )}
+                            </div>
                             {item.brand && <p className="text-xs text-muted-foreground">{item.brand}</p>}
                           </div>
                           <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">

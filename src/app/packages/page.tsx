@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, Sparkles, Weight, ChevronRight, Globe, Lock, Share2, Check, AlertTriangle } from "lucide-react";
+import { Plus, Sparkles, Weight, ChevronRight, Globe, Lock, Share2, Check, AlertTriangle, ClipboardCheck, X } from "lucide-react";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { mockCategories } from "@/lib/mock-data";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
@@ -18,6 +18,11 @@ export default function PackagesPage() {
   const { packages, loading, updatePackage } = usePackages();
   const { gearItems } = useGear();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [nudgeDismissed, setNudgeDismissed] = useState(true);
+
+  useEffect(() => {
+    setNudgeDismissed(!!localStorage.getItem("nudge-pkg-to-checklist-dismissed"));
+  }, []);
 
   const handleShare = useCallback(async (e: React.MouseEvent, pkgId: string, pkgName: string, isPublic: boolean) => {
     e.preventDefault();
@@ -95,29 +100,51 @@ export default function PackagesPage() {
         </div>
       </div>
 
+      {/* チェックリスト誘導バナー */}
+      {!nudgeDismissed && packages.length >= 1 && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+          <ClipboardCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">荷造りチェックを試してみよう</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              パッケージを開いて「荷造りチェック」を押すと、出発前のチェックリストが使えます。装備の忘れものをゼロに。
+            </p>
+            <button
+              onClick={() => { const pkg = packages[0]; if (pkg) window.location.href = `/packages/${pkg.id}/checklist`; }}
+              className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+              <ClipboardCheck className="h-3.5 w-3.5" />
+              チェックリストを開く
+            </button>
+          </div>
+          <button
+            onClick={() => { localStorage.setItem("nudge-pkg-to-checklist-dismissed", "1"); setNudgeDismissed(true); }}
+            className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Freeプラン上限警告 */}
       {packages.length >= 3 ? (
         <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
           <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-red-800">
-              Freeプランの上限に達しました
-            </p>
-            <p className="text-xs text-red-700 mt-0.5">
-              Standardプランにアップグレードすると20セットまで作成できます。
-            </p>
+            <p className="text-sm font-semibold text-red-800">Freeプランの上限に達しました</p>
+            <p className="text-xs text-red-700 mt-0.5">パッケージ3つまで。Standardプランで20セットまで作成できます。</p>
+            <Link href="/pricing" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
+              Standardプランへ →
+            </Link>
           </div>
         </div>
       ) : packages.length === 2 && (
         <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
           <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-amber-800">
-              Freeプランの上限まで残り 1 セット
-            </p>
-            <p className="text-xs text-amber-700 mt-0.5">
-              Freeプランはパッケージ3つまで。Standardプランにアップグレードすると20セットまで作成できます。
-            </p>
+            <p className="text-sm font-semibold text-amber-800">Freeプランの上限まで残り 1 セット</p>
+            <p className="text-xs text-amber-700 mt-0.5">Freeプランはパッケージ3つまで。Standardプランで20セットまで作れます。</p>
+            <Link href="/pricing" className="mt-2 inline-flex items-center gap-1 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors">
+              プランを確認する →
+            </Link>
           </div>
         </div>
       )}

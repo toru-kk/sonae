@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Backpack, Layers, Sparkles, LogIn, LogOut, User, Globe } from "lucide-react";
+import { Backpack, Layers, Sparkles, LogIn, LogOut, User, Globe, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -58,15 +58,26 @@ export function NavBar() {
           );
         })}
         {user && (
-          <Link href="/explore"
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-colors",
-              pathname === "/explore"
-                ? "bg-accent text-primary font-semibold"
-                : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
-            )}>
-            <Globe className="h-4 w-4" />みんなの装備
-          </Link>
+          <>
+            <Link href="/explore"
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-colors",
+                pathname === "/explore"
+                  ? "bg-accent text-primary font-semibold"
+                  : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+              )}>
+              <Globe className="h-4 w-4" />みんなの装備
+            </Link>
+            <Link href="/plans"
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-colors",
+                pathname === "/plans"
+                  ? "bg-accent text-primary font-semibold"
+                  : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+              )}>
+              <CreditCard className="h-4 w-4" />プラン
+            </Link>
+          </>
         )}
       </nav>
 

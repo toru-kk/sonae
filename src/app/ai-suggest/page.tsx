@@ -42,6 +42,8 @@ export default function AiSuggestPage() {
   const [plan, setPlan] = useState<"free" | "standard" | "premium" | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [accommodation, setAccommodation] = useState<"tent" | "hut" | "day">("tent");
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
 
   useEffect(() => {
     const supabase = createClient() as AnyClient;
@@ -69,7 +71,7 @@ export default function AiSuggestPage() {
       const res = await fetch("/api/ai-suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mountain, month, nights }),
+        body: JSON.stringify({ mountain, month, nights, accommodation, difficulty }),
       });
       if (res.status === 429) {
         setLimitReached(true);
@@ -156,8 +158,8 @@ export default function AiSuggestPage() {
         </div>
       )}
 
-      {/* 無料プランゲート（将来的にプラン制限を復活させる場合のために残す） */}
-      {false && plan !== null && !isPaid && (
+      {/* 無料プランゲート */}
+      {plan !== null && !isPaid && (
         <div className="mb-8 rounded-2xl border border-border overflow-hidden">
           {/* プレビューぼかし */}
           <div className="relative">
@@ -209,18 +211,17 @@ export default function AiSuggestPage() {
                 <p className="text-[10px] text-primary-foreground/70">AI提案 無制限</p>
               </div>
             </div>
-            <button
-              disabled
-              className="mt-3 w-full rounded-xl border border-border bg-card py-3 text-sm font-semibold text-muted-foreground cursor-not-allowed flex items-center justify-center gap-2">
+            <a href="/plans"
+              className="mt-3 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
               <Sparkles className="h-4 w-4" />
-              アップグレード（近日公開）
-            </button>
+              プランを見る・アップグレード
+            </a>
           </div>
         </div>
       )}
 
       {/* デモプレビュー（無料ユーザー向け） */}
-      {false && plan !== null && !isPaid && (
+      {plan !== null && !isPaid && (
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 bg-border" />
@@ -334,9 +335,9 @@ export default function AiSuggestPage() {
           <div className="mt-5 rounded-xl bg-primary/5 border border-primary/20 p-4 text-center">
             <p className="text-sm font-semibold text-foreground mb-1">あなたの装備で提案を受けるには</p>
             <p className="text-xs text-muted-foreground mb-3">スタンダードまたはプレミアムプランにアップグレードしてください</p>
-            <button disabled className="rounded-lg bg-primary/30 px-5 py-2 text-sm font-semibold text-primary cursor-not-allowed">
-              アップグレード（近日公開）
-            </button>
+            <a href="/plans" className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors inline-block">
+              プランを見る・アップグレード
+            </a>
           </div>
         </div>
       )}
@@ -389,6 +390,36 @@ export default function AiSuggestPage() {
               </select>
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                スタイル
+              </label>
+              <select
+                value={accommodation}
+                onChange={(e) => setAccommodation(e.target.value as "tent" | "hut" | "day")}
+                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="tent">テント泊</option>
+                <option value="hut">小屋泊</option>
+                <option value="day">日帰り装備</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                難易度
+              </label>
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value as "easy" | "medium" | "hard")}
+                className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="easy">初心者向け</option>
+                <option value="medium">中級者向け</option>
+                <option value="hard">上級者向け</option>
+              </select>
+            </div>
+          </div>
           <button
             onClick={handleSubmit}
             disabled={isLoading || limitReached}
@@ -409,12 +440,18 @@ export default function AiSuggestPage() {
           {remaining !== null && remaining > 0 && (
             <p className="text-center text-xs text-muted-foreground">今月残り {remaining} 回</p>
           )}
+          {remaining === null && (
+            <p className="text-center text-xs text-muted-foreground">無制限プラン</p>
+          )}
           {limitReached && (
             <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
               <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-red-800">今月の上限（3回）に達しました</p>
+                <p className="text-sm font-semibold text-red-800">今月の上限に達しました</p>
                 <p className="text-xs text-red-700 mt-0.5">来月1日にリセットされます。</p>
+                <a href="/plans" className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-red-800 underline underline-offset-2">
+                  プランをアップグレードして回数を増やす →
+                </a>
               </div>
             </div>
           )}

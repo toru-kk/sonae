@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
-import { Plus, Weight, Search, ChevronRight, X, AlertTriangle } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Plus, Weight, Search, ChevronRight, X, AlertTriangle, Layers } from "lucide-react";
 import { mockCategories } from "@/lib/mock-data";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
@@ -18,6 +18,11 @@ export default function GearPage() {
   const { gearItems, loading } = useGear();
   const [query, setQuery] = useState("");
   const [filterCat, setFilterCat] = useState("");
+  const [nudgeDismissed, setNudgeDismissed] = useState(true);
+
+  useEffect(() => {
+    setNudgeDismissed(!!localStorage.getItem("nudge-gear-to-package-dismissed"));
+  }, []);
 
   const categoryMap = Object.fromEntries(mockCategories.map((c) => [c.id, c]));
   const totalWeight = gearItems.reduce((s, g) => s + (g.weight_g ?? 0), 0);
@@ -83,29 +88,49 @@ export default function GearPage() {
       </div>
       </div>
 
+      {/* パッケージ誘導バナー */}
+      {!loading && !nudgeDismissed && gearItems.length >= 1 && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+          <Layers className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-emerald-800">次はパッケージを作ろう</p>
+            <p className="text-xs text-emerald-700 mt-0.5">
+              装備をまとめて「北アルプスセット」などのパッケージを作ると、荷造りチェックリストが使えます。
+            </p>
+            <Link href="/packages/new" className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors">
+              <Layers className="h-3.5 w-3.5" />
+              パッケージを作成
+            </Link>
+          </div>
+          <button
+            onClick={() => { localStorage.setItem("nudge-gear-to-package-dismissed", "1"); setNudgeDismissed(true); }}
+            className="shrink-0 text-emerald-400 hover:text-emerald-600 transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Freeプラン上限警告 */}
       {!loading && gearItems.length >= 30 ? (
         <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
           <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-red-800">
-              Freeプランの上限に達しました
-            </p>
-            <p className="text-xs text-red-700 mt-0.5">
-              Standardプランにアップグレードすると200点まで登録できます。
-            </p>
+            <p className="text-sm font-semibold text-red-800">Freeプランの上限に達しました</p>
+            <p className="text-xs text-red-700 mt-0.5">装備30点まで。Standardプランで200点まで登録できます。</p>
+            <Link href="/pricing" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
+              Standardプランへ →
+            </Link>
           </div>
         </div>
       ) : !loading && gearItems.length >= 25 && (
         <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
           <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-amber-800">
-              Freeプランの上限まで残り {30 - gearItems.length} 点
-            </p>
-            <p className="text-xs text-amber-700 mt-0.5">
-              Freeプランは装備30点まで。Standardプランにアップグレードすると200点まで登録できます。
-            </p>
+            <p className="text-sm font-semibold text-amber-800">Freeプランの上限まで残り {30 - gearItems.length} 点</p>
+            <p className="text-xs text-amber-700 mt-0.5">Freeプランは装備30点まで。Standardプランで200点まで登録できます。</p>
+            <Link href="/pricing" className="mt-2 inline-flex items-center gap-1 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors">
+              プランを確認する →
+            </Link>
           </div>
         </div>
       )}

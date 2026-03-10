@@ -6,6 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
 import { PublicPackageCTA } from "@/components/PublicPackageCTA";
+import { CopyPackageButton } from "@/components/CopyPackageButton";
 
 const CATEGORIES: Record<string, { name_ja: string; sort_order: number }> = {
   shelter:    { name_ja: "シェルター",    sort_order: 1 },
@@ -258,7 +259,10 @@ export default async function PublicPackagePage(
         )}
       </div>
 
-      <PublicPackageCTA packageId={id} ownerId={pkg.user_id} />
+      <div className="mt-4 flex flex-col gap-3">
+        <CopyPackageButton packageId={id} creatorId={creator.id} />
+        <PublicPackageCTA packageId={id} ownerId={pkg.user_id} />
+      </div>
 
     </div>
   );

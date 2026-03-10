@@ -18,7 +18,13 @@ export interface Database {
           email: string;
           display_name: string | null;
           avatar_url: string | null;
+          bio: string | null;
+          experience_level: string | null;
+          favorite_mountains: string[] | null;
+          home_area: string | null;
           plan: "free" | "standard" | "premium";
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -27,13 +33,25 @@ export interface Database {
           email: string;
           display_name?: string | null;
           avatar_url?: string | null;
+          bio?: string | null;
+          experience_level?: string | null;
+          favorite_mountains?: string[] | null;
+          home_area?: string | null;
           plan?: "free" | "standard" | "premium";
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
         };
         Update: {
           email?: string;
           display_name?: string | null;
           avatar_url?: string | null;
+          bio?: string | null;
+          experience_level?: string | null;
+          favorite_mountains?: string[] | null;
+          home_area?: string | null;
           plan?: "free" | "standard" | "premium";
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
         };
       };
       gear_categories: {
@@ -138,6 +156,53 @@ export interface Database {
           quantity?: number;
           sort_order?: number | null;
           notes?: string | null;
+        };
+      };
+      follows: {
+        Row: {
+          id: string;
+          follower_id: string;
+          following_id: string;
+          created_at: string;
+        };
+        Insert: {
+          follower_id: string;
+          following_id: string;
+        };
+        Update: Record<string, never>;
+      };
+      ai_suggest_cache: {
+        Row: {
+          id: string;
+          cache_key: string;
+          result: Json;
+          expires_at: string;
+          created_at: string;
+        };
+        Insert: {
+          cache_key: string;
+          result: Json;
+          expires_at: string;
+        };
+        Update: {
+          result?: Json;
+          expires_at?: string;
+        };
+      };
+      ai_suggest_usage: {
+        Row: {
+          id: string;
+          user_id: string;
+          month: string;
+          count: number;
+        };
+        Insert: {
+          user_id: string;
+          month: string;
+          count?: number;
+        };
+        Update: {
+          count?: number;
         };
       };
     };

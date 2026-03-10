@@ -254,8 +254,8 @@ export default function GearNewPage() {
                   <li key={b.display}>
                     <button
                       type="button"
-                      onMouseDown={() => handleBrandSelect(b.display)}
-                      className="w-full px-3.5 py-2 text-left text-sm hover:bg-accent transition-colors"
+                      onPointerDown={(e) => { e.preventDefault(); handleBrandSelect(b.display); }}
+                      className="w-full px-3.5 py-3 text-left text-sm hover:bg-accent transition-colors"
                     >
                       {b.display}
                     </button>

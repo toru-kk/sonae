@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, ChevronLeft, Weight, Package, AlertCircle, CheckCheck, RotateCcw, Save } from "lucide-react";
+import { Check, ChevronLeft, Weight, Package, AlertCircle, CheckCheck, RotateCcw, Save, CalendarDays, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { usePackages } from "@/hooks/usePackages";
@@ -11,16 +11,16 @@ import { useGear } from "@/hooks/useGear";
 import type { GearItem } from "@/types/gear";
 
 const CATEGORY_META: Record<string, { name_ja: string; icon: string; sort_order: number }> = {
-  shelter:    { name_ja: "シェルター",   icon: "⛺", sort_order: 1 },
-  sleeping:   { name_ja: "シュラフ",     icon: "🛏",  sort_order: 2 },
-  clothing:   { name_ja: "衣類",         icon: "👕",  sort_order: 3 },
-  footwear:   { name_ja: "靴・足回り",   icon: "👟",  sort_order: 4 },
-  backpack:   { name_ja: "バックパック", icon: "🎒",  sort_order: 5 },
-  navigation: { name_ja: "ナビ",         icon: "🗺️",  sort_order: 6 },
-  safety:     { name_ja: "安全装備",     icon: "🦺",  sort_order: 7 },
-  cooking:    { name_ja: "調理",         icon: "🍳",  sort_order: 8 },
-  food:       { name_ja: "食料",         icon: "🍫",  sort_order: 9 },
-  tools:      { name_ja: "道具・他",     icon: "🔧",  sort_order: 10 },
+  shelter:    { name_ja: "シェルター",   icon: "Tent",        sort_order: 1 },
+  sleeping:   { name_ja: "シュラフ",     icon: "BedDouble",   sort_order: 2 },
+  clothing:   { name_ja: "衣類",         icon: "Shirt",       sort_order: 3 },
+  footwear:   { name_ja: "靴・足回り",   icon: "Footprints",  sort_order: 4 },
+  backpack:   { name_ja: "バックパック", icon: "Backpack",    sort_order: 5 },
+  navigation: { name_ja: "ナビ",         icon: "Compass",     sort_order: 6 },
+  safety:     { name_ja: "安全装備",     icon: "ShieldCheck", sort_order: 7 },
+  cooking:    { name_ja: "調理",         icon: "Flame",       sort_order: 8 },
+  food:       { name_ja: "食料",         icon: "Apple",       sort_order: 9 },
+  tools:      { name_ja: "道具・他",     icon: "Wrench",      sort_order: 10 },
 };
 
 function formatWeight(g: number | null): string {
@@ -70,6 +70,34 @@ export default function ChecklistPage() {
     localStorage.removeItem(storageKey);
   };
 
+  // 出発日
+  const departureDateKey = `checklist-departure-${id}`;
+  const [departureDate, setDepartureDate] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem(departureDateKey) ?? "";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (departureDate) localStorage.setItem(departureDateKey, departureDate);
+    else localStorage.removeItem(departureDateKey);
+  }, [departureDate, departureDateKey]);
+
+  const daysUntilDeparture = useMemo(() => {
+    if (!departureDate) return null;
+    const diff = new Date(departureDate).setHours(0,0,0,0) - new Date().setHours(0,0,0,0);
+    return Math.round(diff / (1000 * 60 * 60 * 24));
+  }, [departureDate]);
+
+  // 折りたたみ
+  const [collapsedCats, setCollapsedCats] = useState<Set<string>>(new Set());
+  const toggleCat = (catId: string) => {
+    setCollapsedCats(prev => {
+      const next = new Set(prev);
+      if (next.has(catId)) next.delete(catId); else next.add(catId);
+      return next;
+    });
+  };
+
   const [saved, setSaved] = useState(false);
   const handleSave = () => {
     setSaved(true);
@@ -91,6 +119,7 @@ export default function ChecklistPage() {
   const isAllChecked = totalCount > 0 && checkedCount === totalCount;
   const totalWeight = items.reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
   const checkedWeight = items.filter((item) => checkedIds.has(item.id)).reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
+  const uncheckedEssentials = items.filter((item) => item.is_essential && !checkedIds.has(item.id));
 
   const groupedByCategory = useMemo(() => {
     const groups: Record<string, { catMeta: typeof CATEGORY_META[string]; essential: GearItem[]; regular: GearItem[] }> = {};
@@ -266,22 +295,79 @@ export default function ChecklistPage() {
           </div>
         </div>
 
+        {/* 出発日カード */}
+        <div className="bg-white rounded-2xl border border-stone-200 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <CalendarDays className="h-4 w-4 text-primary shrink-0" />
+            <span className="text-sm font-semibold text-stone-700">出発日</span>
+            {daysUntilDeparture !== null && (
+              <span className={cn(
+                "ml-auto text-sm font-bold tabular-nums",
+                daysUntilDeparture < 0 ? "text-stone-400" :
+                daysUntilDeparture === 0 ? "text-emerald-600" :
+                daysUntilDeparture <= 3 ? "text-amber-600" : "text-primary"
+              )}>
+                {daysUntilDeparture < 0 ? "出発済み" :
+                 daysUntilDeparture === 0 ? "今日出発！" :
+                 `あと ${daysUntilDeparture} 日`}
+              </span>
+            )}
+          </div>
+          <input
+            type="date"
+            value={departureDate}
+            onChange={(e) => setDepartureDate(e.target.value)}
+            className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </div>
+
+        {/* 未チェック必須アイテム警告 */}
+        {uncheckedEssentials.length > 0 && !isAllChecked && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-700">
+                  必須装備 {uncheckedEssentials.length} 点が未確認
+                </p>
+                <ul className="mt-1.5 space-y-0.5">
+                  {uncheckedEssentials.slice(0, 4).map((item) => (
+                    <li key={item.id} className="text-xs text-amber-600">· {item.name}</li>
+                  ))}
+                  {uncheckedEssentials.length > 4 && (
+                    <li className="text-xs text-amber-500">他 {uncheckedEssentials.length - 4} 点</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* チェックリスト本体 */}
         <div className="space-y-4">
           {groupedByCategory.map(({ catId, catMeta, essential, regular }) => {
             const allItems = [...essential, ...regular];
             const catChecked = allItems.filter((i) => checkedIds.has(i.id)).length;
             const catDone = catChecked === allItems.length;
+            const isCollapsed = collapsedCats.has(catId);
             return (
               <section key={catId}>
-                <div className="flex items-center gap-2 mb-2 px-1">
+                <button
+                  onClick={() => toggleCat(catId)}
+                  className="w-full flex items-center gap-2 mb-2 px-1 text-left"
+                >
                   <CategoryIcon categoryId={catId} iconName={catMeta.icon} size="sm" />
                   <h2 className={cn("text-sm font-semibold transition-colors", catDone ? "text-emerald-600" : "text-stone-600")}>
                     {catMeta.name_ja}
                   </h2>
                   {catDone && <Check className="h-3.5 w-3.5 text-emerald-500" strokeWidth={2.5} />}
                   <span className="text-xs text-stone-400 ml-auto tabular-nums">{catChecked} / {allItems.length}</span>
-                </div>
+                  {isCollapsed
+                    ? <ChevronDown className="h-3.5 w-3.5 text-stone-400 shrink-0" />
+                    : <ChevronUp className="h-3.5 w-3.5 text-stone-400 shrink-0" />
+                  }
+                </button>
+                {!isCollapsed && (
                 <div className="bg-white rounded-2xl border border-stone-200 divide-y divide-stone-100 overflow-hidden shadow-sm">
                   {allItems.map((item) => {
                     const checked = checkedIds.has(item.id);
@@ -324,6 +410,7 @@ export default function ChecklistPage() {
                     );
                   })}
                 </div>
+                )}
               </section>
             );
           })}

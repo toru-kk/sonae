@@ -110,31 +110,47 @@ export async function GET(
             </div>
           </div>
 
-          {/* クリエイター */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: "12px",
-            background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "100px", padding: "10px 20px 10px 10px",
-          }}>
-            {avatarData ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={avatarData}
-                width={44} height={44}
-                style={{ borderRadius: "50%", objectFit: "cover" }}
-                alt=""
-              />
-            ) : (
-              <div style={{
-                width: "44px", height: "44px", borderRadius: "50%",
-                background: "linear-gradient(135deg, #14532d, #22c55e)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "18px", fontWeight: "900", color: "white",
-              }}>{avatarInitial}</div>
-            )}
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "2px" }}>作成者</span>
-              <span style={{ fontSize: "16px", fontWeight: "700", color: "white" }}>{creatorName}</span>
+          {/* クリエイター + sonae.appバッジ */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "12px" }}>
+            {/* sonae.appバッジ */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: "8px",
+              background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.25)",
+              borderRadius: "100px", padding: "6px 16px 6px 10px",
+            }}>
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                <path d="M2 16 Q4 16 6.5 9 Q8 13 9.5 12.5 Q11.2 8.5 13 4 Q14.8 9 18 16 Z" fill="#6ee7b7" />
+                <circle cx="13" cy="4" r="1.2" fill="#f59e0b" />
+              </svg>
+              <span style={{ fontSize: "14px", fontWeight: "700", color: "#6ee7b7", letterSpacing: "0.03em" }}>sonae.app で作成</span>
+            </div>
+
+            {/* クリエイター */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: "12px",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: "100px", padding: "10px 20px 10px 10px",
+            }}>
+              {avatarData ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarData}
+                  width={44} height={44}
+                  style={{ borderRadius: "50%", objectFit: "cover" }}
+                  alt=""
+                />
+              ) : (
+                <div style={{
+                  width: "44px", height: "44px", borderRadius: "50%",
+                  background: "linear-gradient(135deg, #14532d, #22c55e)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "18px", fontWeight: "900", color: "white",
+                }}>{avatarInitial}</div>
+              )}
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "2px" }}>作成者</span>
+                <span style={{ fontSize: "16px", fontWeight: "700", color: "white" }}>{creatorName}</span>
+              </div>
             </div>
           </div>
         </div>
