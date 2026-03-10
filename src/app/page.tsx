@@ -294,10 +294,10 @@ export default function Home() {
               href: "/packages",
             },
             {
-              step: "03", icon: Sparkles,
-              title: "AIが最適化",
-              desc: "山名・季節・泊数を入力するだけ。AIがあなたの装備から最適なセットを選んで提案する。",
-              href: "/ai-suggest",
+              step: "03", icon: CheckCircle,
+              title: "荷造りチェック",
+              desc: "出発前にチェックリストで全装備を確認。必須アイテムの抜け漏れをゼロにして、安心して山へ向かう。",
+              href: "/packages",
             },
           ].map(({ step, icon: Icon, title, desc, href }) => (
             <Link key={step} href={href}
