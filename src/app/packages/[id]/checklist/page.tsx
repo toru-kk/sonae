@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, ChevronLeft, Weight, Package, AlertCircle, CheckCheck, RotateCcw, Save, CalendarDays, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronLeft, Weight, Package, AlertCircle, CheckCheck, RotateCcw, Save, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { usePackages } from "@/hooks/usePackages";
@@ -69,24 +69,6 @@ export default function ChecklistPage() {
     setCheckedIds(new Set());
     localStorage.removeItem(storageKey);
   };
-
-  // 出発日
-  const departureDateKey = `checklist-departure-${id}`;
-  const [departureDate, setDepartureDate] = useState<string>(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem(departureDateKey) ?? "";
-  });
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (departureDate) localStorage.setItem(departureDateKey, departureDate);
-    else localStorage.removeItem(departureDateKey);
-  }, [departureDate, departureDateKey]);
-
-  const daysUntilDeparture = useMemo(() => {
-    if (!departureDate) return null;
-    const diff = new Date(departureDate).setHours(0,0,0,0) - new Date().setHours(0,0,0,0);
-    return Math.round(diff / (1000 * 60 * 60 * 24));
-  }, [departureDate]);
 
   // 折りたたみ
   const [collapsedCats, setCollapsedCats] = useState<Set<string>>(new Set());
@@ -292,32 +274,6 @@ export default function ChecklistPage() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* 出発日カード */}
-        <div className="bg-white rounded-2xl border border-stone-200 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-primary shrink-0" />
-            <span className="text-sm font-semibold text-stone-700">出発日</span>
-            <input
-              type="date"
-              value={departureDate}
-              onChange={(e) => setDepartureDate(e.target.value)}
-              className="ml-auto rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
-            />
-            {daysUntilDeparture !== null && (
-              <span className={cn(
-                "text-sm font-bold tabular-nums whitespace-nowrap",
-                daysUntilDeparture < 0 ? "text-stone-400" :
-                daysUntilDeparture === 0 ? "text-emerald-600" :
-                daysUntilDeparture <= 3 ? "text-amber-600" : "text-primary"
-              )}>
-                {daysUntilDeparture < 0 ? "出発済み" :
-                 daysUntilDeparture === 0 ? "今日！" :
-                 `あと${daysUntilDeparture}日`}
-              </span>
-            )}
           </div>
         </div>
 
