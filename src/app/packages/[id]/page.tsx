@@ -147,24 +147,6 @@ export default function PackageDetailPage() {
         <ArrowLeft className="h-4 w-4" />パッケージ
       </Link>
 
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold text-foreground">{pkg.name}</h1>
-          {pkg.description && (
-            <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{pkg.description}</p>
-          )}
-          {pkg.mountain_type && (
-            <div className="mt-2">
-              <span className="rounded-full bg-accent/50 px-3 py-1 text-xs font-medium text-primary">{pkg.mountain_type}</span>
-            </div>
-          )}
-        </div>
-        <div className="shrink-0 text-right">
-          <span className="text-3xl font-bold text-foreground tabular-nums">{formatWeight(totalWeight)}</span>
-          <p className="mt-0.5 text-sm text-muted-foreground">{items.length} 点</p>
-        </div>
-      </div>
-
       {/* 公開確認ダイアログ */}
       {showPublishConfirm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4">
