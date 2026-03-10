@@ -12,7 +12,6 @@ import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
 import { cn } from "@/lib/utils";
 import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
-import { PtarmiganMascot } from "@/components/PtarmiganMascot";
 
 const PAGE_SIZE = 24;
 
@@ -234,7 +233,8 @@ export default function ExplorePage() {
               登山者たちが公開した装備パッケージを参考にしよう。
             </p>
           </div>
-          <PtarmiganMascot className="h-32 sm:h-40 shrink-0 drop-shadow-lg" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/mascot.png" alt="雷鳥マスコット" className="h-24 sm:h-36 shrink-0 drop-shadow-lg" />
         </div>
       </div>
 

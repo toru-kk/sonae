@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2 } from "lucide-react";
+import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2, Heart } from "lucide-react";
+import { getLevelBadge, getSpecialtyBadges, type SpecialtyBadge } from "@/lib/badges";
+import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 
 const EXPERIENCE_LEVELS = [
   { value: "under1",   label: "1年未満" },
@@ -17,7 +19,7 @@ const EXPERIENCE_LABEL: Record<string, string> = {
   under1: "登山歴1年未満", "1to3": "登山歴1〜3年", "3to10": "登山歴3〜10年", over10: "登山歴10年以上",
 };
 
-const HOME_AREAS = [
+const ACTIVITY_AREAS = [
   "北海道", "東北", "関東", "中部・北アルプス",
   "近畿", "中国・四国", "九州・沖縄", "海外",
 ];
@@ -35,7 +37,7 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
   const [favoriteMountains, setFavoriteMountains] = useState<string[]>([]);
-  const [homeArea, setHomeArea] = useState("");
+  const [activityAreas, setActivityAreas] = useState<string[]>([]);
   const [mountainInput, setMountainInput] = useState("");
 
   const [plan, setPlan] = useState<"free" | "standard" | "premium">("free");
@@ -43,6 +45,8 @@ export default function ProfilePage() {
   const [followingCount, setFollowingCount] = useState(0);
   const [packageCount, setPackageCount] = useState(0);
   const [gearCount, setGearCount] = useState(0);
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [specialtyBadges, setSpecialtyBadges] = useState<SpecialtyBadge[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -61,15 +65,16 @@ export default function ProfilePage() {
       setEmail(data.user.email ?? "");
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const [profileRes, followerRes, followingRes, pkgRes, gearRes] = await Promise.all([
+      const [profileRes, followerRes, followingRes, pkgRes, gearRes, packagesRes] = await Promise.all([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (supabase as any).from("users").select("display_name, avatar_url, bio, experience_level, favorite_mountains, home_area, plan").eq("id", uid).single(),
+        (supabase as any).from("users").select("display_name, avatar_url, bio, experience_level, favorite_mountains, activity_areas, home_area, plan").eq("id", uid).single(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (supabase as any).from("follows").select("id", { count: "exact", head: true }).eq("following_id", uid),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (supabase as any).from("follows").select("id", { count: "exact", head: true }).eq("follower_id", uid),
         supabase.from("gear_packages").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("gear_items").select("id", { count: "exact", head: true }).eq("user_id", uid),
+        supabase.from("gear_packages").select("mountain_type, total_weight_g, like_count").eq("user_id", uid),
       ]);
 
       const profile = profileRes.data;
@@ -78,16 +83,26 @@ export default function ProfilePage() {
       setBio(profile?.bio ?? "");
       setExperienceLevel(profile?.experience_level ?? "");
       setFavoriteMountains(profile?.favorite_mountains ?? []);
-      setHomeArea(profile?.home_area ?? "");
+      // activity_areas が未移行の場合は home_area を単一要素配列として fallback
+      setActivityAreas(profile?.activity_areas ?? (profile?.home_area ? [profile.home_area] : []));
       setPlan(profile?.plan ?? "free");
       setFollowerCount(followerRes.count ?? 0);
       setFollowingCount(followingRes.count ?? 0);
       setPackageCount(pkgRes.count ?? 0);
       setGearCount(gearRes.count ?? 0);
+
+      // 総いいね・専門バッジ計算
+      const pkgs = packagesRes.data ?? [];
+      const likes = pkgs.reduce((sum: number, p: { like_count?: number | null }) => sum + (p.like_count ?? 0), 0);
+      setTotalLikes(likes);
+      setSpecialtyBadges(getSpecialtyBadges(pkgs));
+
       setLoading(false);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const levelBadge = getLevelBadge(totalLikes);
 
   const handleSave = async () => {
     setSaving(true);
@@ -99,7 +114,7 @@ export default function ProfilePage() {
       bio: bio || null,
       experience_level: experienceLevel || null,
       favorite_mountains: favoriteMountains,
-      home_area: homeArea || null,
+      activity_areas: activityAreas,
     }).eq("id", userId);
     setSaving(false);
     if (authErr || dbErr) {
@@ -136,6 +151,11 @@ export default function ProfilePage() {
   };
 
   const removeMountain = (m: string) => setFavoriteMountains(favoriteMountains.filter((x) => x !== m));
+
+  const toggleArea = (area: string) =>
+    setActivityAreas((prev) =>
+      prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area]
+    );
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
@@ -174,9 +194,13 @@ export default function ProfilePage() {
             <div className="relative shrink-0">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatarUrl} alt={displayName} className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20" />
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className={`h-16 w-16 rounded-full object-cover ring-2 ${levelBadge.ringClass}`}
+                />
               ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#14532d] to-[#22c55e] ring-2 ring-white/20 text-2xl font-black text-white select-none">
+                <div className={`flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#14532d] to-[#22c55e] ring-2 ${levelBadge.ringClass} text-2xl font-black text-white select-none`}>
                   {initials}
                 </div>
               )}
@@ -190,7 +214,12 @@ export default function ProfilePage() {
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-white leading-tight">{displayName}</h1>
-              <div className="mt-1 flex flex-wrap items-center gap-2">
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                {/* レベルバッジ */}
+                <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${levelBadge.chipBorder} ${levelBadge.chipBg} ${levelBadge.chipText}`}>
+                  <LevelBadgeIcon badgeKey={levelBadge.key} className="h-3 w-3" />
+                  {levelBadge.label}
+                </span>
                 {experienceLevel && (
                   <span className="rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-0.5 text-xs font-semibold text-green-300">
                     {EXPERIENCE_LABEL[experienceLevel] ?? experienceLevel}
@@ -209,7 +238,7 @@ export default function ProfilePage() {
           </div>
 
           {/* 統計 */}
-          <div className="flex gap-6 mb-5">
+          <div className="flex gap-5 mb-4">
             {[
               { label: "フォロワー", value: followerCount },
               { label: "フォロー中", value: followingCount },
@@ -221,7 +250,51 @@ export default function ProfilePage() {
                 <p className="text-[11px] text-white/50">{label}</p>
               </div>
             ))}
+            {/* 総いいね — 強調 */}
+            <div className="ml-auto flex flex-col items-end">
+              <p className="flex items-center gap-1 text-lg font-bold text-rose-400 tabular-nums">
+                <Heart className="h-4 w-4 fill-rose-400" />
+                {totalLikes}
+              </p>
+              <p className="text-[11px] text-white/50">総いいね</p>
+            </div>
           </div>
+
+          {/* 次のバッジまでの進捗 */}
+          {levelBadge.nextMilestone !== null && (
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-[11px] text-white/40">
+                  次のバッジまであと <span className="text-white/60 font-semibold">{levelBadge.nextMilestone - totalLikes} いいね</span>
+                </p>
+                <p className="text-[11px] text-white/30">{totalLikes} / {levelBadge.nextMilestone}</p>
+              </div>
+              <div className="h-1 w-full rounded-full bg-white/10">
+                <div
+                  className={`h-1 rounded-full transition-all ${levelBadge.chipBg.replace("bg-", "bg-").replace("/10", "/60")}`}
+                  style={{ width: `${Math.min((totalLikes / levelBadge.nextMilestone) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* 専門バッジ */}
+          {specialtyBadges.length > 0 && (
+            <div className="mb-5">
+              <p className="text-[11px] text-white/40 mb-1.5">獲得バッジ</p>
+              <div className="flex flex-wrap gap-1.5">
+                {specialtyBadges.map((badge) => (
+                  <span
+                    key={badge.key}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badge.chipBorder} ${badge.chipBg} ${badge.chipText}`}
+                  >
+                    <SpecialtyBadgeIcon badgeKey={badge.key} className="h-3 w-3" />
+                    {badge.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* アクション */}
           <div className="flex flex-wrap gap-2">
@@ -334,17 +407,19 @@ export default function ProfilePage() {
         </div>
 
         <div className="rounded-xl border border-border bg-card p-5">
-          <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+          <label className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
             <MapPin className="h-4 w-4 text-muted-foreground" />
             活動エリア
+            <span className="ml-auto text-xs font-normal text-muted-foreground">複数選択可</span>
           </label>
+          <p className="text-xs text-muted-foreground mb-3">よく登るエリアを選んでください</p>
           <div className="flex flex-wrap gap-2">
-            {HOME_AREAS.map((area) => (
+            {ACTIVITY_AREAS.map((area) => (
               <button
                 key={area}
-                onClick={() => setHomeArea(homeArea === area ? "" : area)}
+                onClick={() => toggleArea(area)}
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                  homeArea === area
+                  activityAreas.includes(area)
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
