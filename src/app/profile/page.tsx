@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2, Heart } from "lucide-react";
 import { getLevelBadge, getSpecialtyBadges, type SpecialtyBadge } from "@/lib/badges";
 import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
+import { PlanPortalButton } from "@/components/PlanPortalButton";
 
 const EXPERIENCE_LEVELS = [
   { value: "under1",   label: "1年未満" },
@@ -491,6 +492,18 @@ export default function ProfilePage() {
             }`}>
               {plan === "premium" ? "Premium" : plan === "standard" ? "Standard" : "無料"}
             </span>
+          </div>
+          <div className="mt-3">
+            {plan === "free" ? (
+              <Link
+                href="/plans"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-primary bg-primary/5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
+                <Crown className="h-4 w-4" />
+                プランをアップグレード
+              </Link>
+            ) : (
+              <PlanPortalButton />
+            )}
           </div>
         </div>
       </div>
