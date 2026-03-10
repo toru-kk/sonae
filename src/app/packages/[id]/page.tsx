@@ -149,7 +149,7 @@ export default function PackageDetailPage() {
 
       {/* 公開確認ダイアログ */}
       {showPublishConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
           <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
             <h3 className="text-base font-bold text-foreground mb-1">このパッケージを公開しますか？</h3>
             <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
