@@ -7,6 +7,7 @@ import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
 import { PublicPackageCTA } from "@/components/PublicPackageCTA";
 import { CopyPackageButton } from "@/components/CopyPackageButton";
+import { LikeButton } from "@/components/LikeButton";
 
 const CATEGORIES: Record<string, { name_ja: string; sort_order: number }> = {
   shelter:    { name_ja: "シェルター",    sort_order: 1 },
@@ -259,8 +260,11 @@ export default async function PublicPackagePage(
         )}
       </div>
 
-      <div className="mt-4 flex flex-col gap-3">
-        <CopyPackageButton packageId={id} creatorId={creator.id} />
+      <div className="mt-4 mx-auto max-w-3xl px-4 sm:px-6 pb-8 flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <LikeButton packageId={id} initialLikeCount={pkg.like_count ?? 0} />
+          <CopyPackageButton packageId={id} creatorId={creator.id} />
+        </div>
         <PublicPackageCTA packageId={id} ownerId={pkg.user_id} />
       </div>
 

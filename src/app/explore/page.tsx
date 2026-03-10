@@ -2,12 +2,13 @@
 
 // Force Vercel rebuild - clear cache
 import Link from "next/link";
-import { Globe, Weight, Compass, Search, X, Users, Loader2 } from "lucide-react";
+import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
 import { CopyPackageButton } from "@/components/CopyPackageButton";
+import { LikeButton } from "@/components/LikeButton";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 24;
@@ -22,6 +23,7 @@ type PublicPackage = {
   description: string | null;
   mountain_type: string | null;
   total_weight_g: number;
+  like_count: number;
   user_id: string;
   created_at: string;
   users: { display_name: string | null; avatar_url: string | null } | null;
@@ -42,7 +44,7 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
 }
 
 const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "テント泊", "冬山", "沢登り", "その他"];
-type SortKey = "new" | "light" | "follow" | "users";
+type SortKey = "new" | "light" | "popular" | "follow" | "users";
 
 const EXPERIENCE_LABEL: Record<string, string> = {
   under1: "1年未満", "1to3": "1〜3年", "3to10": "3〜10年", over10: "10年以上",
@@ -94,7 +96,7 @@ export default function ExplorePage() {
 
     supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(0, PAGE_SIZE - 1)
@@ -139,7 +141,7 @@ export default function ExplorePage() {
     const supabase = createClient();
     const { data } = await supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
@@ -192,6 +194,9 @@ export default function ExplorePage() {
         .filter((p) => p.total_weight_g > 0)
         .sort((a, b) => a.total_weight_g - b.total_weight_g);
     }
+    if (sort === "popular") {
+      list = list.sort((a, b) => (b.like_count ?? 0) - (a.like_count ?? 0));
+    }
 
     return list;
   }, [allPackages, sort, selectedType, query, followedUserIds]);
@@ -199,6 +204,7 @@ export default function ExplorePage() {
   const tabs: { key: SortKey; label: string; loginRequired?: boolean; icon?: React.ReactNode }[] = [
     { key: "new", label: "新着" },
     { key: "light", label: "軽量順" },
+    { key: "popular", label: "人気順", icon: <Heart className="h-3.5 w-3.5" /> },
     { key: "follow", label: "フォロー中", loginRequired: true },
     { key: "users", label: "ユーザー", icon: <Users className="h-3.5 w-3.5" /> },
   ];
@@ -445,7 +451,10 @@ export default function ExplorePage() {
                             <span className="text-xs text-muted-foreground">{itemCount} 点</span>
                           )}
                         </div>
-                        <CopyPackageButton packageId={pkg.id} creatorId={pkg.user_id} compact />
+                        <div className="flex items-center gap-1">
+                          <LikeButton packageId={pkg.id} initialLikeCount={pkg.like_count} compact />
+                          <CopyPackageButton packageId={pkg.id} creatorId={pkg.user_id} compact />
+                        </div>
                       </div>
                       {w > 0 && (
                         <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
