@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import { cn } from "@/lib/utils";
 
 type P = { className?: string };
@@ -136,7 +137,7 @@ export function IconUL({ className }: P) {
 
 // ─── Lookup helpers ───────────────────────────────────────────────────────────
 
-const LEVEL_ICON_MAP: Record<string, (p: P) => JSX.Element> = {
+const LEVEL_ICON_MAP: Record<string, (p: P) => ReactElement> = {
   newbie:   IconNewbie,
   trail:    IconTrail,
   climber:  IconClimber,
@@ -144,7 +145,7 @@ const LEVEL_ICON_MAP: Record<string, (p: P) => JSX.Element> = {
   master:   IconMaster,
 };
 
-const SPECIALTY_ICON_MAP: Record<string, (p: P) => JSX.Element> = {
+const SPECIALTY_ICON_MAP: Record<string, (p: P) => ReactElement> = {
   lowmountain: IconLowMountain,
   alpine:      IconAlpine,
   tent:        IconTent,
