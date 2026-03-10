@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Globe, Weight, Compass, Search, X, Users } from "lucide-react";
+import { Globe, Weight, Compass, Search, X, Users, Loader2 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
+import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 24;
 
 function formatWeight(g: number) {
   return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
@@ -56,6 +59,9 @@ type PublicUser = {
 
 export default function ExplorePage() {
   const [allPackages, setAllPackages] = useState<PublicPackage[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [followedUserIds, setFollowedUserIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -90,9 +96,11 @@ export default function ExplorePage() {
       .select("id, name, description, mountain_type, total_weight_g, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
-      .limit(60)
+      .range(0, PAGE_SIZE - 1)
       .then(({ data }) => {
-        setAllPackages((data ?? []) as unknown as PublicPackage[]);
+        const pkgs = (data ?? []) as unknown as PublicPackage[];
+        setAllPackages(pkgs);
+        if (pkgs.length < PAGE_SIZE) setHasMore(false);
         setLoading(false);
       });
   }, []);
@@ -123,6 +131,22 @@ export default function ExplorePage() {
         setUsersFetched(true);
       });
   }, [sort, usersFetched, loading, allPackages]);
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("gear_packages")
+      .select("id, name, description, mountain_type, total_weight_g, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
+      .eq("is_public", true)
+      .order("created_at", { ascending: false })
+      .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
+    if (!data || data.length < PAGE_SIZE) setHasMore(false);
+    setAllPackages(prev => [...prev, ...(data ?? []) as unknown as PublicPackage[]]);
+    setPage(nextPage);
+    setLoadingMore(false);
+  };
 
   const filteredUsers = useMemo(() => {
     let list = [...allUsers];
@@ -179,7 +203,7 @@ export default function ExplorePage() {
   ];
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-background">
+    <div className="min-h-[calc(100dvh-56px)] bg-background">
 
       {/* ヘッダー */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
@@ -420,7 +444,7 @@ export default function ExplorePage() {
                             <span className="text-xs text-muted-foreground">{itemCount} 点</span>
                           )}
                         </div>
-                        <span className="text-[10px] font-semibold text-primary group-hover:underline">詳細を見る →</span>
+                        <CopyPackageButton packageId={pkg.id} creatorId={pkg.user_id} compact />
                       </div>
                       {w > 0 && (
                         <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
@@ -432,6 +456,21 @@ export default function ExplorePage() {
                 );
               })}
             </div>
+            {hasMore && sort === "new" && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-medium text-foreground hover:bg-secondary transition-colors disabled:opacity-50"
+                >
+                  {loadingMore ? (
+                    <><Loader2 className="h-4 w-4 animate-spin" />読み込み中...</>
+                  ) : (
+                    "もっと見る"
+                  )}
+                </button>
+              </div>
+            )}
           </>
         )}
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Backpack, Layers, Sparkles, ArrowRight, ChevronRight, Check } from "lucide-react";
+import { Backpack, Layers, Sparkles, ArrowRight, ChevronRight, Check, ClipboardCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 
@@ -49,18 +49,29 @@ const slides: Slide[] = [
   {
     id: "step",
     step: 3,
+    icon: ClipboardCheck,
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    title: "荷造りチェックで確認する",
+    desc: "出発前にパッケージを開いて「荷造りチェック」をスタート。装備をひとつずつ確認しながらパッキング。全部チェックで出発OK！",
+    hint: "出発日を設定するとカウントダウンが表示されます。必須装備の未チェックは警告で通知。",
+  },
+  {
+    id: "step",
+    step: 4,
     icon: Sparkles,
     color: "text-amber-600",
     bg: "bg-amber-50",
     border: "border-amber-200",
-    title: "AIに相談する",
+    title: "AIに装備を相談する",
     desc: "山名・季節・泊数を入力するだけ。登録した装備の中からAIが最適なセットを提案し、不足装備も指摘してくれます。",
     hint: "無料プランで月3回まで利用できます。",
   },
   { id: "done" },
 ];
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -93,7 +104,7 @@ export default function OnboardingPage() {
   const slide = slides[current];
 
   return (
-    <div className="flex min-h-[calc(100vh-56px)] flex-col items-center justify-center bg-background px-4 py-12">
+    <div className="flex min-h-[calc(100dvh-56px)] flex-col items-center justify-center bg-background px-4 py-12">
 
       {/* ロゴ */}
       <div className="flex items-center gap-2 mb-10">
@@ -120,11 +131,26 @@ export default function OnboardingPage() {
               {displayName ? `${displayName}さん、` : ""}
               <br />はじめましょう。
             </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-              Sonaeは3ステップで使えます。
-              <br />まず装備を登録して、パッケージにまとめて、
-              <br />あとはAIにお任せ。
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+              Sonaeは4ステップで使えます。
             </p>
+            {/* フロー図 */}
+            <div className="mb-8 rounded-xl border border-border bg-secondary/30 divide-y divide-border text-left overflow-hidden">
+              {[
+                { icon: Backpack,       label: "装備を登録",         color: "text-sky-600",     bg: "bg-sky-50"     },
+                { icon: Layers,         label: "パッケージにまとめる", color: "text-violet-600",  bg: "bg-violet-50"  },
+                { icon: ClipboardCheck, label: "荷造りチェックで確認", color: "text-emerald-600", bg: "bg-emerald-50" },
+                { icon: Sparkles,       label: "AIに装備を相談",      color: "text-amber-600",   bg: "bg-amber-50"   },
+              ].map(({ icon: Icon, label, color, bg }, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-lg ${bg}`}>
+                    <Icon className={`h-4 w-4 ${color}`} />
+                  </div>
+                  <span className="text-sm font-medium text-foreground">{label}</span>
+                  <span className={`ml-auto text-[10px] font-black tracking-widest ${color}`}>STEP {i + 1}</span>
+                </div>
+              ))}
+            </div>
             <button
               onClick={goNext}
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
@@ -194,14 +220,33 @@ export default function OnboardingPage() {
         {/* 完了 */}
         {slide.id === "done" && (
           <div className="text-center">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-100 border border-green-200">
-              <Check className="h-8 w-8 text-green-600" />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 border border-emerald-200">
+              <Check className="h-8 w-8 text-emerald-600" />
             </div>
             <h2 className="text-xl font-black text-foreground mb-3">準備完了！</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-              まずは最初の装備を登録してみましょう。
-              <br />テントやシュラフから始めると整理しやすいですよ。
+            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              まずは装備を登録しましょう。<br />
+              登録 → パッケージ作成 → 荷造りチェック<br />
+              の順に進めると最短で使いこなせます。
             </p>
+            {/* ミニロードマップ */}
+            <div className="mb-8 rounded-xl border border-border bg-secondary/30 divide-y divide-border text-left overflow-hidden">
+              {[
+                { num: "1", label: "装備を登録する",       sub: "今からやります",             active: true  },
+                { num: "2", label: "パッケージを作る",      sub: "装備をセットにまとめる",     active: false },
+                { num: "3", label: "荷造りチェックをする",  sub: "出発前に確認リストで確かめる", active: false },
+              ].map((row) => (
+                <div key={row.num} className={`flex items-center gap-3 px-4 py-3 ${row.active ? "bg-primary/5" : ""}`}>
+                  <div className={`shrink-0 flex h-6 w-6 items-center justify-center rounded-full text-xs font-black ${row.active ? "bg-primary text-primary-foreground" : "bg-border text-muted-foreground"}`}>
+                    {row.num}
+                  </div>
+                  <div>
+                    <p className={`text-sm font-semibold ${row.active ? "text-primary" : "text-foreground"}`}>{row.label}</p>
+                    <p className="text-xs text-muted-foreground">{row.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
             <button
               onClick={goNext}
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"

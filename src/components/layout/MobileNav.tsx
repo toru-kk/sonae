@@ -32,7 +32,10 @@ export function MobileNav() {
   if (!isLoggedIn || pathname.includes("/checklist")) return null;
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white/95 backdrop-blur-sm">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white/95 backdrop-blur-sm"
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 0.5rem)" }}
+    >
       <div className="flex items-stretch">
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive = href === "/"
@@ -41,7 +44,7 @@ export function MobileNav() {
           return (
             <Link key={href} href={href}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium transition-colors",
+                "flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium transition-colors whitespace-nowrap",
                 isActive
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"

@@ -38,6 +38,16 @@
   p { word-break: auto-phrase; }
 }
 
+/* PWA safe-area */
+.mobile-content-wrap {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 768px) {
+  .mobile-content-wrap {
+    padding-bottom: 0;
+  }
+}
+
 @layer components {
   .sidebar-link {
     @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground;

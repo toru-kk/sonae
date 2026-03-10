@@ -3,7 +3,7 @@ import { SonaeLogoIcon } from "@/components/SonaeLogo";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+    <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-4">
       <div className="text-center space-y-6 max-w-sm">
         <div className="flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">

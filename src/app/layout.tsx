@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 import { NavBar } from "@/components/layout/NavBar";
@@ -8,6 +8,12 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: { default: "Sonae — 登山装備管理", template: "%s | Sonae" },
@@ -26,6 +32,11 @@ export const metadata: Metadata = {
     description: "AIが山に合わせた装備パッケージを提案。荷物忘れをゼロへ。",
     images: ["/api/og/home"],
   },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -43,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NavBar />
           </div>
         </header>
-        <div className="pb-16 md:pb-0">{children}</div>
+        <div className="mobile-content-wrap">{children}</div>
         <MobileNav />
         <Analytics />
       </body>

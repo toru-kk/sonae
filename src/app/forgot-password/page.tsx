@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-56px)] flex-col justify-center px-6 py-12">
+    <div className="flex min-h-[calc(100dvh-56px)] flex-col justify-center px-6 py-12">
       <div className="mx-auto w-full max-w-sm">
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center gap-2.5">
