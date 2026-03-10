@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Globe, Trash2, Share2, Check, ExternalLink } from "lucide-react";
+import { ArrowLeft, ChevronRight, Globe, Trash2, Share2, Check } from "lucide-react";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { useGear } from "@/hooks/useGear";
@@ -237,7 +237,7 @@ export default function PackageDetailPage() {
                   : "border-blue-200 bg-white text-blue-700 hover:bg-blue-50"
               )}>
               {copied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-              {copied ? "リンクをコピーしました！" : "リンクをコピー"}
+              {copied ? "コピーしました！" : "シェア"}
             </button>
             <a
               href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(publicUrl)}&text=${encodeURIComponent(`${pkg.name}の装備セット（${formatWeight(totalWeight)}） | Sonae`)}`}
@@ -337,16 +337,6 @@ export default function PackageDetailPage() {
             className="flex-1 inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
             パッケージを編集
           </Link>
-          <button onClick={handleShare}
-            className={cn(
-              "inline-flex items-center justify-center gap-1.5 rounded-xl border px-4 py-3 text-sm font-semibold transition-all duration-200",
-              copied
-                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-accent"
-            )}>
-            {copied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-            {copied ? "コピー済" : "シェア"}
-          </button>
           <button onClick={handleDelete}
             className={cn(
               "inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition-colors",
