@@ -5,16 +5,18 @@ import { createClient } from "@/lib/supabase/server";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
-
-const PRICE_IDS: Record<string, string> = {
-  standard: process.env.STRIPE_PRICE_STANDARD!,
-  premium: process.env.STRIPE_PRICE_PREMIUM!,
-};
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2026-02-25.clover",
+  });
+}
 
 export async function POST(req: NextRequest) {
+  const stripe = getStripe();
+  const PRICE_IDS: Record<string, string> = {
+    standard: process.env.STRIPE_PRICE_STANDARD!,
+    premium: process.env.STRIPE_PRICE_PREMIUM!,
+  };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
