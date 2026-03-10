@@ -21,7 +21,7 @@ export const LEVEL_BADGES: LevelBadge[] = [
     ringClass: "ring-white/20",
     chipBorder: "border-white/20",
     chipBg: "bg-white/5",
-    chipText: "text-white/50",
+    chipText: "text-white/70",
   },
   {
     key: "trail",

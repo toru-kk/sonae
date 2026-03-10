@@ -140,8 +140,12 @@ export default async function UserProfilePage(
               {user.favorite_mountains?.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {user.favorite_mountains.map((m: string) => (
-                    <span key={m} className="rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-xs text-white/60">
-                      ⛰ {m}
+                    <span key={m} className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/8 px-2.5 py-0.5 text-xs font-medium text-white/80">
+                      <svg viewBox="0 0 16 16" fill="currentColor" className="inline-block h-3 w-3 shrink-0" aria-hidden>
+                        <path d="M8 2L2 14H14L8 2Z" opacity="0.9" />
+                        <path d="M8 2L6.5 6.5L8 8.5L9.5 6.5L8 2Z" fill="white" opacity="0.4" />
+                      </svg>
+                      {m}
                     </span>
                   ))}
                 </div>

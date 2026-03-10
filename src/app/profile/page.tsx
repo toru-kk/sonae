@@ -380,6 +380,10 @@ export default function ProfilePage() {
           <div className="flex flex-wrap gap-2 mb-3">
             {favoriteMountains.map((m) => (
               <span key={m} className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <svg viewBox="0 0 16 16" fill="currentColor" className="inline-block h-3 w-3 shrink-0 opacity-70" aria-hidden>
+                  <path d="M8 2L2 14H14L8 2Z" opacity="0.9" />
+                  <path d="M8 2L6.5 6.5L8 8.5L9.5 6.5L8 2Z" fill="white" opacity="0.4" />
+                </svg>
                 {m}
                 <button onClick={() => removeMountain(m)} className="hover:text-foreground transition-colors">×</button>
               </span>
