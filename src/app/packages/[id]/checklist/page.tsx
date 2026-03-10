@@ -296,29 +296,29 @@ export default function ChecklistPage() {
         </div>
 
         {/* 出発日カード */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-4">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="bg-white rounded-2xl border border-stone-200 px-4 py-3">
+          <div className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-primary shrink-0" />
             <span className="text-sm font-semibold text-stone-700">出発日</span>
+            <input
+              type="date"
+              value={departureDate}
+              onChange={(e) => setDepartureDate(e.target.value)}
+              className="ml-auto rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
             {daysUntilDeparture !== null && (
               <span className={cn(
-                "ml-auto text-sm font-bold tabular-nums",
+                "text-sm font-bold tabular-nums whitespace-nowrap",
                 daysUntilDeparture < 0 ? "text-stone-400" :
                 daysUntilDeparture === 0 ? "text-emerald-600" :
                 daysUntilDeparture <= 3 ? "text-amber-600" : "text-primary"
               )}>
                 {daysUntilDeparture < 0 ? "出発済み" :
-                 daysUntilDeparture === 0 ? "今日出発！" :
-                 `あと ${daysUntilDeparture} 日`}
+                 daysUntilDeparture === 0 ? "今日！" :
+                 `あと${daysUntilDeparture}日`}
               </span>
             )}
           </div>
-          <input
-            type="date"
-            value={departureDate}
-            onChange={(e) => setDepartureDate(e.target.value)}
-            className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
         </div>
 
         {/* 未チェック必須アイテム警告 */}
