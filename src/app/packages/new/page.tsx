@@ -9,15 +9,7 @@ import { usePackages } from "@/hooks/usePackages";
 import { useGear } from "@/hooks/useGear";
 import type { GearItem } from "@/types/gear";
 import { cn } from "@/lib/utils";
-
-const MOUNTAIN_TYPES = [
-  "高山・縦走",
-  "低山・ハイキング",
-  "富士山",
-  "雪山",
-  "沢登り",
-  "その他",
-] as const;
+import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
 
 const categoryMap = Object.fromEntries(mockCategories.map((c) => [c.id, c]));
 

@@ -11,6 +11,7 @@ import { ULScore } from "@/components/ULScore";
 import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
 import { cn } from "@/lib/utils";
+import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
 
 const PAGE_SIZE = 24;
 
@@ -44,7 +45,6 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
   );
 }
 
-const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "低山・ハイキング", "テント泊", "冬山", "沢登り", "その他"];
 type SortKey = "new" | "light" | "popular" | "follow" | "users";
 
 const EXPERIENCE_LABEL: Record<string, string> = {

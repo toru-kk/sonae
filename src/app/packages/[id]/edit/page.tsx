@@ -9,7 +9,7 @@ import { useGear } from "@/hooks/useGear";
 import { usePackages } from "@/hooks/usePackages";
 import { cn } from "@/lib/utils";
 
-const MOUNTAIN_TYPES = ["高山・縦走", "低山・ハイキング", "富士山", "雪山", "沢登り", "その他"] as const;
+import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
 
 const CATEGORY_META: Record<string, { name_ja: string; icon: string; sort_order: number }> = {
   shelter:    { name_ja: "シェルター",   icon: "Tent",        sort_order: 1 },
