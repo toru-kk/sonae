@@ -44,7 +44,7 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
   );
 }
 
-const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "低山ハイク", "テント泊", "冬山", "沢登り", "その他"];
+const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "低山・ハイキング", "テント泊", "冬山", "沢登り", "その他"];
 type SortKey = "new" | "light" | "popular" | "follow" | "users";
 
 const EXPERIENCE_LABEL: Record<string, string> = {
