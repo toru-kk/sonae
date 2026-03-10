@@ -2,6 +2,7 @@
 
 // Force Vercel rebuild - clear cache
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -43,7 +44,7 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
   );
 }
 
-const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "テント泊", "冬山", "沢登り", "その他"];
+const MOUNTAIN_TYPES = ["高山・縦走", "日帰りハイク", "低山ハイク", "テント泊", "冬山", "沢登り", "その他"];
 type SortKey = "new" | "light" | "popular" | "follow" | "users";
 
 const EXPERIENCE_LABEL: Record<string, string> = {
@@ -61,6 +62,7 @@ type PublicUser = {
 };
 
 export default function ExplorePage() {
+  const router = useRouter();
   const [allPackages, setAllPackages] = useState<PublicPackage[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -237,7 +239,7 @@ export default function ExplorePage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 space-y-3">
 
           {/* タブ */}
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
             {tabs.map(({ key, label, loginRequired, icon }) => {
               const disabled = loginRequired && !currentUserId;
               return (
@@ -246,7 +248,7 @@ export default function ExplorePage() {
                   onClick={() => { if (!disabled) { setSort(key); setQuery(""); setSelectedType(null); } }}
                   disabled={disabled}
                   className={cn(
-                    "inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                    "shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors whitespace-nowrap",
                     sort === key
                       ? "bg-primary text-primary-foreground"
                       : disabled
@@ -282,6 +284,17 @@ export default function ExplorePage() {
             </div>
             {sort !== "users" && (
               <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => setSelectedType(null)}
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                    selectedType === null
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  )}
+                >
+                  すべて
+                </button>
                 {MOUNTAIN_TYPES.map((type) => (
                   <button
                     key={type}
@@ -415,8 +428,8 @@ export default function ExplorePage() {
                 const creator = pkg.users;
                 const creatorName = creator?.display_name ?? "匿名ユーザー";
                 return (
-                  <Link key={pkg.id} href={`/packages/${pkg.id}/public`}
-                    className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden">
+                  <div key={pkg.id} onClick={() => router.push(`/packages/${pkg.id}/public`)}
+                    className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden cursor-pointer">
                     <div className="flex-1 p-4 pb-3">
                       <Link
                         href={`/u/${pkg.user_id}`}
@@ -462,7 +475,7 @@ export default function ExplorePage() {
                         </div>
                       )}
                     </div>
-                  </Link>
+                  </div>
                 );
               })}
             </div>
