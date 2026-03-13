@@ -242,7 +242,7 @@ export default async function UserProfilePage(
                 className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-colors ${
                   earned
                     ? `${badge.chipBorder} ${badge.chipBg}`
-                    : "border-border bg-card/50 opacity-40"
+                    : "border-border bg-card/50 opacity-50"
                 }`}
               >
                 <div className="relative">
