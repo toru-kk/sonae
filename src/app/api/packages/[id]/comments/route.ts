@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAnonClientRaw } from "@supabase/supabase-js";
+import { createNotification } from "@/lib/notifications";
 
 function createAnonClient() {
   return createAnonClientRaw(
@@ -50,6 +51,23 @@ export async function POST(
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // 通知作成
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: pkg } = await (supabase as any)
+    .from("gear_packages")
+    .select("user_id")
+    .eq("id", id)
+    .single();
+  if (pkg?.user_id) {
+    await createNotification(supabase, {
+      recipientUserId: pkg.user_id,
+      actorId: user.id,
+      type: "comment",
+      packageId: id,
+    });
+  }
+
   return NextResponse.json({ comment: data });
 }
 

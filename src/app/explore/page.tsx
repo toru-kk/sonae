@@ -3,7 +3,7 @@
 // Force Vercel rebuild - clear cache
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart } from "lucide-react";
+import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart, Trophy } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
@@ -79,6 +79,14 @@ export default function ExplorePage() {
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersFetched, setUsersFetched] = useState(false);
 
+  // フォローフィード用の状態
+  const [feedPackages, setFeedPackages] = useState<PublicPackage[]>([]);
+  const [feedPage, setFeedPage] = useState(0);
+  const [feedHasMore, setFeedHasMore] = useState(true);
+  const [feedLoading, setFeedLoading] = useState(false);
+  const [feedFetched, setFeedFetched] = useState(false);
+  const [feedLoadingMore, setFeedLoadingMore] = useState(false);
+
   useEffect(() => {
     const supabase = createClient();
 
@@ -109,6 +117,42 @@ export default function ExplorePage() {
         setLoading(false);
       });
   }, []);
+
+  // フォロータブ選択時にフィードを取得
+  useEffect(() => {
+    if (sort !== "follow" || feedFetched || !currentUserId) return;
+    setFeedLoading(true);
+    const params = new URLSearchParams({ page: "0" });
+    fetch(`/api/feed?${params}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFeedPackages(data.packages ?? []);
+        setFeedHasMore(data.hasMore ?? false);
+        setFeedPage(0);
+        setFeedLoading(false);
+        setFeedFetched(true);
+      })
+      .catch(() => {
+        setFeedLoading(false);
+        setFeedFetched(true);
+      });
+  }, [sort, feedFetched, currentUserId]);
+
+  const loadMoreFeed = async () => {
+    setFeedLoadingMore(true);
+    const nextPage = feedPage + 1;
+    const params = new URLSearchParams({ page: String(nextPage) });
+    if (selectedType) params.set("mountain_type", selectedType);
+    if (query.trim()) params.set("q", query.trim());
+    try {
+      const res = await fetch(`/api/feed?${params}`);
+      const data = await res.json();
+      setFeedPackages((prev) => [...prev, ...(data.packages ?? [])]);
+      setFeedHasMore(data.hasMore ?? false);
+      setFeedPage(nextPage);
+    } catch { /* ignore */ }
+    setFeedLoadingMore(false);
+  };
 
   // ユーザータブ選択時にユーザー詳細を取得
   useEffect(() => {
@@ -166,13 +210,26 @@ export default function ExplorePage() {
     return list;
   }, [allUsers, query]);
 
-  const packages = useMemo(() => {
-    let list = [...allPackages];
-
-    // フォロー中フィルター
-    if (sort === "follow") {
-      list = list.filter((p) => followedUserIds.has(p.user_id));
+  // フォロータブではfeedPackagesをフィルタ（山タイプ・検索はクライアント側で追加フィルタ）
+  const feedFiltered = useMemo(() => {
+    let list = [...feedPackages];
+    if (selectedType) list = list.filter((p) => p.mountain_type === selectedType);
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          p.users?.display_name?.toLowerCase().includes(q)
+      );
     }
+    return list;
+  }, [feedPackages, selectedType, query]);
+
+  const packages = useMemo(() => {
+    if (sort === "follow") return feedFiltered;
+
+    let list = [...allPackages];
 
     // 山タイプフィルター
     if (selectedType) {
@@ -201,7 +258,7 @@ export default function ExplorePage() {
     }
 
     return list;
-  }, [allPackages, sort, selectedType, query, followedUserIds]);
+  }, [allPackages, sort, selectedType, query, feedFiltered]);
 
   const tabs: { key: SortKey; label: string; loginRequired?: boolean; icon?: React.ReactNode }[] = [
     { key: "new", label: "新着" },
@@ -322,6 +379,19 @@ export default function ExplorePage() {
       {/* コンテンツエリア */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
 
+        {/* 週間ランキングへの導線 */}
+        <Link
+          href="/ranking"
+          className="mb-6 flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50/50 px-4 py-3 hover:bg-amber-50 transition-colors group"
+        >
+          <div className="flex items-center gap-2.5">
+            <Trophy className="h-4 w-4 text-amber-600" />
+            <span className="text-sm font-semibold text-amber-900">週間人気ランキング</span>
+            <span className="text-xs text-amber-600/80">今週のトレンド装備をチェック</span>
+          </div>
+          <span className="text-xs font-medium text-amber-600 group-hover:underline">見る →</span>
+        </Link>
+
         {/* ユーザー一覧 */}
         {sort === "users" && (
           <>
@@ -386,7 +456,7 @@ export default function ExplorePage() {
           </>
         )}
 
-        {sort !== "users" && loading && (
+        {sort !== "users" && (sort === "follow" ? feedLoading : loading) && (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="h-48 rounded-xl border border-border bg-card animate-pulse" />
@@ -394,7 +464,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {sort !== "users" && !loading && packages.length === 0 && (
+        {sort !== "users" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-24 text-center">
             <Compass className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
             {sort === "follow" ? (
@@ -422,7 +492,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {sort !== "users" && !loading && packages.length > 0 && (
+        {sort !== "users" && !(sort === "follow" ? feedLoading : loading) && packages.length > 0 && (
           <>
             <p className="text-xs text-muted-foreground mb-4">{packages.length} 件</p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -483,14 +553,14 @@ export default function ExplorePage() {
                 );
               })}
             </div>
-            {hasMore && sort === "new" && (
+            {((sort === "new" && hasMore) || (sort === "follow" && feedHasMore)) && (
               <div className="mt-6 text-center">
                 <button
-                  onClick={loadMore}
-                  disabled={loadingMore}
+                  onClick={sort === "follow" ? loadMoreFeed : loadMore}
+                  disabled={sort === "follow" ? feedLoadingMore : loadingMore}
                   className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-medium text-foreground hover:bg-secondary transition-colors disabled:opacity-50"
                 >
-                  {loadingMore ? (
+                  {(sort === "follow" ? feedLoadingMore : loadingMore) ? (
                     <><Loader2 className="h-4 w-4 animate-spin" />読み込み中...</>
                   ) : (
                     "もっと見る"

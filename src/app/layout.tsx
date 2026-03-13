@@ -46,6 +46,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body className={`${geist.variable} font-sans min-h-screen`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Sonae",
+              alternateName: "ソナエ",
+              url: "https://sonae.vercel.app",
+              inLanguage: "ja",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://sonae.vercel.app/explore?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
         <header className="border-b border-border bg-white/95 backdrop-blur-sm">
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
             <Link href="/" className="flex items-center gap-2.5">

@@ -9,6 +9,9 @@ import { PublicPackageCTA } from "@/components/PublicPackageCTA";
 import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
 import { PackageComments } from "@/components/PackageComments";
+import { ShareButtons } from "@/components/ShareButtons";
+import { getSpecialtyBadges } from "@/lib/badges";
+import { SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 
 const CATEGORIES: Record<string, { name_ja: string; sort_order: number }> = {
   shelter:    { name_ja: "シェルター",    sort_order: 1 },
@@ -98,6 +101,9 @@ export default async function PublicPackagePage(
   const creatorName = creator.display_name ?? "Sonaeユーザー";
   const creatorInitial = creatorName.slice(0, 1).toUpperCase();
 
+  // パッケージの専門バッジを計算
+  const packageBadges = getSpecialtyBadges([{ mountain_type: pkg.mountain_type, total_weight_g: totalWeight }]);
+
   // カテゴリ別グループ化
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const grouped: Record<string, any[]> = {};
@@ -117,6 +123,27 @@ export default async function PublicPackagePage(
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: pkg.name,
+            description: pkg.description ?? `${items.length}点の装備パッケージ`,
+            url: `https://sonae.vercel.app/packages/${id}/public`,
+            brand: { "@type": "Organization", name: "Sonae" },
+            category: pkg.mountain_type ?? "登山装備",
+            additionalProperty: [
+              { "@type": "PropertyValue", name: "総重量", value: formatWeight(totalWeight) },
+              { "@type": "PropertyValue", name: "装備点数", value: items.length },
+            ],
+            ...(creator.id && creator.display_name
+              ? { creator: { "@type": "Person", name: creator.display_name, url: `https://sonae.vercel.app/u/${creator.id}` } }
+              : {}),
+          }),
+        }}
+      />
 
       {/* ヒーローヘッダー */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
@@ -180,6 +207,15 @@ export default async function PublicPackagePage(
                     {pkg.copy_count} 人が参考にした
                   </span>
                 )}
+                {packageBadges.map((badge) => (
+                  <span
+                    key={badge.key}
+                    className={`inline-flex items-center gap-1 rounded-full border ${badge.chipBorder} ${badge.chipBg} px-2.5 py-1 text-xs font-semibold ${badge.chipText}`}
+                  >
+                    <SpecialtyBadgeIcon badgeKey={badge.key} className="h-3.5 w-3.5" />
+                    {badge.label}
+                  </span>
+                ))}
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">{pkg.name}</h1>
               {pkg.description && (
@@ -262,9 +298,17 @@ export default async function PublicPackagePage(
       </div>
 
       <div className="mt-4 mx-auto max-w-3xl px-4 sm:px-6 pb-12 flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <LikeButton packageId={id} initialLikeCount={pkg.like_count ?? 0} />
-          <CopyPackageButton packageId={id} creatorId={creator.id} />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <LikeButton packageId={id} initialLikeCount={pkg.like_count ?? 0} />
+            <CopyPackageButton packageId={id} creatorId={creator.id} />
+          </div>
+          <ShareButtons
+            packageId={id}
+            packageName={pkg.name}
+            mountainType={pkg.mountain_type}
+            totalWeight={formatWeight(totalWeight)}
+          />
         </div>
         <PublicPackageCTA packageId={id} ownerId={pkg.user_id} />
         <PackageComments packageId={id} />

@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Backpack, Layers, Sparkles, LogIn, LogOut, User, Globe, CreditCard } from "lucide-react";
+import { Backpack, Layers, Sparkles, LogIn, LogOut, User, Globe, CreditCard, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const navItems = [
   { href: "/gear",       label: "マイ装備",   icon: Backpack },
@@ -16,6 +17,7 @@ const navItems = [
 
 const publicNavItems = [
   { href: "/explore", label: "みんなの装備", icon: Globe },
+  { href: "/ranking", label: "ランキング", icon: Trophy },
 ];
 
 export function NavBar() {
@@ -68,6 +70,15 @@ export function NavBar() {
               )}>
               <Globe className="h-4 w-4" />みんなの装備
             </Link>
+            <Link href="/ranking"
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-colors",
+                pathname === "/ranking"
+                  ? "bg-accent text-primary font-semibold"
+                  : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+              )}>
+              <Trophy className="h-4 w-4" />ランキング
+            </Link>
             <Link href="/plans"
               className={cn(
                 "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-colors",
@@ -85,6 +96,7 @@ export function NavBar() {
       <div className="flex items-center gap-2 ml-2">
         {user ? (
           <div className="flex items-center gap-2">
+            <NotificationBell />
             <Link href="/profile"
               className="hidden sm:flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors">
               {user.user_metadata?.avatar_url ? (

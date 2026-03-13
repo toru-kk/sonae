@@ -1,6 +1,24 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "@supabase/supabase-js";
 
+const CATEGORIES: Record<string, { name_ja: string; sort_order: number }> = {
+  shelter:    { name_ja: "シェルター",    sort_order: 1 },
+  sleeping:   { name_ja: "シュラフ",      sort_order: 2 },
+  clothing:   { name_ja: "衣類",          sort_order: 3 },
+  footwear:   { name_ja: "靴",            sort_order: 4 },
+  backpack:   { name_ja: "バックパック",  sort_order: 5 },
+  navigation: { name_ja: "ナビ",          sort_order: 6 },
+  safety:     { name_ja: "安全装備",      sort_order: 7 },
+  cooking:    { name_ja: "調理",          sort_order: 8 },
+  food:       { name_ja: "食料",          sort_order: 9 },
+  tools:      { name_ja: "道具",          sort_order: 10 },
+};
+
+const BAR_COLORS = [
+  "#fb923c","#a78bfa","#38bdf8","#fbbf24","#22c55e",
+  "#60a5fa","#f87171","#fb7185","#a3e635","#94a3b8",
+];
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -15,7 +33,7 @@ export async function GET(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await supabase
     .from("gear_packages")
-    .select("*, gear_package_items(gear_item_id), users(display_name, avatar_url)")
+    .select("*, gear_package_items(gear_item_id, gear_items(category_id, weight_g)), users(display_name, avatar_url)")
     .eq("id", id)
     .eq("is_public", true)
     .single() as { data: any };
@@ -24,6 +42,19 @@ export async function GET(
   const mountainType: string | null = data?.mountain_type ?? null;
   const itemCount: number = data?.gear_package_items?.length ?? 0;
   const totalWeightG: number = data?.total_weight_g ?? 0;
+
+  // カテゴリ別重量計算
+  const catWeights: Record<string, number> = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (data?.gear_package_items ?? []).forEach((pi: any) => {
+    const item = pi.gear_items;
+    if (!item) return;
+    const cat = item.category_id ?? "tools";
+    catWeights[cat] = (catWeights[cat] ?? 0) + (item.weight_g ?? 0);
+  });
+  const categoryGroups = Object.entries(catWeights)
+    .filter(([catId]) => CATEGORIES[catId])
+    .sort((a, b) => (CATEGORIES[a[0]]?.sort_order ?? 99) - (CATEGORIES[b[0]]?.sort_order ?? 99));
   const weightStr = totalWeightG >= 1000
     ? `${(totalWeightG / 1000).toFixed(1)} kg`
     : `${totalWeightG} g`;
@@ -93,6 +124,29 @@ export async function GET(
             lineHeight: 1.1, letterSpacing: "-0.02em",
           }}>{name}</div>
         </div>
+
+        {/* 重量バー */}
+        {totalWeightG > 0 && categoryGroups.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", height: "12px", borderRadius: "6px", overflow: "hidden", background: "rgba(255,255,255,0.08)" }}>
+              {categoryGroups.map(([catId, weight], idx) => {
+                const pct = (weight / totalWeightG) * 100;
+                if (pct < 1) return null;
+                return (
+                  <div key={catId} style={{ width: `${pct}%`, height: "100%", background: BAR_COLORS[CATEGORIES[catId]?.sort_order ? CATEGORIES[catId].sort_order - 1 : idx] }} />
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              {categoryGroups.filter(([, w]) => w > 0).slice(0, 6).map(([catId], idx) => (
+                <div key={catId} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: BAR_COLORS[CATEGORIES[catId]?.sort_order ? CATEGORIES[catId].sort_order - 1 : idx] }} />
+                  <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{CATEGORIES[catId]?.name_ja}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* フッター：統計 + クリエイター */}
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>

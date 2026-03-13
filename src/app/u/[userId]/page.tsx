@@ -7,7 +7,9 @@ import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { ULScore } from "@/components/ULScore";
 import { UserProfileCTA } from "@/components/UserProfileCTA";
 import { FollowButton } from "@/components/FollowButton";
-import { Layers } from "lucide-react";
+import { Layers, Lock } from "lucide-react";
+import { getLevelBadge, getSpecialtyBadges, SPECIALTY_BADGE_DEFS } from "@/lib/badges";
+import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 
 function formatWeight(g: number) {
   return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
@@ -21,27 +23,37 @@ function createAnonClient() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchProfile(userId: string): Promise<{ user: any; packages: any[]; followerCount: number } | null> {
+async function fetchProfile(userId: string): Promise<{ user: any; packages: any[]; followerCount: number; totalLikes: number } | null> {
   const supabase = createAnonClient();
 
-  const [userRes, pkgRes, followCountRes] = await Promise.all([
+  const [userRes, pkgRes, followCountRes, likesRes] = await Promise.all([
     supabase.from("users").select("id, display_name, avatar_url, bio, experience_level, favorite_mountains, home_area").eq("id", userId).single(),
     supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, gear_package_items(count)")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, gear_package_items(count)")
       .eq("user_id", userId)
       .eq("is_public", true)
       .order("created_at", { ascending: false }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase as any).from("follows").select("id", { count: "exact", head: true }).eq("following_id", userId),
+    // 全パッケージのlike_countを合計するために全パッケージを取得
+    supabase
+      .from("gear_packages")
+      .select("like_count")
+      .eq("user_id", userId)
+      .eq("is_public", true),
   ]);
 
   if (userRes.error || !userRes.data) return null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalLikes = (likesRes.data ?? []).reduce((sum: number, p: any) => sum + (p.like_count ?? 0), 0);
 
   return {
     user: userRes.data,
     packages: pkgRes.data ?? [],
     followerCount: followCountRes.count ?? 0,
+    totalLikes,
   };
 }
 
@@ -65,9 +77,14 @@ export default async function UserProfilePage(
   const result = await fetchProfile(userId);
   if (!result) notFound();
 
-  const { user, packages, followerCount } = result;
+  const { user, packages, followerCount, totalLikes } = result;
   const displayName = user.display_name ?? "Sonaeユーザー";
   const initial = displayName.slice(0, 1).toUpperCase();
+
+  // バッジ計算
+  const levelBadge = getLevelBadge(totalLikes);
+  const earnedBadges = getSpecialtyBadges(packages);
+  const earnedKeys = new Set(earnedBadges.map((b) => b.key));
 
   // 現在ログイン中のユーザーを取得（未ログインならnull）
   const serverSupabase = await createClient();
@@ -93,6 +110,26 @@ export default async function UserProfilePage(
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: displayName,
+            url: `https://sonae.vercel.app/u/${userId}`,
+            ...(user.avatar_url ? { image: user.avatar_url } : {}),
+            ...(user.bio ? { description: user.bio } : {}),
+            interactionStatistic: [
+              {
+                "@type": "InteractionCounter",
+                interactionType: "https://schema.org/FollowAction",
+                userInteractionCount: followerCount,
+              },
+            ],
+          }),
+        }}
+      />
 
       {/* ヘッダー */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
@@ -113,16 +150,22 @@ export default async function UserProfilePage(
                 <img
                   src={user.avatar_url}
                   alt={displayName}
-                  className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20"
+                  className={`h-16 w-16 rounded-full object-cover ring-2 ${levelBadge.ringClass}`}
                 />
               ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#14532d] to-[#22c55e] ring-2 ring-white/20 text-2xl font-black text-white select-none">
+                <div className={`flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#14532d] to-[#22c55e] ring-2 ${levelBadge.ringClass} text-2xl font-black text-white select-none`}>
                   {initial}
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-white">{displayName}</h1>
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-2xl font-bold text-white">{displayName}</h1>
+                <span className={`inline-flex items-center gap-1 rounded-full border ${levelBadge.chipBorder} ${levelBadge.chipBg} px-2.5 py-0.5 text-xs font-semibold ${levelBadge.chipText}`}>
+                  <LevelBadgeIcon badgeKey={levelBadge.key} className="h-3.5 w-3.5" />
+                  {levelBadge.label}
+                </span>
+              </div>
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
                 {user.experience_level && (
                   <span className="rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-0.5 text-xs font-semibold text-green-300">
@@ -184,6 +227,41 @@ export default async function UserProfilePage(
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* バッジコレクション */}
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 pt-8">
+        <h2 className="text-sm font-bold text-foreground mb-3">バッジコレクション</h2>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+          {SPECIALTY_BADGE_DEFS.map((badge) => {
+            const earned = earnedKeys.has(badge.key);
+            return (
+              <div
+                key={badge.key}
+                className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-colors ${
+                  earned
+                    ? `${badge.chipBorder} ${badge.chipBg}`
+                    : "border-border bg-card/50 opacity-40"
+                }`}
+              >
+                <div className="relative">
+                  <SpecialtyBadgeIcon
+                    badgeKey={badge.key}
+                    className={`h-6 w-6 ${earned ? badge.chipText : "text-muted-foreground"}`}
+                  />
+                  {!earned && (
+                    <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground" />
+                  )}
+                </div>
+                <span className={`text-[10px] font-semibold leading-tight text-center ${
+                  earned ? badge.chipText : "text-muted-foreground"
+                }`}>
+                  {badge.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

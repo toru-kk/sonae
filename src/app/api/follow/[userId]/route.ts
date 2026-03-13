@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(
   _req: NextRequest,
@@ -19,6 +20,16 @@ export async function POST(
   if (error && error.code !== "23505") {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // 通知作成（新規フォローの場合のみ）
+  if (!error) {
+    await createNotification(supabase, {
+      recipientUserId: targetId,
+      actorId: user.id,
+      type: "follow",
+    });
+  }
+
   return NextResponse.json({ ok: true });
 }
 
@@ -39,5 +50,15 @@ export async function DELETE(
     .eq("following_id", targetId);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // 対応する通知を削除
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any)
+    .from("notifications")
+    .delete()
+    .eq("user_id", targetId)
+    .eq("actor_id", user.id)
+    .eq("type", "follow");
+
   return NextResponse.json({ ok: true });
 }

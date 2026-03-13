@@ -9,6 +9,37 @@ import { PlanCTA } from "@/components/PlanCTA";
 export default function Home() {
   return (
     <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebApplication",
+              name: "Sonae",
+              alternateName: "ソナエ",
+              url: "https://sonae.vercel.app",
+              description: "AIが山に合わせた装備パッケージを提案する登山装備管理サービス",
+              applicationCategory: "LifestyleApplication",
+              operatingSystem: "Web",
+              inLanguage: "ja",
+              offers: [
+                { "@type": "Offer", price: "0", priceCurrency: "JPY", name: "Free" },
+                { "@type": "Offer", price: "480", priceCurrency: "JPY", name: "Standard" },
+                { "@type": "Offer", price: "980", priceCurrency: "JPY", name: "Premium" },
+              ],
+            },
+            {
+              "@type": "Organization",
+              name: "Sonae",
+              url: "https://sonae.vercel.app",
+              logo: "https://sonae.vercel.app/favicon.svg",
+            },
+          ],
+        }),
+      }}
+    />
     <div className="bg-background">
 
       {/* ヒーロー */}
