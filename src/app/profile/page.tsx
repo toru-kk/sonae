@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2, Heart } from "lucide-react";
-import { getLevelBadge, getSpecialtyBadges, type SpecialtyBadge } from "@/lib/badges";
+import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2, Heart, Lock } from "lucide-react";
+import { getLevelBadge, getSpecialtyBadges, SPECIALTY_BADGE_DEFS, type SpecialtyBadge } from "@/lib/badges";
 import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 import { PlanPortalButton } from "@/components/PlanPortalButton";
 
@@ -279,23 +279,40 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* 専門バッジ */}
-          {specialtyBadges.length > 0 && (
-            <div className="mb-5">
-              <p className="text-[11px] text-white/40 mb-1.5">獲得バッジ</p>
-              <div className="flex flex-wrap gap-1.5">
-                {specialtyBadges.map((badge) => (
-                  <span
+          {/* バッジコレクション */}
+          <div className="mb-5">
+            <p className="text-[11px] text-white/40 mb-1.5">バッジコレクション</p>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+              {SPECIALTY_BADGE_DEFS.map((badge) => {
+                const earned = specialtyBadges.some((b) => b.key === badge.key);
+                return (
+                  <div
                     key={badge.key}
-                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badge.chipBorder} ${badge.chipBg} ${badge.chipText}`}
+                    className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-colors ${
+                      earned
+                        ? `${badge.chipBorder} ${badge.chipBg}`
+                        : "border-white/10 bg-white/5 opacity-40"
+                    }`}
                   >
-                    <SpecialtyBadgeIcon badgeKey={badge.key} className="h-3 w-3" />
-                    {badge.label}
-                  </span>
-                ))}
-              </div>
+                    <div className="relative">
+                      <SpecialtyBadgeIcon
+                        badgeKey={badge.key}
+                        className={`h-5 w-5 ${earned ? badge.chipText : "text-white/40"}`}
+                      />
+                      {!earned && (
+                        <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/40" />
+                      )}
+                    </div>
+                    <span className={`text-[9px] font-semibold leading-tight text-center ${
+                      earned ? badge.chipText : "text-white/40"
+                    }`}>
+                      {badge.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          )}
+          </div>
 
           {/* アクション */}
           <div className="flex flex-wrap gap-2">
