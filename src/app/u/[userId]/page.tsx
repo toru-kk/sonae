@@ -242,20 +242,20 @@ export default async function UserProfilePage(
                 className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-colors ${
                   earned
                     ? `${badge.chipBorder} ${badge.chipBg}`
-                    : "border-border bg-card/50 opacity-50"
+                    : "border-border bg-muted/60"
                 }`}
               >
                 <div className="relative">
                   <SpecialtyBadgeIcon
                     badgeKey={badge.key}
-                    className={`h-6 w-6 ${earned ? badge.chipText : "text-muted-foreground"}`}
+                    className={`h-6 w-6 ${earned ? badge.chipText : "text-muted-foreground/70"}`}
                   />
                   {!earned && (
-                    <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground" />
+                    <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground/70" />
                   )}
                 </div>
                 <span className={`text-[10px] font-semibold leading-tight text-center ${
-                  earned ? badge.chipText : "text-muted-foreground"
+                  earned ? badge.chipText : "text-muted-foreground/80"
                 }`}>
                   {badge.label}
                 </span>
