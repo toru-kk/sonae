@@ -10,6 +10,7 @@ import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
 import { PackageComments } from "@/components/PackageComments";
 import { ShareButtons } from "@/components/ShareButtons";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { getSpecialtyBadges } from "@/lib/badges";
 import { SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 
@@ -146,9 +147,8 @@ export default async function PublicPackagePage(
       />
 
       {/* ヒーローヘッダー */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 py-10">
+      <HeaderGradient variant="public">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
 
           {/* Sonaeロゴリンク */}
           <Link href="/" className="mb-8 inline-flex items-center gap-2 group">
@@ -256,7 +256,7 @@ export default async function PublicPackagePage(
             </div>
           )}
         </div>
-      </div>
+      </HeaderGradient>
 
       {/* 装備リスト */}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">

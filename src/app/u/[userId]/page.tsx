@@ -10,6 +10,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { Layers, Lock } from "lucide-react";
 import { getLevelBadge, getSpecialtyBadges, SPECIALTY_BADGE_DEFS } from "@/lib/badges";
 import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 
 function formatWeight(g: number) {
   return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
@@ -132,9 +133,8 @@ export default async function UserProfilePage(
       />
 
       {/* ヘッダー */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 py-10">
+      <HeaderGradient variant="profile">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
 
           <Link href="/" className="mb-8 inline-flex items-center gap-2 group">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/20">
@@ -228,7 +228,7 @@ export default async function UserProfilePage(
             </div>
           </div>
         </div>
-      </div>
+      </HeaderGradient>
 
       {/* バッジコレクション */}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 pt-8">
@@ -239,23 +239,23 @@ export default async function UserProfilePage(
             return (
               <div
                 key={badge.key}
-                className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-colors ${
+                className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-all ${
                   earned
-                    ? `${badge.chipBorder} ${badge.chipBg}`
-                    : "border-border bg-muted/60"
+                    ? `${badge.chipBorder} ${badge.chipBg} ${badge.glowClassLight} badge-shimmer badge-shimmer-light scale-105`
+                    : "border-border bg-muted/50 grayscale opacity-40"
                 }`}
               >
                 <div className="relative">
                   <SpecialtyBadgeIcon
                     badgeKey={badge.key}
-                    className={`h-6 w-6 ${earned ? badge.chipTextLight : "text-muted-foreground/70"}`}
+                    className={`h-6 w-6 ${earned ? badge.chipTextLight : "text-muted-foreground/50"}`}
                   />
                   {!earned && (
-                    <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground/70" />
+                    <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground/50" />
                   )}
                 </div>
                 <span className={`text-[10px] font-semibold leading-tight text-center ${
-                  earned ? badge.chipTextLight : "text-muted-foreground/80"
+                  earned ? badge.chipTextLight : "text-muted-foreground/60"
                 }`}>
                   {badge.label}
                 </span>

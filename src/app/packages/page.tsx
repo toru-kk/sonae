@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Plus, Sparkles, Weight, ChevronRight, Globe, Lock, Share2, Check, AlertTriangle, ClipboardCheck, X } from "lucide-react";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { ULScore } from "@/components/ULScore";
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -65,9 +66,8 @@ export default function PackagesPage() {
 
       {/* ブランドヘッダー */}
       <div className="mb-6 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-3 pt-1">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] px-5 py-4">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(20,75,44,0.4),transparent)]" />
-          <div className="relative flex items-center justify-between gap-4">
+        <HeaderGradient variant="packages" className="rounded-2xl px-5 py-4">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10">
                 <SonaeLogoIcon className="h-5 w-5" />
@@ -97,7 +97,7 @@ export default function PackagesPage() {
               </Link>
             </div>
           </div>
-        </div>
+        </HeaderGradient>
       </div>
 
       {/* チェックリスト誘導バナー */}

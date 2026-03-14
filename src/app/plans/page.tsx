@@ -1,6 +1,7 @@
 import { CheckCircle, Sparkles, Crown, Zap } from "lucide-react";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { PlanCheckoutButton } from "@/components/PlanCheckoutButton";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { PlanPortalButton } from "@/components/PlanPortalButton";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
@@ -43,9 +44,8 @@ export default async function PlansPage() {
 
       {/* ブランドヘッダー */}
       <div className="mb-10 -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] px-6 py-8 text-center">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_50%,rgba(20,75,44,0.4),transparent)]" />
-          <div className="relative">
+        <HeaderGradient variant="plans" className="rounded-2xl px-6 py-8 text-center">
+          <div>
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
               <SonaeLogoIcon className="h-7 w-7" />
             </div>
@@ -53,7 +53,7 @@ export default async function PlansPage() {
             <h1 className="text-2xl sm:text-3xl font-black text-white mb-2">まずは無料で始められる</h1>
             <p className="text-sm text-white/60">装備管理・シェア機能はすべて無料。AIが必要になったらアップグレード。</p>
           </div>
-        </div>
+        </HeaderGradient>
       </div>
 
       {/* プランカード */}

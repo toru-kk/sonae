@@ -6,6 +6,7 @@ import { Sparkles, AlertTriangle, CheckCircle, ShoppingCart, Save, Check, Loader
 import { mockAiResult } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { usePackages } from "@/hooks/usePackages";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,12 +123,11 @@ export default function AiSuggestPage() {
 
       {/* ブランドヘッダー */}
       <div className="mb-8 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-3 pt-1">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] px-5 py-4">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(20,75,44,0.4),transparent)]" />
-          <div className="absolute right-5 top-1/2 -translate-y-1/2 opacity-10">
+        <HeaderGradient variant="ai" className="rounded-2xl px-5 py-4">
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 opacity-10 z-10">
             <Sparkles className="h-16 w-16 text-amber-400" />
           </div>
-          <div className="relative flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10">
               <SonaeLogoIcon className="h-5 w-5" />
             </div>
@@ -141,7 +141,7 @@ export default function AiSuggestPage() {
               </p>
             </div>
           </div>
-        </div>
+        </HeaderGradient>
       </div>
 
       {/* 未ログインゲート */}

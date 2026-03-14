@@ -83,6 +83,10 @@ export type SpecialtyBadge = {
   chipText: string;
   /** ライト背景用テキスト色（公開プロフィール等） */
   chipTextLight: string;
+  /** 獲得時のグロー */
+  glowClass: string;
+  /** ライト背景用グロー */
+  glowClassLight: string;
 };
 
 export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
@@ -93,6 +97,8 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBg: "bg-lime-500/25",
     chipText: "text-lime-200",
     chipTextLight: "text-lime-700",
+    glowClass: "shadow-[0_0_12px_rgba(163,230,53,0.35)]",
+    glowClassLight: "shadow-[0_0_10px_rgba(101,163,13,0.25)]",
   },
   {
     key: "alpine",
@@ -101,6 +107,8 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBg: "bg-blue-500/25",
     chipText: "text-blue-200",
     chipTextLight: "text-blue-700",
+    glowClass: "shadow-[0_0_12px_rgba(96,165,250,0.35)]",
+    glowClassLight: "shadow-[0_0_10px_rgba(59,130,246,0.25)]",
   },
   {
     key: "tent",
@@ -109,6 +117,8 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBg: "bg-orange-500/25",
     chipText: "text-orange-200",
     chipTextLight: "text-orange-700",
+    glowClass: "shadow-[0_0_12px_rgba(251,146,60,0.35)]",
+    glowClassLight: "shadow-[0_0_10px_rgba(234,88,12,0.25)]",
   },
   {
     key: "winter",
@@ -117,6 +127,8 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBg: "bg-cyan-500/25",
     chipText: "text-cyan-200",
     chipTextLight: "text-cyan-700",
+    glowClass: "shadow-[0_0_12px_rgba(34,211,238,0.35)]",
+    glowClassLight: "shadow-[0_0_10px_rgba(6,182,212,0.25)]",
   },
   {
     key: "fuji",
@@ -125,6 +137,8 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBg: "bg-red-500/25",
     chipText: "text-red-200",
     chipTextLight: "text-red-700",
+    glowClass: "shadow-[0_0_12px_rgba(248,113,113,0.35)]",
+    glowClassLight: "shadow-[0_0_10px_rgba(220,38,38,0.25)]",
   },
   {
     key: "ul",
@@ -133,6 +147,8 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBg: "bg-violet-500/25",
     chipText: "text-violet-200",
     chipTextLight: "text-violet-700",
+    glowClass: "shadow-[0_0_12px_rgba(167,139,250,0.35)]",
+    glowClassLight: "shadow-[0_0_10px_rgba(124,58,237,0.25)]",
   },
 ];
 

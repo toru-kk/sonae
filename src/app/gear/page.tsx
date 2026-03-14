@@ -8,6 +8,7 @@ import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
 import { cn } from "@/lib/utils";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 
 function formatWeight(g: number | null) {
   if (!g) return "—";
@@ -46,9 +47,8 @@ export default function GearPage() {
 
       {/* ブランドヘッダー */}
       <div className="sticky top-0 z-10 mb-6 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-3 pt-1 bg-background/80 backdrop-blur-sm">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] px-5 py-4">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative flex items-center justify-between gap-4">
+      <HeaderGradient variant="gear" className="rounded-2xl px-5 py-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10">
               <SonaeLogoIcon className="h-5 w-5" />
@@ -85,7 +85,7 @@ export default function GearPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </HeaderGradient>
       </div>
 
       {/* パッケージ誘導バナー */}

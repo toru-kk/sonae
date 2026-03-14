@@ -8,6 +8,7 @@ import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapP
 import { getLevelBadge, getSpecialtyBadges, SPECIALTY_BADGE_DEFS, type SpecialtyBadge } from "@/lib/badges";
 import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 import { PlanPortalButton } from "@/components/PlanPortalButton";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 
 const EXPERIENCE_LEVELS = [
   { value: "under1",   label: "1年未満" },
@@ -186,9 +187,8 @@ export default function ProfilePage() {
     <div className="mx-auto max-w-2xl px-4 sm:px-6">
 
       {/* プロフィールカード（ヒーロー） */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] -mx-4 sm:-mx-6 px-4 sm:px-6 py-8 mb-8">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative">
+      <HeaderGradient variant="profile" className="-mx-4 sm:-mx-6 px-4 sm:px-6 py-8 mb-8">
+        <div>
 
           {/* アバター + 名前 */}
           <div className="flex items-start gap-4 mb-5">
@@ -288,23 +288,23 @@ export default function ProfilePage() {
                 return (
                   <div
                     key={badge.key}
-                    className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-colors ${
+                    className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-all ${
                       earned
-                        ? `${badge.chipBorder} ${badge.chipBg}`
-                        : "border-white/20 bg-white/10"
+                        ? `${badge.chipBorder} ${badge.chipBg} ${badge.glowClass} badge-shimmer scale-105`
+                        : "border-white/10 bg-white/5 grayscale opacity-40"
                     }`}
                   >
                     <div className="relative">
                       <SpecialtyBadgeIcon
                         badgeKey={badge.key}
-                        className={`h-5 w-5 ${earned ? "text-white" : "text-white/50"}`}
+                        className={`h-5 w-5 ${earned ? `text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]` : "text-white/40"}`}
                       />
                       {!earned && (
-                        <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/50" />
+                        <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/30" />
                       )}
                     </div>
                     <span className={`text-[9px] font-semibold leading-tight text-center ${
-                      earned ? "text-white" : "text-white/70"
+                      earned ? "text-white" : "text-white/50"
                     }`}>
                       {badge.label}
                     </span>
@@ -326,7 +326,7 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-      </div>
+      </HeaderGradient>
 
       {/* プロフィール設定 */}
       <div className="space-y-4">

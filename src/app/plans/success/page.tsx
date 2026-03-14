@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { CheckCircle, Sparkles } from "lucide-react";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 
 export default function PlansSuccessPage() {
   return (
     <div className="mx-auto max-w-lg px-4 sm:px-6 py-16 text-center">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535] p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_50%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative">
+      <HeaderGradient variant="plans" className="rounded-2xl p-10">
+        <div>
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
             <CheckCircle className="h-9 w-9 text-green-400" />
           </div>
@@ -35,7 +35,7 @@ export default function PlansSuccessPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </HeaderGradient>
     </div>
   );
 }

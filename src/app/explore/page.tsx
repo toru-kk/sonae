@@ -7,6 +7,7 @@ import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart, Trophy } from
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
+import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { ULScore } from "@/components/ULScore";
 import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
@@ -272,9 +273,8 @@ export default function ExplorePage() {
     <div className="min-h-[calc(100dvh-56px)] bg-background">
 
       {/* ヘッダー */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(20,75,44,0.4),transparent)]" />
-        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-14 flex items-end justify-between gap-4">
+      <HeaderGradient variant="explore">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-14 flex items-end justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2.5 mb-6">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/20">
@@ -293,7 +293,7 @@ export default function ExplorePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/mascot.png" alt="雷鳥マスコット" className="h-24 sm:h-36 shrink-0 drop-shadow-lg" />
         </div>
-      </div>
+      </HeaderGradient>
 
       {/* フィルターバー */}
       <div className="bg-background/95 border-b border-border">
