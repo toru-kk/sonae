@@ -25,6 +25,7 @@ export interface Database {
           plan: "free" | "standard" | "premium";
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
+          featured_badges: string[] | null;
           created_at: string;
           updated_at: string;
         };
@@ -36,6 +37,7 @@ export interface Database {
           bio?: string | null;
           experience_level?: string | null;
           favorite_mountains?: string[] | null;
+          featured_badges?: string[] | null;
           home_area?: string | null;
           plan?: "free" | "standard" | "premium";
           stripe_customer_id?: string | null;
@@ -48,6 +50,7 @@ export interface Database {
           bio?: string | null;
           experience_level?: string | null;
           favorite_mountains?: string[] | null;
+          featured_badges?: string[] | null;
           home_area?: string | null;
           plan?: "free" | "standard" | "premium";
           stripe_customer_id?: string | null;

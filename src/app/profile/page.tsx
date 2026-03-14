@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2, Heart, Lock } from "lucide-react";
-import { getLevelBadge, getSpecialtyBadges, SPECIALTY_BADGE_DEFS, type SpecialtyBadge } from "@/lib/badges";
+import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapPin, FileText, Trash2, Heart, Lock, Pencil, X as XIcon } from "lucide-react";
+import { getLevelBadge, getAllBadges, SPECIALTY_BADGE_DEFS, BADGE_CATEGORY_LABELS, getBadgesByCategory, type SpecialtyBadge, type BadgeCategory } from "@/lib/badges";
 import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 import { PlanPortalButton } from "@/components/PlanPortalButton";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
@@ -49,6 +49,8 @@ export default function ProfilePage() {
   const [gearCount, setGearCount] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
   const [specialtyBadges, setSpecialtyBadges] = useState<SpecialtyBadge[]>([]);
+  const [featuredBadges, setFeaturedBadges] = useState<string[]>([]);
+  const [showBadgePicker, setShowBadgePicker] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -67,9 +69,9 @@ export default function ProfilePage() {
       setEmail(data.user.email ?? "");
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const [profileRes, followerRes, followingRes, pkgRes, gearRes, packagesRes] = await Promise.all([
+      const [profileRes, followerRes, followingRes, pkgRes, gearRes, packagesRes, commentCountRes, likeGivenRes, gearCatsRes] = await Promise.all([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (supabase as any).from("users").select("display_name, avatar_url, bio, experience_level, favorite_mountains, activity_areas, home_area, plan").eq("id", uid).single(),
+        (supabase as any).from("users").select("display_name, avatar_url, bio, experience_level, favorite_mountains, activity_areas, home_area, plan, featured_badges").eq("id", uid).single(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (supabase as any).from("follows").select("id", { count: "exact", head: true }).eq("following_id", uid),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,6 +79,11 @@ export default function ProfilePage() {
         supabase.from("gear_packages").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("gear_items").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("gear_packages").select("mountain_type, total_weight_g, like_count").eq("user_id", uid),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from("package_comments").select("id", { count: "exact", head: true }).eq("user_id", uid),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from("package_likes").select("id", { count: "exact", head: true }).eq("user_id", uid),
+        supabase.from("gear_items").select("category_id").eq("user_id", uid),
       ]);
 
       const profile = profileRes.data;
@@ -88,16 +95,29 @@ export default function ProfilePage() {
       // activity_areas が未移行の場合は home_area を単一要素配列として fallback
       setActivityAreas(profile?.activity_areas ?? (profile?.home_area ? [profile.home_area] : []));
       setPlan(profile?.plan ?? "free");
+      setFeaturedBadges(profile?.featured_badges ?? []);
       setFollowerCount(followerRes.count ?? 0);
       setFollowingCount(followingRes.count ?? 0);
       setPackageCount(pkgRes.count ?? 0);
-      setGearCount(gearRes.count ?? 0);
+      const gc = gearRes.count ?? 0;
+      setGearCount(gc);
 
-      // 総いいね・専門バッジ計算
+      // 使用カテゴリ数
+      const catIds = new Set((gearCatsRes.data ?? []).map((g: { category_id: string }) => g.category_id));
+
+      // 総いいね・バッジ計算
       const pkgs = packagesRes.data ?? [];
       const likes = pkgs.reduce((sum: number, p: { like_count?: number | null }) => sum + (p.like_count ?? 0), 0);
       setTotalLikes(likes);
-      setSpecialtyBadges(getSpecialtyBadges(pkgs));
+      setSpecialtyBadges(getAllBadges({
+        packages: pkgs,
+        gearCount: gc,
+        usedCategoryCount: catIds.size,
+        commentCount: commentCountRes.count ?? 0,
+        likeGivenCount: likeGivenRes.count ?? 0,
+        followerCount: followerRes.count ?? 0,
+        totalLikesReceived: likes,
+      }));
 
       setLoading(false);
     });
@@ -117,6 +137,7 @@ export default function ProfilePage() {
       experience_level: experienceLevel || null,
       favorite_mountains: favoriteMountains,
       activity_areas: activityAreas,
+      featured_badges: featuredBadges,
     }).eq("id", userId);
     setSaving(false);
     if (authErr || dbErr) {
@@ -279,39 +300,81 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* バッジコレクション */}
-          <div className="mb-5">
-            <p className="text-[11px] text-white/40 mb-1.5">バッジコレクション</p>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-              {SPECIALTY_BADGE_DEFS.map((badge) => {
-                const earned = specialtyBadges.some((b) => b.key === badge.key);
-                return (
-                  <div
-                    key={badge.key}
-                    className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-all ${
-                      earned
-                        ? `${badge.chipBorder} ${badge.chipBg} ${badge.glowClass} badge-shimmer scale-105`
-                        : "border-white/10 bg-white/5 grayscale opacity-40"
-                    }`}
-                  >
-                    <div className="relative">
-                      <SpecialtyBadgeIcon
-                        badgeKey={badge.key}
-                        className={`h-5 w-5 ${earned ? `text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]` : "text-white/40"}`}
-                      />
-                      {!earned && (
-                        <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/30" />
-                      )}
-                    </div>
-                    <span className={`text-[9px] font-semibold leading-tight text-center ${
-                      earned ? "text-white" : "text-white/50"
-                    }`}>
+          {/* お気に入りバッジ */}
+          {featuredBadges.length > 0 && (
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-1.5">
+                <p className="text-[11px] text-white/40">お気に入りバッジ</p>
+                <button onClick={() => setShowBadgePicker(true)} className="text-[10px] text-white/30 hover:text-white/60 transition-colors">
+                  <Pencil className="h-3 w-3 inline" />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {featuredBadges.map((key) => {
+                  const badge = SPECIALTY_BADGE_DEFS.find((b) => b.key === key);
+                  if (!badge) return null;
+                  return (
+                    <span key={key} className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${badge.chipBorder} ${badge.chipBg} ${badge.chipText}`}>
+                      <SpecialtyBadgeIcon badgeKey={key} className="h-3 w-3" />
                       {badge.label}
                     </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
+          )}
+
+          {/* バッジコレクション */}
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-[11px] text-white/40">バッジコレクション</p>
+              <span className="text-[10px] text-white/25">{specialtyBadges.length} / {SPECIALTY_BADGE_DEFS.length} 獲得</span>
+              {featuredBadges.length === 0 && (
+                <button onClick={() => setShowBadgePicker(true)} className="ml-auto text-[10px] text-white/30 hover:text-white/60 transition-colors flex items-center gap-1">
+                  <Pencil className="h-3 w-3" />
+                  お気に入り設定
+                </button>
+              )}
+            </div>
+            {(["specialty", "action", "community", "mastery", "style"] as BadgeCategory[]).map((cat) => {
+              const badges = getBadgesByCategory()[cat];
+              if (badges.length === 0) return null;
+              return (
+                <div key={cat} className="mb-2">
+                  <p className="text-[9px] text-white/25 mb-1">{BADGE_CATEGORY_LABELS[cat]}</p>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                    {badges.map((badge) => {
+                      const earned = specialtyBadges.some((b) => b.key === badge.key);
+                      return (
+                        <div
+                          key={badge.key}
+                          className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-all ${
+                            earned
+                              ? `${badge.chipBorder} ${badge.chipBg} ${badge.glowClass} badge-shimmer scale-105`
+                              : "border-white/10 bg-white/5 grayscale opacity-40"
+                          }`}
+                        >
+                          <div className="relative">
+                            <SpecialtyBadgeIcon
+                              badgeKey={badge.key}
+                              className={`h-5 w-5 ${earned ? "text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]" : "text-white/40"}`}
+                            />
+                            {!earned && (
+                              <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/30" />
+                            )}
+                          </div>
+                          <span className={`text-[9px] font-semibold leading-tight text-center ${
+                            earned ? "text-white" : "text-white/50"
+                          }`}>
+                            {badge.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* アクション */}
@@ -545,6 +608,61 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* お気に入りバッジ選択モーダル */}
+      {showBadgePicker && (
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+          <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground">お気に入りバッジ</h3>
+              <button onClick={() => setShowBadgePicker(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+                <XIcon className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              獲得済みバッジから最大4つ選択。プロフィールに表示されます。
+              <span className="ml-1 font-semibold">{featuredBadges.length}/4</span>
+            </p>
+            <div className="grid grid-cols-3 gap-2 max-h-[50vh] overflow-y-auto">
+              {SPECIALTY_BADGE_DEFS.map((badge) => {
+                const earned = specialtyBadges.some((b) => b.key === badge.key);
+                if (!earned) return null;
+                const selected = featuredBadges.includes(badge.key);
+                return (
+                  <button
+                    key={badge.key}
+                    onClick={() => {
+                      if (selected) {
+                        setFeaturedBadges(featuredBadges.filter((k) => k !== badge.key));
+                      } else if (featuredBadges.length < 4) {
+                        setFeaturedBadges([...featuredBadges, badge.key]);
+                      }
+                    }}
+                    className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-all ${
+                      selected
+                        ? `${badge.chipBorder} bg-primary/10 ring-2 ring-primary`
+                        : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <SpecialtyBadgeIcon badgeKey={badge.key} className={`h-6 w-6 ${badge.chipTextLight}`} />
+                    <span className="text-[10px] font-semibold text-foreground leading-tight text-center">{badge.label}</span>
+                    {selected && <Check className="h-3.5 w-3.5 text-primary" />}
+                  </button>
+                );
+              })}
+            </div>
+            {specialtyBadges.length === 0 && (
+              <p className="text-center text-sm text-muted-foreground py-8">まだ獲得したバッジがありません</p>
+            )}
+            <button
+              onClick={() => setShowBadgePicker(false)}
+              className="mt-4 w-full rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              完了
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 削除確認ダイアログ */}
       {showDeleteConfirm && (
