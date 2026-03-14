@@ -110,10 +110,10 @@ function SvgPattern({ id }: { id: string }) {
       );
     case "ridge":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 100 100">
-          <path d="M0 88 L8 72 L15 78 L25 55 L35 65 L45 40 L55 52 L65 30 L75 45 L85 25 L92 38 L100 32 L100 100 L0 100Z" fill="white" fillOpacity="0.35" />
-          <path d="M0 92 L12 80 L22 85 L32 68 L42 75 L52 58 L62 65 L72 48 L82 55 L90 42 L100 50 L100 100 L0 100Z" fill="white" fillOpacity="0.2" />
-          <path d="M0 95 L15 88 L30 92 L45 82 L60 87 L75 78 L90 82 L100 75 L100 100 L0 100Z" fill="white" fillOpacity="0.1" />
+        <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 200 100">
+          <path d="M0 85 Q10 78 18 70 Q22 65 28 58 Q32 53 38 48 Q42 44 48 38 Q52 34 55 30 Q58 34 62 40 Q66 46 72 52 Q78 48 82 42 Q86 36 90 28 Q94 32 98 38 Q102 44 108 50 Q114 46 118 40 Q122 34 128 30 Q132 34 136 40 Q140 46 148 55 Q156 50 162 45 Q168 48 175 55 Q182 60 190 65 Q196 70 200 72 L200 100 L0 100Z" fill="white" fillOpacity="0.3" />
+          <path d="M0 90 Q12 84 20 78 Q28 72 36 65 Q42 60 50 55 Q56 58 62 63 Q68 60 74 54 Q80 48 86 42 Q92 46 98 52 Q104 56 112 60 Q118 56 124 50 Q130 46 138 42 Q144 46 150 52 Q158 58 166 62 Q174 58 182 55 Q190 60 200 65 L200 100 L0 100Z" fill="white" fillOpacity="0.18" />
+          <path d="M0 94 Q15 90 30 86 Q40 83 50 80 Q60 82 70 85 Q80 80 90 76 Q100 78 110 82 Q120 78 130 74 Q140 76 155 80 Q170 78 185 75 Q195 78 200 80 L200 100 L0 100Z" fill="white" fillOpacity="0.1" />
         </svg>
       );
     case "stars":
