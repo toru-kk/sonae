@@ -7,27 +7,27 @@ const VARIANTS: Record<
   { gradient: string; radial: string; patternId: string }
 > = {
   gear: {
-    gradient: "bg-gradient-to-r from-[#03080d] via-[#0d1f15] to-[#1a3d25]",
+    gradient: "bg-gradient-to-r from-[#03080d] via-[#1a2a18] to-[#2a4a28]",
     radial:
-      "bg-[radial-gradient(ellipse_50%_60%_at_70%_40%,rgba(180,140,60,0.12),transparent)]",
+      "bg-[radial-gradient(ellipse_50%_60%_at_70%_40%,rgba(200,160,60,0.18),transparent)]",
     patternId: "dots",
   },
   packages: {
-    gradient: "bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]",
+    gradient: "bg-gradient-to-br from-[#03080d] via-[#0a2a1a] to-[#1a6040]",
     radial:
-      "bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(52,211,153,0.15),transparent)]",
+      "bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(52,211,153,0.2),transparent)]",
     patternId: "contour",
   },
   explore: {
-    gradient: "bg-gradient-to-bl from-[#03080d] via-[#071a18] to-[#0f3a35]",
+    gradient: "bg-gradient-to-bl from-[#03080d] via-[#08201e] to-[#124540]",
     radial:
-      "bg-[radial-gradient(ellipse_60%_50%_at_30%_60%,rgba(56,189,248,0.12),transparent)]",
+      "bg-[radial-gradient(ellipse_60%_50%_at_30%_60%,rgba(56,189,248,0.18),transparent)]",
     patternId: "compass",
   },
   ai: {
-    gradient: "bg-gradient-to-b from-[#03080d] via-[#0d0f1f] to-[#1a1535]",
+    gradient: "bg-gradient-to-b from-[#03080d] via-[#10102a] to-[#1e1845]",
     radial:
-      "bg-[radial-gradient(ellipse_50%_60%_at_50%_30%,rgba(139,92,246,0.15),transparent)]",
+      "bg-[radial-gradient(ellipse_50%_60%_at_50%_30%,rgba(139,92,246,0.22),transparent)]",
     patternId: "neural",
   },
   profile: {
@@ -37,15 +37,15 @@ const VARIANTS: Record<
     patternId: "ridge",
   },
   plans: {
-    gradient: "bg-gradient-to-r from-[#03080d] via-[#1a1508] to-[#2a2010]",
+    gradient: "bg-gradient-to-r from-[#03080d] via-[#201a08] to-[#352a10]",
     radial:
-      "bg-[radial-gradient(ellipse_50%_60%_at_60%_40%,rgba(251,191,36,0.12),transparent)]",
+      "bg-[radial-gradient(ellipse_50%_60%_at_60%_40%,rgba(251,191,36,0.18),transparent)]",
     patternId: "stars",
   },
   public: {
-    gradient: "bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]",
+    gradient: "bg-gradient-to-br from-[#03080d] via-[#0a2a1a] to-[#1a6040]",
     radial:
-      "bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(52,211,153,0.12),transparent)]",
+      "bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(52,211,153,0.18),transparent)]",
     patternId: "contour",
   },
 };
@@ -54,10 +54,10 @@ function SvgPattern({ id }: { id: string }) {
   switch (id) {
     case "dots":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="p-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="1" fill="white" />
+            <pattern id="p-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="10" cy="10" r="1" fill="white" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#p-dots)" />
@@ -65,11 +65,12 @@ function SvgPattern({ id }: { id: string }) {
       );
     case "contour":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 h-full w-full opacity-[0.1]" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="p-contour" x="0" y="0" width="120" height="40" patternUnits="userSpaceOnUse">
-              <path d="M0 20 Q30 8 60 20 Q90 32 120 20" fill="none" stroke="white" strokeWidth="0.8" />
-              <path d="M0 35 Q30 28 60 35 Q90 42 120 35" fill="none" stroke="white" strokeWidth="0.5" />
+            <pattern id="p-contour" x="0" y="0" width="100" height="50" patternUnits="userSpaceOnUse">
+              <path d="M0 15 Q25 5 50 15 Q75 25 100 15" fill="none" stroke="white" strokeWidth="0.7" />
+              <path d="M0 35 Q25 25 50 35 Q75 45 100 35" fill="none" stroke="white" strokeWidth="0.5" />
+              <path d="M0 50 Q25 42 50 50 Q75 58 100 50" fill="none" stroke="white" strokeWidth="0.3" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#p-contour)" />
@@ -77,11 +78,12 @@ function SvgPattern({ id }: { id: string }) {
       );
     case "compass":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 h-full w-full opacity-[0.1]" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="p-compass" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
-              <line x1="14" y1="16" x2="18" y2="16" stroke="white" strokeWidth="0.6" />
-              <line x1="16" y1="14" x2="16" y2="18" stroke="white" strokeWidth="0.6" />
+            <pattern id="p-compass" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+              <line x1="12" y1="14" x2="16" y2="14" stroke="white" strokeWidth="0.5" />
+              <line x1="14" y1="12" x2="14" y2="16" stroke="white" strokeWidth="0.5" />
+              <circle cx="14" cy="14" r="3" fill="none" stroke="white" strokeWidth="0.25" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#p-compass)" />
@@ -89,15 +91,18 @@ function SvgPattern({ id }: { id: string }) {
       );
     case "neural":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 h-full w-full opacity-[0.1]" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="p-neural" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-              <circle cx="10" cy="10" r="1.2" fill="white" />
-              <circle cx="30" cy="30" r="1.2" fill="white" />
-              <circle cx="30" cy="10" r="0.8" fill="white" />
-              <circle cx="10" cy="30" r="0.8" fill="white" />
-              <line x1="10" y1="10" x2="30" y2="30" stroke="white" strokeWidth="0.3" />
-              <line x1="30" y1="10" x2="10" y2="30" stroke="white" strokeWidth="0.3" />
+            <pattern id="p-neural" x="0" y="0" width="36" height="36" patternUnits="userSpaceOnUse">
+              <circle cx="8" cy="8" r="1.5" fill="white" fillOpacity="0.7" />
+              <circle cx="28" cy="28" r="1.5" fill="white" fillOpacity="0.7" />
+              <circle cx="28" cy="8" r="1" fill="white" fillOpacity="0.5" />
+              <circle cx="8" cy="28" r="1" fill="white" fillOpacity="0.5" />
+              <circle cx="18" cy="18" r="0.8" fill="white" fillOpacity="0.4" />
+              <line x1="8" y1="8" x2="28" y2="28" stroke="white" strokeWidth="0.3" strokeOpacity="0.5" />
+              <line x1="28" y1="8" x2="8" y2="28" stroke="white" strokeWidth="0.3" strokeOpacity="0.5" />
+              <line x1="8" y1="8" x2="18" y2="18" stroke="white" strokeWidth="0.2" strokeOpacity="0.4" />
+              <line x1="28" y1="28" x2="18" y2="18" stroke="white" strokeWidth="0.2" strokeOpacity="0.4" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#p-neural)" />
@@ -105,19 +110,23 @@ function SvgPattern({ id }: { id: string }) {
       );
     case "ridge":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M0 85 L15 60 L30 72 L50 35 L65 55 L80 25 L95 50 L100 40 L100 100 L0 100Z" fill="white" fillOpacity="0.5" />
-          <path d="M0 90 L20 75 L40 82 L55 60 L70 70 L85 50 L100 65 L100 100 L0 100Z" fill="white" fillOpacity="0.3" />
+        <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <path d="M0 88 L8 72 L15 78 L25 55 L35 65 L45 40 L55 52 L65 30 L75 45 L85 25 L92 38 L100 32 L100 100 L0 100Z" fill="white" fillOpacity="0.35" />
+          <path d="M0 92 L12 80 L22 85 L32 68 L42 75 L52 58 L62 65 L72 48 L82 55 L90 42 L100 50 L100 100 L0 100Z" fill="white" fillOpacity="0.2" />
+          <path d="M0 95 L15 88 L30 92 L45 82 L60 87 L75 78 L90 82 L100 75 L100 100 L0 100Z" fill="white" fillOpacity="0.1" />
         </svg>
       );
     case "stars":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="p-stars" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
-              <path d="M24 8 L25.5 14 L32 14 L27 18 L28.5 24 L24 20 L19.5 24 L21 18 L16 14 L22.5 14Z" fill="white" fillOpacity="0.6" transform="scale(0.4) translate(30,10)" />
-              <circle cx="10" cy="38" r="0.6" fill="white" />
-              <circle cx="38" cy="8" r="0.5" fill="white" />
+            <pattern id="p-stars" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M30 8 L31.5 13 L37 13 L32.5 16.5 L34 22 L30 18.5 L26 22 L27.5 16.5 L23 13 L28.5 13Z" fill="white" fillOpacity="0.5" transform="scale(0.35) translate(10,5)" />
+              <path d="M30 8 L31.5 13 L37 13 L32.5 16.5 L34 22 L30 18.5 L26 22 L27.5 16.5 L23 13 L28.5 13Z" fill="white" fillOpacity="0.3" transform="scale(0.25) translate(160,130)" />
+              <circle cx="12" cy="45" r="0.7" fill="white" fillOpacity="0.6" />
+              <circle cx="48" cy="12" r="0.5" fill="white" fillOpacity="0.4" />
+              <circle cx="35" cy="50" r="0.4" fill="white" fillOpacity="0.3" />
+              <circle cx="52" cy="38" r="0.6" fill="white" fillOpacity="0.5" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#p-stars)" />
