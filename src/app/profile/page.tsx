@@ -297,14 +297,14 @@ export default function ProfilePage() {
                     <div className="relative">
                       <SpecialtyBadgeIcon
                         badgeKey={badge.key}
-                        className={`h-5 w-5 ${earned ? badge.chipText : "text-white/50"}`}
+                        className={`h-5 w-5 ${earned ? "text-white" : "text-white/50"}`}
                       />
                       {!earned && (
                         <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/50" />
                       )}
                     </div>
                     <span className={`text-[9px] font-semibold leading-tight text-center ${
-                      earned ? badge.chipText : "text-white/70"
+                      earned ? "text-white" : "text-white/70"
                     }`}>
                       {badge.label}
                     </span>

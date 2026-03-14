@@ -81,6 +81,8 @@ export type SpecialtyBadge = {
   chipBorder: string;
   chipBg: string;
   chipText: string;
+  /** ライト背景用テキスト色（公開プロフィール等） */
+  chipTextLight: string;
 };
 
 export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
@@ -90,6 +92,7 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBorder: "border-lime-400/60",
     chipBg: "bg-lime-500/25",
     chipText: "text-lime-200",
+    chipTextLight: "text-lime-700",
   },
   {
     key: "alpine",
@@ -97,6 +100,7 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBorder: "border-blue-400/60",
     chipBg: "bg-blue-500/25",
     chipText: "text-blue-200",
+    chipTextLight: "text-blue-700",
   },
   {
     key: "tent",
@@ -104,6 +108,7 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBorder: "border-orange-400/60",
     chipBg: "bg-orange-500/25",
     chipText: "text-orange-200",
+    chipTextLight: "text-orange-700",
   },
   {
     key: "winter",
@@ -111,6 +116,7 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBorder: "border-cyan-400/60",
     chipBg: "bg-cyan-500/25",
     chipText: "text-cyan-200",
+    chipTextLight: "text-cyan-700",
   },
   {
     key: "fuji",
@@ -118,6 +124,7 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBorder: "border-red-400/60",
     chipBg: "bg-red-500/25",
     chipText: "text-red-200",
+    chipTextLight: "text-red-700",
   },
   {
     key: "ul",
@@ -125,6 +132,7 @@ export const SPECIALTY_BADGE_DEFS: SpecialtyBadge[] = [
     chipBorder: "border-violet-400/60",
     chipBg: "bg-violet-500/25",
     chipText: "text-violet-200",
+    chipTextLight: "text-violet-700",
   },
 ];
 

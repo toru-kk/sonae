@@ -248,14 +248,14 @@ export default async function UserProfilePage(
                 <div className="relative">
                   <SpecialtyBadgeIcon
                     badgeKey={badge.key}
-                    className={`h-6 w-6 ${earned ? badge.chipText : "text-muted-foreground/70"}`}
+                    className={`h-6 w-6 ${earned ? badge.chipTextLight : "text-muted-foreground/70"}`}
                   />
                   {!earned && (
                     <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground/70" />
                   )}
                 </div>
                 <span className={`text-[10px] font-semibold leading-tight text-center ${
-                  earned ? badge.chipText : "text-muted-foreground/80"
+                  earned ? badge.chipTextLight : "text-muted-foreground/80"
                 }`}>
                   {badge.label}
                 </span>
