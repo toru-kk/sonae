@@ -291,20 +291,20 @@ export default function ProfilePage() {
                     className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-colors ${
                       earned
                         ? `${badge.chipBorder} ${badge.chipBg}`
-                        : "border-white/15 bg-white/5"
+                        : "border-white/20 bg-white/10"
                     }`}
                   >
                     <div className="relative">
                       <SpecialtyBadgeIcon
                         badgeKey={badge.key}
-                        className={`h-5 w-5 ${earned ? badge.chipText : "text-white/30"}`}
+                        className={`h-5 w-5 ${earned ? badge.chipText : "text-white/50"}`}
                       />
                       {!earned && (
-                        <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/40" />
+                        <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/50" />
                       )}
                     </div>
                     <span className={`text-[9px] font-semibold leading-tight text-center ${
-                      earned ? badge.chipText : "text-white/50"
+                      earned ? badge.chipText : "text-white/70"
                     }`}>
                       {badge.label}
                     </span>
