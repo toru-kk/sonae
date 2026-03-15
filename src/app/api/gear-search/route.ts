@@ -14,7 +14,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ packages: [], hasMore: false });
   }
 
-  // 装備名で gear_items を検索 → package_id を取得 → 公開パッケージを返す
+  const packageIdSet = new Set<string>();
+
+  // 1. 装備名・ブランドで gear_items を検索 → package_id を取得
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: matchingItems } = await (supabase as any)
     .from("gear_items")
@@ -22,24 +24,42 @@ export async function GET(req: NextRequest) {
     .or(`name.ilike.%${query}%,brand.ilike.%${query}%`)
     .limit(200);
 
-  if (!matchingItems || matchingItems.length === 0) {
-    return NextResponse.json({ packages: [], hasMore: false });
+  if (matchingItems && matchingItems.length > 0) {
+    const gearItemIds = matchingItems.map((g: { id: string }) => g.id);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: pkgItems } = await (supabase as any)
+      .from("gear_package_items")
+      .select("package_id")
+      .in("gear_item_id", gearItemIds);
+
+    if (pkgItems) {
+      for (const pi of pkgItems) {
+        packageIdSet.add(pi.package_id);
+      }
+    }
   }
 
-  const gearItemIds = matchingItems.map((g: { id: string }) => g.id);
-
-  // gear_package_items から該当する package_id を取得
+  // 2. パッケージ名・説明文でも検索（装備名でヒットしない場合の補完）
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: pkgItems } = await (supabase as any)
-    .from("gear_package_items")
-    .select("package_id")
-    .in("gear_item_id", gearItemIds);
+  const { data: nameMatches } = await (supabase as any)
+    .from("gear_packages")
+    .select("id")
+    .eq("is_public", true)
+    .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
+    .limit(100);
 
-  if (!pkgItems || pkgItems.length === 0) {
+  if (nameMatches) {
+    for (const p of nameMatches) {
+      packageIdSet.add(p.id);
+    }
+  }
+
+  if (packageIdSet.size === 0) {
     return NextResponse.json({ packages: [], hasMore: false });
   }
 
-  const packageIds = [...new Set(pkgItems.map((pi: { package_id: string }) => pi.package_id))];
+  const packageIds = [...packageIdSet];
 
   // 公開パッケージを取得（装備アイテム情報も含む）
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
