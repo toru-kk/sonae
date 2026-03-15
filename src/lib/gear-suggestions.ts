@@ -93,6 +93,42 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "Lofoten 2 Camp SI", brand: "Nordisk", category_id: "shelter", weight_g: 3100, search: "ロフォーテン lofoten ノルディスク テント 2人用 4シーズン 冬山" },
   // Terra Nova
   { name: "Laser Compact 2", brand: "Terra Nova", category_id: "shelter", weight_g: 960, search: "レーザーコンパクト laser compact テラノバ テント UL 2人用 軽量" },
+  // finetrack 追加
+  { name: "カミナドーム 1", brand: "finetrack", category_id: "shelter", weight_g: 1130, search: "カミナドーム kaminadome ファイントラック テント 1人用 ソロ 軽量" },
+  // ZEROGRAM 追加
+  { name: "スルーハイカー 1P", brand: "ZEROGRAM", category_id: "shelter", weight_g: 680, search: "スルーハイカー thruhiker ゼログラム テント UL ソロ 1人用 軽量" },
+  // Naturehike
+  { name: "CloudUp 2", brand: "Naturehike", category_id: "shelter", weight_g: 1550, search: "クラウドアップ cloudup ネイチャーハイク テント 2人用 軽量 コスパ" },
+  { name: "Star River 2", brand: "Naturehike", category_id: "shelter", weight_g: 2100, search: "スターリバー star river ネイチャーハイク テント 2人用 自立式" },
+  // HERITAGE 追加
+  { name: "クロスオーバードーム 2G", brand: "Heritage", category_id: "shelter", weight_g: 540, search: "クロスオーバードーム crossoverdome ヘリテイジ テント UL 超軽量 ソロ" },
+  { name: "HI-REVO", brand: "Heritage", category_id: "shelter", weight_g: 780, search: "ハイレヴォ hirevo ヘリテイジ シェルター ツェルト UL 超軽量" },
+  // Six Moon Designs 追加
+  { name: "Haven", brand: "Six Moon Designs", category_id: "shelter", weight_g: 960, search: "ヘイブン haven シックスムーンデザイン テント ハンモック タープ UL" },
+  { name: "Skyscape Trekker", brand: "Six Moon Designs", category_id: "shelter", weight_g: 737, search: "スカイスケープトレッカー skyscape trekker シックスムーンデザイン テント UL ソロ" },
+  // Locus Gear 追加
+  { name: "Djedi DCF-eVent", brand: "Locus Gear", category_id: "shelter", weight_g: 340, search: "ジェダイ djedi DCF イーベント ローカスギア シェルター UL 超軽量 キューベン" },
+  { name: "Hapi", brand: "Locus Gear", category_id: "shelter", weight_g: 280, search: "ハピ hapi ローカスギア タープ ピラミッド UL 超軽量 シルナイロン" },
+  // ULA
+  { name: "SB-2", brand: "ULA", category_id: "shelter", weight_g: 510, search: "SB-2 ユーエルエー ULA シェルター タープ UL 軽量" },
+  // Seek Outside
+  { name: "Cimarron", brand: "Seek Outside", category_id: "shelter", weight_g: 1270, search: "シマロン cimarron シークアウトサイド テント ティピ 薪ストーブ ホットテント" },
+  { name: "Redcliff", brand: "Seek Outside", category_id: "shelter", weight_g: 1360, search: "レッドクリフ redcliff シークアウトサイド テント ティピ 薪ストーブ ホットテント" },
+  // 小川テント
+  { name: "ステイシー ST-II", brand: "ogawa", category_id: "shelter", weight_g: 2900, search: "ステイシー stacy オガワ ogawa 小川テント テント ソロ ツーリング" },
+  // PAINE 追加
+  { name: "パイネ ゴアライズ 2", brand: "PAINE", category_id: "shelter", weight_g: 1560, search: "パイネ paine ゴアライズ テント ゴアテックス 2人用" },
+  // タープ
+  { name: "DD SuperLight Tarp 3x3", brand: "DD Hammocks", category_id: "shelter", weight_g: 460, search: "DDスーパーライト タープ dd hammocks ハンモック UL 軽量 タープ泊" },
+  { name: "Siltarp 3", brand: "Rab", category_id: "shelter", weight_g: 340, search: "シルタープ siltarp ラブ rab タープ シルナイロン UL 軽量" },
+  { name: "Ultra-Sil Nano Tarp Poncho", brand: "Sea to Summit", category_id: "shelter", weight_g: 145, search: "ウルトラシルナノ ultra-sil nano シートゥサミット タープ ポンチョ UL 超軽量" },
+  // フットプリント・グランドシート
+  { name: "グラウンドシート ドーム2型用", brand: "mont-bell", category_id: "shelter", weight_g: 190, search: "グラウンドシート モンベル テント フットプリント 保護 防水" },
+  { name: "Tyvek グランドシート", brand: "タイベック", category_id: "shelter", weight_g: 130, search: "タイベック tyvek グランドシート フットプリント テント 自作 UL 軽量" },
+  // Tarptent 追加
+  { name: "Aeon Li", brand: "Tarptent", category_id: "shelter", weight_g: 397, search: "イーオン aeon ターペントレント タープテント UL ソロ DCF 超軽量" },
+  // Zpacks
+  { name: "Duplex", brand: "Zpacks", category_id: "shelter", weight_g: 539, search: "デュプレックス duplex ジーパックス Zpacks テント DCF キューベン UL 2人用" },
 
   // ═══════════════════════════════════════════
   // シュラフ・寝具 (sleeping)
@@ -173,6 +209,42 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "サーマルシーツ シングル", brand: "mont-bell", category_id: "sleeping", weight_g: 180, search: "サーマルシーツ モンベル シュラフシーツ インナーシーツ 保温 インナー" },
   { name: "スリーピングバッグライナー", brand: "Sea to Summit", category_id: "sleeping", weight_g: 115, search: "スリーピングバッグライナー シートゥサミット シュラフシーツ インナー シルク コットン" },
   { name: "ゴアテックスシュラフカバーワイド", brand: "ISUKA", category_id: "sleeping", weight_g: 340, search: "ゴアテックス シュラフカバー ワイド イスカ isuka 防水 透湿 ビビー" },
+  // Cumulus
+  { name: "Quilt 450", brand: "Cumulus", category_id: "sleeping", weight_g: 710, search: "キルト quilt キュムラス cumulus シュラフ ダウン UL 軽量 ポーランド" },
+  { name: "Panyam 600", brand: "Cumulus", category_id: "sleeping", weight_g: 960, search: "パニャム panyam キュムラス cumulus シュラフ ダウン 冬用 マミー型" },
+  // Enlightened Equipment 追加
+  { name: "Enigma 20°F", brand: "Enlightened Equipment", category_id: "sleeping", weight_g: 490, search: "エンライトンドイクイップメント enlightened equipment エニグマ enigma キルト シュラフ UL 軽量" },
+  // NANGA 追加
+  { name: "ミニマリスムダウンバッグ 250STD", brand: "NANGA", category_id: "sleeping", weight_g: 500, search: "ミニマリスム minimalism ダウンバッグ ナンガ シュラフ UL 軽量 250" },
+  // ISUKA 追加
+  { name: "エアプラス 280", brand: "ISUKA", category_id: "sleeping", weight_g: 570, search: "エアプラス airplus イスカ シュラフ 寝袋 軽量 3シーズン" },
+  { name: "エアプラス 630", brand: "ISUKA", category_id: "sleeping", weight_g: 1070, search: "エアプラス airplus イスカ シュラフ 寝袋 冬用 ダウン" },
+  { name: "ダウンプラス ポカラ X", brand: "ISUKA", category_id: "sleeping", weight_g: 1350, search: "ダウンプラス ポカラ pokara イスカ シュラフ 寝袋 封筒型 ワイド 快適" },
+  // Patagonia
+  { name: "850ダウン スリーピングバッグ 19°F", brand: "Patagonia", category_id: "sleeping", weight_g: 964, search: "パタゴニア patagonia 850ダウン シュラフ 寝袋 ダウン リサイクル 環境" },
+  // Therm-a-Rest 追加
+  { name: "ProLite Plus", brand: "THERMAREST", category_id: "sleeping", weight_g: 620, search: "プロライトプラス proliteplus サーマレスト マット 自動膨張 暖かい" },
+  { name: "Trail Scout", brand: "THERMAREST", category_id: "sleeping", weight_g: 740, search: "トレイルスカウト trail scout サーマレスト マット 自動膨張 入門" },
+  // NEMO 追加
+  { name: "Tensor Insulated Long Wide", brand: "NEMO", category_id: "sleeping", weight_g: 510, search: "テンサー tensor ロングワイド ニーモ NEMO マット パッド 暖かい 大型" },
+  // Exped
+  { name: "SynMat HL", brand: "Exped", category_id: "sleeping", weight_g: 395, search: "シンマット synmat エクスペド exped マット UL 軽量 エアー" },
+  { name: "MegaMat Lite 12", brand: "Exped", category_id: "sleeping", weight_g: 880, search: "メガマット megamat ライト エクスペド exped マット 厚手 快適 12cm" },
+  // Sea to Summit マット
+  { name: "Comfort Plus SI マット", brand: "Sea to Summit", category_id: "sleeping", weight_g: 750, search: "コンフォートプラス comfort plus シートゥサミット マット 自動膨張 快適" },
+  { name: "Ether Light XT Insulated", brand: "Sea to Summit", category_id: "sleeping", weight_g: 490, search: "イーサーライト ether light XT シートゥサミット マット エアー 暖かい 軽量" },
+  // コット
+  { name: "ライトコット", brand: "Helinox", category_id: "sleeping", weight_g: 1200, search: "ライトコット lightcot ヘリノックス helinox コット 軽量 コンパクト" },
+  { name: "ラグジュアリーライト メッシュコット", brand: "THERMAREST", category_id: "sleeping", weight_g: 2630, search: "ラグジュアリーライト luxurylite メッシュコット サーマレスト コット キャンプ 快適" },
+  // mont-bell 枕追加
+  { name: "U.L. コンフォートシステムピロー", brand: "mont-bell", category_id: "sleeping", weight_g: 63, search: "ULコンフォートシステムピロー モンベル 枕 エアー 超軽量 コンパクト" },
+  // SOL 追加
+  { name: "エスケーピービヴィ", brand: "SOL", category_id: "sleeping", weight_g: 241, search: "エスケーピー ビヴィ escape bivvy SOL ソル ビバーク 透湿 エマージェンシー" },
+  // NANGA 追加
+  { name: "オーロラ 450STD", brand: "NANGA", category_id: "sleeping", weight_g: 1000, search: "オーロラ aurora ナンガ シュラフ 寝袋 防水 3シーズン" },
+  { name: "オーロラ 600STD", brand: "NANGA", category_id: "sleeping", weight_g: 1200, search: "オーロラ aurora ナンガ シュラフ 寝袋 防水 冬用" },
+  // Klymit
+  { name: "Static V Insulated", brand: "Klymit", category_id: "sleeping", weight_g: 652, search: "スタティック static V クライミット klymit マット エアー 断熱 Vチャンバー" },
 
   // ═══════════════════════════════════════════
   // 衣類 (clothing)
@@ -506,6 +578,58 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "Nepal Cube GTX", brand: "La Sportiva", category_id: "footwear", weight_g: 1880, search: "ネパールキューブ nepal cube ラスポルティバ 冬山靴 アルパイン ダブルブーツ 厳冬期" },
   { name: "アルパインクルーザー 3000", brand: "mont-bell", category_id: "footwear", weight_g: 1760, search: "アルパインクルーザー3000 alpinecruiser 3000 モンベル 冬山 ダブルブーツ 厳冬期 アイゼン対応" },
 
+  // ソックス
+  { name: "ミディアムハイカー クルー", brand: "FITS", category_id: "footwear", weight_g: 80, search: "FITS フィッツ ミディアムハイカー medium hiker ソックス 靴下 メリノウール 登山" },
+  { name: "トレイル ミッドウェイト ミニクルー", brand: "Injinji", category_id: "footwear", weight_g: 56, search: "インジンジ injinji トレイル ミッドウェイト 五本指 ソックス 靴下 トレイルラン" },
+  { name: "Hiking Essential Medium Crew", brand: "Point6", category_id: "footwear", weight_g: 70, search: "ポイントシックス point6 ハイキング エッセンシャル ソックス 靴下 メリノウール" },
+  { name: "Hike Midweight Merino Endurance", brand: "Bridgedale", category_id: "footwear", weight_g: 85, search: "ブリッジデイル bridgedale ハイク ミッドウェイト ソックス 靴下 メリノウール 登山" },
+  { name: "メリノウール アルパインソックス", brand: "mont-bell", category_id: "footwear", weight_g: 90, search: "メリノウール アルパイン ソックス 靴下 モンベル 登山 厚手 保温" },
+  { name: "Hike+ Medium Crew", brand: "Icebreaker", category_id: "footwear", weight_g: 75, search: "アイスブレーカー icebreaker ハイクプラス ミディアム ソックス 靴下 メリノウール 登山" },
+  { name: "レーシングラン 五本指", brand: "Tabio", category_id: "footwear", weight_g: 30, search: "タビオ tabio レーシングラン 五本指 ソックス 靴下 トレイルラン 薄手 日本製" },
+  { name: "Coolmesh II Quarter", brand: "WRIGHTSOCK", category_id: "footwear", weight_g: 50, search: "ライトソック wrightsock クールメッシュ coolmesh ソックス 靴下 二重構造 マメ防止" },
+
+  // 沢靴
+  { name: "サワートレッカー", brand: "mont-bell", category_id: "footwear", weight_g: 680, search: "サワートレッカー sawatrekker モンベル 沢靴 沢登り フェルト" },
+  { name: "KR-3XF", brand: "キャラバン", category_id: "footwear", weight_g: 720, search: "KR-3XF キャラバン caravan 沢靴 沢登り フェルト 渓流" },
+  { name: "オリジナル沢靴", brand: "秀山荘", category_id: "footwear", weight_g: 750, search: "秀山荘 しゅうざんそう オリジナル沢靴 沢登り フェルト 渓流 専門店" },
+
+  // アプローチシューズ
+  { name: "TX Guide", brand: "La Sportiva", category_id: "footwear", weight_g: 640, search: "TX ガイド guide ラスポルティバ アプローチシューズ クライミング 岩場" },
+  { name: "Gecko", brand: "SCARPA", category_id: "footwear", weight_g: 680, search: "ゲッコー gecko スカルパ アプローチシューズ クライミング 岩場" },
+  { name: "Guide Tennie", brand: "Five Ten", category_id: "footwear", weight_g: 740, search: "ガイドテニー guide tennie ファイブテン アプローチシューズ ステルスラバー 岩場" },
+  { name: "Konseal FL2 GTX", brand: "Arc'teryx", category_id: "footwear", weight_g: 660, search: "コンシール konseal FL2 アークテリクス アプローチシューズ ゴアテックス 岩場 ハイキング" },
+
+  // ローカットハイキング
+  { name: "Anacapa Low GTX", brand: "HOKA", category_id: "footwear", weight_g: 730, search: "アナカパ anacapa ロー ホカ ハイキング ローカット ゴアテックス 軽量" },
+  { name: "X Ultra 4 Mid GTX", brand: "Salomon", category_id: "footwear", weight_g: 860, search: "X ULTRA 4 ミッド mid サロモン トレッキング ゴアテックス ミドルカット" },
+  { name: "MQM 3 GTX", brand: "Merrell", category_id: "footwear", weight_g: 700, search: "MQM3 メレル ハイキング ローカット ゴアテックス 軽量 スピードハイク" },
+  { name: "Trail 2650 Campo GTX", brand: "Danner", category_id: "footwear", weight_g: 650, search: "トレイル2650 カンポ campo ダナー ハイキング ゴアテックス ローカット 軽量" },
+  { name: "Facet 75 OutDry", brand: "Columbia", category_id: "footwear", weight_g: 680, search: "ファセット facet 75 コロンビア ハイキング アウトドライ 防水 ローカット 軽量" },
+
+  // クライミングシューズ
+  { name: "Solution", brand: "La Sportiva", category_id: "footwear", weight_g: 450, search: "ソリューション solution ラスポルティバ クライミングシューズ ボルダリング" },
+  { name: "Drago", brand: "SCARPA", category_id: "footwear", weight_g: 390, search: "ドラゴ drago スカルパ クライミングシューズ ボルダリング ソフト" },
+  { name: "Anasazi VCS", brand: "Five Ten", category_id: "footwear", weight_g: 460, search: "アナサジ anasazi VCS ファイブテン クライミングシューズ ベルクロ ステルスラバー" },
+
+  // スキーブーツ / バックカントリー
+  { name: "Maestrale RS", brand: "SCARPA", category_id: "footwear", weight_g: 1430, search: "マエストラーレ maestrale RS スカルパ スキーブーツ バックカントリー AT テレマーク" },
+  { name: "TLT X", brand: "Dynafit", category_id: "footwear", weight_g: 1050, search: "TLT X ディナフィット スキーブーツ バックカントリー AT 軽量 スキーモ" },
+
+  // クランポン用ブーツ追加
+  { name: "Crow GTX", brand: "Salewa", category_id: "footwear", weight_g: 1300, search: "クロウ crow サレワ salewa 登山靴 アルパイン ゴアテックス アイゼン対応 冬山" },
+
+  // 地下足袋
+  { name: "プロガードスパイク", brand: "丸五", category_id: "footwear", weight_g: 480, search: "プロガード スパイク 丸五 地下足袋 林業 沢 岩場 スパイク付き" },
+  { name: "跣たび", brand: "力王", category_id: "footwear", weight_g: 350, search: "跣たび はだしたび 力王 りきおう 地下足袋 沢登り 岩場 軽量" },
+
+  // 長靴
+  { name: "バードウォッチング長靴", brand: "日本野鳥の会", category_id: "footwear", weight_g: 460, search: "バードウォッチング長靴 日本野鳥の会 レインブーツ 折りたたみ コンパクト 軽量 フェス" },
+  { name: "パルクール2", brand: "AIGLE", category_id: "footwear", weight_g: 1050, search: "パルクール parcours エーグル AIGLE 長靴 レインブーツ ラバー フランス製 アウトドア" },
+
+  // ポール追加
+  { name: "FL-120", brand: "Helinox", category_id: "footwear", weight_g: 380, search: "FL-120 ヘリノックス トレッキングポール 軽量 カーボン 折りたたみ" },
+  { name: "アルパインポール カーボン", brand: "mont-bell", category_id: "footwear", weight_g: 360, search: "アルパインポール カーボン モンベル トレッキングポール 軽量 3段折りたたみ" },
+
   // ═══════════════════════════════════════════
   // バックパック (backpack)
   // ═══════════════════════════════════════════
@@ -569,6 +693,41 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   // Trail Bum
   { name: "Bummer 35", brand: "Trail Bum", category_id: "backpack", weight_g: 480, search: "バマー bummer トレイルバム trail bum ザック UL 軽量 日帰り" },
   { name: "Steady 50", brand: "Trail Bum", category_id: "backpack", weight_g: 620, search: "ステディ steady トレイルバム trail bum ザック UL 軽量 縦走 テント泊" },
+  // Gossamer Gear追加
+  { name: "Gorilla 50", brand: "Gossamer Gear", category_id: "backpack", weight_g: 620, search: "ゴリラ gorilla ゴッサマーギア ザック UL 軽量 スルーハイク 50L" },
+  // ULA追加
+  { name: "Circuit", brand: "ULA", category_id: "backpack", weight_g: 1100, search: "サーキット circuit ULA ザック UL 軽量 スルーハイク 68L" },
+  { name: "Ohm 2.0", brand: "ULA", category_id: "backpack", weight_g: 850, search: "オーム ohm ULA ザック UL 軽量 39L" },
+  { name: "Catalyst", brand: "ULA", category_id: "backpack", weight_g: 990, search: "カタリスト catalyst ULA ザック UL 軽量 55L" },
+  // Zpacks
+  { name: "Arc Blast 55", brand: "Zpacks", category_id: "backpack", weight_g: 540, search: "アークブラスト arc blast ジーパックス zpacks ザック UL 超軽量 DCF キューベン 55L" },
+  { name: "Nero 38", brand: "Zpacks", category_id: "backpack", weight_g: 310, search: "ネロ nero ジーパックス zpacks ザック UL 超軽量 DCF フレームレス 38L" },
+  // OMM
+  { name: "Classic 25", brand: "OMM", category_id: "backpack", weight_g: 420, search: "クラシック classic OMM オリジナルマウンテンマラソン ザック UL ファストパッキング 25L" },
+  { name: "Phantom 25", brand: "OMM", category_id: "backpack", weight_g: 320, search: "ファントム phantom OMM オリジナルマウンテンマラソン ザック UL 超軽量 25L" },
+  // Pa'lante
+  { name: "V2", brand: "Pa'lante", category_id: "backpack", weight_g: 430, search: "パランテ palante V2 ザック UL 超軽量 スルーハイク" },
+  // EXPED
+  { name: "Lightning 45", brand: "EXPED", category_id: "backpack", weight_g: 1020, search: "ライトニング lightning エクスペド EXPED ザック 軽量 45L アルパイン" },
+  // Lowe Alpine
+  { name: "AirZone Trail Camino 37:42", brand: "Lowe Alpine", category_id: "backpack", weight_g: 1350, search: "エアゾーン トレイルカミノ airzone trail camino ロウアルパイン ザック 37 42 背面メッシュ" },
+  { name: "Cerro Torre 65:85", brand: "Lowe Alpine", category_id: "backpack", weight_g: 2450, search: "セロトーレ cerro torre ロウアルパイン ザック 大型 65 85 遠征 テント泊" },
+  // Thule
+  { name: "AllTrail X 35L", brand: "Thule", category_id: "backpack", weight_g: 1100, search: "オールトレイル alltrail スーリー thule ザック 35L ハイキング" },
+  // SALOMON
+  { name: "OUT NIGHT 30+5", brand: "SALOMON", category_id: "backpack", weight_g: 1060, search: "アウトナイト out night サロモン salomon ザック 30L テント泊 ファストパッキング" },
+  { name: "XT 15", brand: "SALOMON", category_id: "backpack", weight_g: 420, search: "XT15 サロモン salomon ザック 15L トレイルランニング ファストパッキング" },
+  { name: "ADV SKIN 12", brand: "SALOMON", category_id: "backpack", weight_g: 310, search: "アドバンスドスキン ADV SKIN 12 サロモン salomon トレイルランニング ベスト ランニングベスト" },
+  // mont-bell追加
+  { name: "トリプルポケットパック 45", brand: "mont-bell", category_id: "backpack", weight_g: 1250, search: "トリプルポケットパック モンベル ザック 45L 縦走 テント泊 三室構造" },
+  // deuter追加
+  { name: "エアコンタクト ウルトラ 50+5", brand: "deuter", category_id: "backpack", weight_g: 1480, search: "エアコンタクトウルトラ aircontact ultra ドイター deuter ザック 軽量 50L テント泊" },
+  // Black Diamond
+  { name: "Distance 15", brand: "Black Diamond", category_id: "backpack", weight_g: 340, search: "ディスタンス distance ブラックダイヤモンド black diamond ザック 15L トレイルランニング ベスト" },
+  // THE NORTH FACE ランニングベスト
+  { name: "Martin Wing 10", brand: "THE NORTH FACE", category_id: "backpack", weight_g: 275, search: "マーティンウィング martin wing ノースフェイス ランニングベスト 10L トレイルラン" },
+  // OSPREY ランニングベスト
+  { name: "Duro 15", brand: "OSPREY", category_id: "backpack", weight_g: 480, search: "デューロ duro オスプレー ランニングベスト 15L トレイルラン ハイドレーション" },
 
   // ═══════════════════════════════════════════
   // ナビゲーション (navigation)
@@ -590,6 +749,22 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "ルーペ 10倍", brand: "SILVA", category_id: "navigation", weight_g: 18, search: "ルーペ シルバ silva 地図 読図 拡大鏡 コンパス" },
   { name: "地図ケース A4", brand: "mont-bell", category_id: "navigation", weight_g: 40, search: "地図ケース 地図 防水 モンベル map case 読図" },
   { name: "温度計 サーモメーター", brand: "mont-bell", category_id: "navigation", weight_g: 12, search: "温度計 thermometer モンベル 気温 登山 コンパクト" },
+  // SUUNTO追加
+  { name: "9 Peak Pro", brand: "SUUNTO", category_id: "navigation", weight_g: 64, search: "9ピークプロ 9 peak pro スント GPS ウォッチ トレイル 長時間バッテリー" },
+  { name: "Core", brand: "SUUNTO", category_id: "navigation", weight_g: 64, search: "コア core スント 高度計 気圧計 コンパス ABC 腕時計 登山" },
+  // Garmin追加
+  { name: "fēnix 7", brand: "Garmin", category_id: "navigation", weight_g: 79, search: "フェニックス fenix 7 ガーミン GPS ウォッチ スマートウォッチ マルチスポーツ" },
+  { name: "Instinct 2X Solar", brand: "Garmin", category_id: "navigation", weight_g: 67, search: "インスティンクト instinct 2X ソーラー ガーミン GPS ウォッチ タフネス 太陽光充電" },
+  // COROS追加
+  { name: "PACE 3", brand: "COROS", category_id: "navigation", weight_g: 39, search: "ペース3 pace 3 カロス coros GPS ウォッチ 軽量 ランニング トレイル" },
+  // スマホホルダー
+  { name: "スマホホルダー ユニバーサルアダプター", brand: "QUAD LOCK", category_id: "navigation", weight_g: 36, search: "クアッドロック quad lock スマホホルダー スマートフォン マウント YAMAP ヤマップ 地図 ナビ" },
+  // 温度計
+  { name: "サーモマックス50", brand: "EMPEX", category_id: "navigation", weight_g: 16, search: "サーモマックス thermomax エンペックス empex 温度計 小型 登山 アウトドア" },
+  // ハンドヘルドGPS
+  { name: "eTrex 32x", brand: "Garmin", category_id: "navigation", weight_g: 142, search: "イートレックス etrex 32x ガーミン GPS ハンディ 地図 日本語 登山 ナビゲーション" },
+  // コンパス追加
+  { name: "レンジャーコンパス", brand: "SILVA", category_id: "navigation", weight_g: 42, search: "レンジャー ranger シルバ silva コンパス 方位磁石 ミラー 読図 精密" },
 
   // ═══════════════════════════════════════════
   // 安全装備 (safety)
@@ -641,6 +816,36 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "サミットピック ステッカ", brand: "PETZL", category_id: "safety", weight_g: 330, search: "サミットピック ペツル petzl アイスアックス ピッケル 冬山 アルパイン" },
   { name: "Air Tech Evolution", brand: "Grivel", category_id: "safety", weight_g: 420, search: "エアテック グリベル grivel アイスアックス ピッケル 冬山 縦走" },
   { name: "Raven Ultra", brand: "Black Diamond", category_id: "safety", weight_g: 385, search: "レイブン raven ブラックダイヤモンド black diamond アイスアックス ピッケル 冬山" },
+  // ヘッドランプ追加
+  { name: "NEO5R", brand: "LEDLENSER", category_id: "safety", weight_g: 74, search: "ネオ NEO5R レッドレンザー ledlenser ヘッドランプ USB充電 ランニング" },
+  { name: "NU25 UL", brand: "Nitecore", category_id: "safety", weight_g: 28, search: "NU25 ナイトコア nitecore ヘッドランプ 超軽量 UL USB充電 コンパクト" },
+  { name: "コンパクトヘッドランプ", brand: "mont-bell", category_id: "safety", weight_g: 55, search: "コンパクトヘッドランプ モンベル ヘッデン 軽量 エントリー 電池式" },
+  // ヘルメット追加
+  { name: "ビジョン", brand: "Black Diamond", category_id: "safety", weight_g: 230, search: "ビジョン vision ブラックダイヤモンド black diamond ヘルメット 軽量 MIPS" },
+  { name: "Wall Rider", brand: "MAMMUT", category_id: "safety", weight_g: 240, search: "ウォールライダー wall rider マムート MAMMUT ヘルメット 軽量 MIPS" },
+  { name: "Storm", brand: "Camp", category_id: "safety", weight_g: 230, search: "ストーム storm カンプ camp ヘルメット 軽量 アルパイン クライミング" },
+  // アイゼン
+  { name: "スノースパイク 10", brand: "mont-bell", category_id: "safety", weight_g: 850, search: "スノースパイク snowspike 10本爪 モンベル アイゼン クランポン 冬山 雪山" },
+  { name: "G12", brand: "Grivel", category_id: "safety", weight_g: 930, search: "G12 グリベル grivel アイゼン クランポン 12本爪 冬山 アルパイン" },
+  { name: "IRVIS", brand: "PETZL", category_id: "safety", weight_g: 770, search: "イルビス irvis ペツル petzl アイゼン クランポン 10本爪 冬山 軽量" },
+  { name: "セラック クリップ", brand: "Black Diamond", category_id: "safety", weight_g: 920, search: "セラック serac クリップ ブラックダイヤモンド アイゼン クランポン 12本爪 冬山" },
+  // ピッケル追加
+  { name: "アルパインアックス", brand: "mont-bell", category_id: "safety", weight_g: 430, search: "アルパインアックス alpine axe モンベル ピッケル 冬山 縦走 雪山" },
+  { name: "サミットエボ", brand: "PETZL", category_id: "safety", weight_g: 340, search: "サミットエボ summit evo ペツル petzl ピッケル アイスアックス 冬山 軽量 アルパイン" },
+  // 雪崩装備
+  { name: "バリーヴォックス S2", brand: "MAMMUT", category_id: "safety", weight_g: 210, search: "バリーヴォックス barryvox S2 マムート MAMMUT アバランチビーコン 雪崩 トランシーバー 捜索" },
+  { name: "Tracker4", brand: "BCA", category_id: "safety", weight_g: 150, search: "トラッカー4 tracker4 BCA アバランチビーコン 雪崩 トランシーバー 捜索" },
+  { name: "3+", brand: "Ortovox", category_id: "safety", weight_g: 210, search: "3プラス 3+ オルトボックス ortovox アバランチビーコン 雪崩 トランシーバー 捜索" },
+  { name: "B-2 EXT プローブ 240", brand: "BCA", category_id: "safety", weight_g: 280, search: "B2 EXT プローブ probe BCA 雪崩 プローブ ゾンデ 捜索 アバランチ 240cm" },
+  { name: "NEO プローブ 240", brand: "ARVA", category_id: "safety", weight_g: 220, search: "ネオ NEO プローブ probe アルバ ARVA 雪崩 ゾンデ 捜索 アバランチ 240cm" },
+  // アバランチエアバッグ
+  { name: "フリップ RAS 3.0 22L", brand: "MAMMUT", category_id: "safety", weight_g: 2600, search: "フリップ flip RAS 3.0 マムート MAMMUT アバランチエアバッグ 雪崩 エアバッグ ザック バックカントリー" },
+  { name: "Float 32", brand: "BCA", category_id: "safety", weight_g: 3100, search: "フロート float 32 BCA アバランチエアバッグ 雪崩 エアバッグ ザック バックカントリー" },
+  { name: "Avabag Litric FreeRide 30", brand: "Ortovox", category_id: "safety", weight_g: 1990, search: "アババッグ リトリック avabag litric オルトボックス ortovox アバランチエアバッグ 雪崩 超軽量" },
+  // スノーショベル
+  { name: "Beast", brand: "ORTOVOX", category_id: "safety", weight_g: 660, search: "ビースト beast オルトボックス ortovox ショベル スコップ 雪崩 除雪 アバランチ" },
+  { name: "Shaxe Speed", brand: "BCA", category_id: "safety", weight_g: 780, search: "シャックス スピード shaxe speed BCA ショベル スコップ ピッケル 雪崩 除雪" },
+  { name: "デプロイ 7", brand: "Black Diamond", category_id: "safety", weight_g: 660, search: "デプロイ deploy ブラックダイヤモンド black diamond ショベル スコップ 雪崩 除雪 アバランチ" },
 
   // ═══════════════════════════════════════════
   // 調理器具 (cooking)
@@ -707,6 +912,34 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   // 焚き火
   { name: "Picogrill 398", brand: "Picogrill", category_id: "cooking", weight_g: 115, search: "ピコグリル 398 焚き火 グリル 軽量 コンパクト ソロ" },
   { name: "フラットパックポータブルグリル&ファイヤーピット", brand: "UCO", category_id: "cooking", weight_g: 255, search: "フラットパック UCO ポータブルグリル 焚き火 ファイヤーピット" },
+  // クッカー追加
+  { name: "Ti ウルトラライトクッカー 2", brand: "EVERNEW", category_id: "cooking", weight_g: 104, search: "チタン ウルトラライトクッカー2 エバニュー EVERNEW クッカー UL 軽量 900ml" },
+  { name: "Ti ウルトラライトクッカー 3", brand: "EVERNEW", category_id: "cooking", weight_g: 122, search: "チタン ウルトラライトクッカー3 エバニュー EVERNEW クッカー UL 軽量 1300ml" },
+  { name: "チタンシングルマグ 300", brand: "Snow Peak", category_id: "cooking", weight_g: 50, search: "チタンシングルマグ 300 スノーピーク マグカップ チタン 軽量 300ml" },
+  { name: "チタンポット 1100ml", brand: "TOAKS", category_id: "cooking", weight_g: 122, search: "チタンポット トークス TOAKS クッカー チタン 1100 UL 軽量 大" },
+  { name: "タイタンケトル 850ml", brand: "MSR", category_id: "cooking", weight_g: 118, search: "タイタンケトル titan kettle MSR チタン ケトル 軽量 湯沸かし" },
+  { name: "Halulite ボイラー 1.1L", brand: "GSI", category_id: "cooking", weight_g: 168, search: "ハルライト halulite ボイラー GSI クッカー 軽量 鍋" },
+  // アルコールストーブ・固形燃料追加
+  { name: "チタンアルコールストーブ", brand: "EVERNEW", category_id: "cooking", weight_g: 34, search: "チタンアルコールストーブ エバニュー EVERNEW アルスト UL 軽量 チタン" },
+  { name: "Caldera Cone System", brand: "Trail Designs", category_id: "cooking", weight_g: 65, search: "カルデラコーン caldera cone トレイルデザインズ アルコールストーブ 風防一体 UL" },
+  { name: "Triad Multi-Fuel Stove", brand: "Vargo", category_id: "cooking", weight_g: 28, search: "トライアド triad バーゴ vargo アルコールストーブ マルチフューエル チタン UL" },
+  { name: "ポケットストーブ スタンダード", brand: "Esbit", category_id: "cooking", weight_g: 85, search: "エスビット esbit ポケットストーブ 固形燃料 コンパクト 軽量" },
+  { name: "固形燃料 ミリタリー 14g×6", brand: "Esbit", category_id: "cooking", weight_g: 84, search: "エスビット esbit 固形燃料 タブレット ミリタリー 着火" },
+  // ウッドストーブ
+  { name: "Solo Stove Lite", brand: "Solo Stove", category_id: "cooking", weight_g: 255, search: "ソロストーブ solo stove ライト lite ウッドストーブ 二次燃焼 薪" },
+  { name: "ナノストーブ G2", brand: "FIREBOX", category_id: "cooking", weight_g: 141, search: "ファイヤーボックス firebox ナノストーブ nano ウッドストーブ 折りたたみ 薪" },
+  // テーブル
+  { name: "フィールドホッパー ST-630", brand: "SOTO", category_id: "cooking", weight_g: 395, search: "フィールドホッパー field hopper ソト SOTO テーブル 折りたたみ ソロ コンパクト" },
+  { name: "オゼン ライト", brand: "Snow Peak", category_id: "cooking", weight_g: 270, search: "オゼン ライト ozen light スノーピーク テーブル 折りたたみ 軽量 A4" },
+  // ランタン（テント内用）
+  { name: "たねほおずき", brand: "Snow Peak", category_id: "cooking", weight_g: 57, search: "たねほおずき スノーピーク ランタン LED 小型 マグネット テント" },
+  { name: "クラッシャブルランタンシェード", brand: "mont-bell", category_id: "cooking", weight_g: 30, search: "クラッシャブルランタンシェード モンベル ヘッドライト 拡散 ランタン化" },
+  // フライパン
+  { name: "山フライパン 17cm", brand: "UNIFLAME", category_id: "cooking", weight_g: 170, search: "山フライパン ユニフレーム uniflame フライパン 17cm フッ素 アルミ 軽量" },
+  { name: "チタントレック フライパン", brand: "Snow Peak", category_id: "cooking", weight_g: 170, search: "チタントレック フライパン スノーピーク チタン 軽量" },
+  // ケトル・ポット追加
+  { name: "チタンケトル 600ml", brand: "EVERNEW", category_id: "cooking", weight_g: 98, search: "チタンケトル エバニュー EVERNEW ケトル チタン 600 湯沸かし UL" },
+  { name: "トレック1400", brand: "Snow Peak", category_id: "cooking", weight_g: 365, search: "トレック1400 スノーピーク クッカー アルミ 鍋 大型" },
 
   // ═══════════════════════════════════════════
   // 食料 (food)
@@ -734,6 +967,25 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "アルパイン サーモボトル 1.5L", brand: "mont-bell", category_id: "food", weight_g: 540, search: "アルパインサーモボトル モンベル 保温 水筒 魔法瓶 大容量 1.5L" },
   { name: "Dromedary Bag 10L", brand: "MSR", category_id: "food", weight_g: 186, search: "ドロメダリー dromedary MSR 大容量 ウォーターキャリー 水袋 10L" },
   { name: "ウォーターキャリー 2L", brand: "EVERNEW", category_id: "food", weight_g: 55, search: "エバニュー ウォーターキャリー 2L 水袋 軽量 大容量" },
+  // 保温ボトル追加
+  { name: "山専用ボトル FFX-901", brand: "THERMOS", category_id: "food", weight_g: 390, search: "山専用ボトル サーモス thermos 保温 魔法瓶 900ml 山専 大容量" },
+  { name: "マスター真空ボトル 0.75L", brand: "STANLEY", category_id: "food", weight_g: 710, search: "スタンレー stanley マスター master 真空ボトル 保温 頑丈 0.75L" },
+  // 浄水器追加
+  { name: "BeFree 1L コラプシブルボトル", brand: "KATADYN", category_id: "food", weight_g: 65, search: "カタダイン katadyn ビーフリー befree 1L 浄水器 コラプシブル ソフトボトル" },
+  { name: "TrailShot マイクロフィルター", brand: "MSR", category_id: "food", weight_g: 142, search: "トレイルショット trailshot MSR 浄水器 マイクロフィルター ポンプ式" },
+  { name: "QuickDraw マイクロフィルター", brand: "Platypus", category_id: "food", weight_g: 64, search: "クイックドロー quickdraw プラティパス 浄水器 マイクロフィルター 軽量" },
+  // 行動食
+  { name: "えいようかん", brand: "井村屋", category_id: "food", weight_g: 60, search: "えいようかん 井村屋 ようかん 羊羹 行動食 非常食 カロリー 長期保存" },
+  { name: "薄皮つぶあんぱん 5個入", brand: "ヤマザキ", category_id: "food", weight_g: 290, search: "薄皮まんじゅう つぶあんぱん ヤマザキ 行動食 パン あんぱん カロリー" },
+  { name: "カロリーメイト ブロック", brand: "大塚製薬", category_id: "food", weight_g: 80, search: "カロリーメイト calorie mate 大塚製薬 行動食 栄養補給 バランス食" },
+  { name: "inゼリー エネルギー", brand: "森永製菓", category_id: "food", weight_g: 180, search: "inゼリー ウイダー エネルギー 森永 行動食 ゼリー 補給 即効" },
+  { name: "トレイルミックス 大袋", brand: "稲葉ピーナツ", category_id: "food", weight_g: 200, search: "トレイルミックス trail mix ナッツ ドライフルーツ 行動食 ミックスナッツ" },
+  // フリーズドライ
+  { name: "アルファ米 五目ごはん", brand: "尾西食品", category_id: "food", weight_g: 100, search: "尾西 アルファ米 五目ごはん フリーズドライ 非常食 山飯 軽量" },
+  { name: "アルファ米 白飯", brand: "尾西食品", category_id: "food", weight_g: 100, search: "尾西 アルファ米 白飯 フリーズドライ 非常食 山飯 軽量" },
+  { name: "アルファ米 わかめごはん", brand: "尾西食品", category_id: "food", weight_g: 100, search: "尾西 アルファ米 わかめごはん フリーズドライ 非常食 山飯" },
+  { name: "フリーズドライ味噌汁 なす", brand: "アマノフーズ", category_id: "food", weight_g: 9, search: "アマノフーズ amano フリーズドライ 味噌汁 みそ汁 なす 山飯 軽量" },
+  { name: "フリーズドライ味噌汁 とうふ", brand: "アマノフーズ", category_id: "food", weight_g: 10, search: "アマノフーズ amano フリーズドライ 味噌汁 みそ汁 とうふ 豆腐 山飯" },
 
   // ═══════════════════════════════════════════
   // 道具・他 (tools)
@@ -785,4 +1037,34 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "ヘルメットホルダー", brand: "mont-bell", category_id: "tools", weight_g: 40, search: "モンベル ヘルメットホルダー ザック 固定 登山ヘルメット" },
   { name: "スキンクリーム UV", brand: "finetrack", category_id: "tools", weight_g: 30, search: "ファイントラック 日焼け止め UV スキンクリーム 紫外線 山岳" },
   { name: "ワセリン 皮膚保護クリーム", brand: "Vaseline", category_id: "tools", weight_g: 50, search: "ワセリン vaseline 皮膚保護 靴擦れ 防止 スキンケア 保湿" },
+  // ソーラーパネル追加
+  { name: "SolarPanel 5+", brand: "BioLite", category_id: "tools", weight_g: 390, search: "バイオライト biolite ソーラーパネル5 太陽光 充電 ソーラー" },
+  { name: "625 Solar Panel", brand: "Anker", category_id: "tools", weight_g: 350, search: "アンカー anker 625 ソーラーパネル 太陽光 充電 ソーラー 折りたたみ" },
+  // モバイルバッテリー追加
+  { name: "NB10000", brand: "Nitecore", category_id: "tools", weight_g: 150, search: "ナイトコア nitecore NB10000 モバイルバッテリー 10000mAh 軽量 コンパクト ランタン" },
+  // チェア
+  { name: "チェアワン", brand: "Helinox", category_id: "tools", weight_g: 890, search: "ヘリノックス helinox チェアワン chair one 折りたたみ椅子 軽量 キャンプ" },
+  { name: "チェアゼロ", brand: "Helinox", category_id: "tools", weight_g: 490, search: "ヘリノックス helinox チェアゼロ chair zero 折りたたみ椅子 UL 超軽量" },
+  { name: "L.W.トレールチェア 26", brand: "mont-bell", category_id: "tools", weight_g: 530, search: "モンベル トレールチェア trail chair 折りたたみ椅子 軽量 登山" },
+  // 三脚
+  { name: "Travel Tripod", brand: "Peak Design", category_id: "tools", weight_g: 1270, search: "ピークデザイン peak design トラベル三脚 travel tripod カメラ 軽量 コンパクト" },
+  { name: "GorillaPod 1K Kit", brand: "Joby", category_id: "tools", weight_g: 197, search: "ジョビー joby ゴリラポッド gorillapod 三脚 フレキシブル カメラ コンパクト" },
+  // 時計・GPS
+  { name: "Vertical", brand: "SUUNTO", category_id: "tools", weight_g: 74, search: "スント suunto バーティカル vertical GPS ウォッチ 時計 登山 高度計 コンパス" },
+  { name: "fenix 7X Sapphire Solar", brand: "GARMIN", category_id: "tools", weight_g: 89, search: "ガーミン garmin フェニックス fenix 7X GPS ウォッチ 時計 登山 ソーラー" },
+  // 双眼鏡
+  { name: "Sportstar EX 8x25", brand: "Nikon", category_id: "tools", weight_g: 300, search: "ニコン nikon スポーツスター sportstar 双眼鏡 8倍 コンパクト 野鳥" },
+  { name: "アトレックライト HR 8x21WP", brand: "VIXEN", category_id: "tools", weight_g: 185, search: "ビクセン vixen アトレックライト atrek light 双眼鏡 防水 コンパクト 軽量" },
+  // レスキュー・安全
+  { name: "ココヘリ 会員発信機", brand: "ココヘリ", category_id: "tools", weight_g: 20, search: "ココヘリ cocoheli 発信機 捜索 遭難 レスキュー ヘリ 位置情報" },
+  { name: "ResQLink View PLB", brand: "ACR", category_id: "tools", weight_g: 142, search: "レスキューリンク resqlink PLB ACR 緊急発信器 遭難 救助 SOS ビーコン" },
+  // 虫よけ追加
+  { name: "おすだけノーマット スプレータイプ", brand: "アース製薬", category_id: "tools", weight_g: 120, search: "おすだけノーマット アース 虫よけ 虫除け スプレー テント内 蚊" },
+  { name: "パワー森林香", brand: "富士錦", category_id: "tools", weight_g: 230, search: "パワー森林香 富士錦 蚊取り線香 虫よけ アウトドア 防虫 強力" },
+  // 洗面・衛生
+  { name: "Pocket Soap 50枚", brand: "Sea to Summit", category_id: "tools", weight_g: 25, search: "シートゥサミット ポケットソープ pocket soap 紙石鹸 携帯 衛生 軽量" },
+  { name: "O.D.タオル M", brand: "mont-bell", category_id: "tools", weight_g: 42, search: "モンベル O.D.タオル OD towel 速乾 タオル コンパクト アウトドア" },
+  // 熊鈴
+  { name: "消音熊鈴", brand: "東京ベル", category_id: "tools", weight_g: 40, search: "熊鈴 くまよけ ベアベル 消音 東京ベル bear bell 野生動物" },
+  { name: "熊よけ鈴 ガーディアン", brand: "mont-bell", category_id: "tools", weight_g: 50, search: "モンベル 熊鈴 熊よけ ベアベル ガーディアン guardian 消音" },
 ];

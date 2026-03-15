@@ -257,16 +257,18 @@ export default function GearNewPage() {
               onFocus={() => setShowGearSuggestions(true)}
               onBlur={() => setTimeout(() => setShowGearSuggestions(false), 150)}
               autoComplete="off"
-              placeholder="入力するとサジェストが表示されます"
+              placeholder="例：ダウンハガー、ストームクルーザー"
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
             {showGearSuggestions && filteredGearSuggestions.length > 0 && (
-              <ul className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-white shadow-lg overflow-hidden">
+              <ul className="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto rounded-lg border border-border bg-white shadow-lg overscroll-contain"
+                onPointerDown={(e) => e.preventDefault()}
+              >
                 {filteredGearSuggestions.map((g) => (
                   <li key={`${g.category_id}-${g.name}`}>
                     <button
                       type="button"
-                      onPointerDown={(e) => { e.preventDefault(); handleGearSuggestionSelect(g); }}
-                      className="w-full px-3.5 py-3 text-left hover:bg-accent transition-colors"
+                      onClick={() => handleGearSuggestionSelect(g)}
+                      className="w-full px-3.5 py-3 text-left hover:bg-accent active:bg-accent/80 transition-colors"
                     >
                       <span className="text-sm font-medium text-foreground">{g.name}</span>
                       <span className="ml-2 text-xs text-muted-foreground">{g.brand} · {g.weight_g}g</span>
