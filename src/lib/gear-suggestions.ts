@@ -276,6 +276,100 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "メリノウール ハイキングソックス", brand: "mont-bell", category_id: "clothing", weight_g: 75, search: "メリノウール ソックス 靴下 モンベル ハイキング" },
   { name: "トレッキングソックス パイル", brand: "mont-bell", category_id: "clothing", weight_g: 85, search: "トレッキングソックス パイル モンベル 靴下 クッション" },
 
+  // ウインドシェル
+  { name: "EXライトウインドパーカ", brand: "mont-bell", category_id: "clothing", weight_g: 56, search: "EXライトウインドパーカ exlight wind モンベル ウインドシェル 超軽量" },
+  { name: "スワローテイルフーディ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 150, search: "スワローテイル swallowtail ノースフェイス ウインドシェル フーディ" },
+  { name: "スワローテイルベントフーディ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 165, search: "スワローテイルベント swallowtail vent ノースフェイス ウインドシェル 通気性" },
+  { name: "Vital Windshell Hoody", brand: "Rab", category_id: "clothing", weight_g: 110, search: "バイタル ウインドシェル vital windshell ラブ Rab フーディ 軽量" },
+  { name: "Cierzo Lite 2.5 Jacket", brand: "Rab", category_id: "clothing", weight_g: 76, search: "シエルゾ cierzo ラブ Rab ウインドシェル UL 超軽量" },
+  { name: "Airshed Pro Pullover", brand: "patagonia", category_id: "clothing", weight_g: 113, search: "エアシェッド airshed プルオーバー パタゴニア ウインドシェル 通気性" },
+  { name: "L.I.M Shield Comp Hood", brand: "Haglöfs", category_id: "clothing", weight_g: 135, search: "LIM シールド ホグロフス ウインドシェル フーディ 軽量" },
+
+  // ソフトシェル
+  { name: "Gamma LT Hoody", brand: "Arc'teryx", category_id: "clothing", weight_g: 380, search: "ガンマ gamma LT アークテリクス ソフトシェル ストレッチ フーディ" },
+  { name: "Gamma MX Hoody", brand: "Arc'teryx", category_id: "clothing", weight_g: 480, search: "ガンマ gamma MX アークテリクス ソフトシェル ストレッチ 防風 裏起毛" },
+  { name: "クラッグジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 340, search: "クラッグ crag モンベル ソフトシェル ストレッチ 行動着" },
+  { name: "クラッグパンツ", brand: "mont-bell", category_id: "clothing", weight_g: 295, search: "クラッグ crag モンベル ソフトシェル パンツ ストレッチ" },
+  { name: "Madris Light ML Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 290, search: "マドリス madris ライト マムート ソフトシェル ミッドレイヤー 軽量" },
+  { name: "Ultimate VII SO Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 480, search: "アルティメット ultimate マムート ソフトシェル フーディ 防風" },
+  { name: "K ライトグリッドジャケット", brand: "Millet", category_id: "clothing", weight_g: 310, search: "K ライトグリッド lightgrid ミレー ソフトシェル 行動着 通気性" },
+  { name: "ニュウモラップ フーディ", brand: "finetrack", category_id: "clothing", weight_g: 250, search: "ニュウモラップ newmorap ファイントラック ソフトシェル 通気性 行動着" },
+  { name: "ドラウトソル ジャケット", brand: "finetrack", category_id: "clothing", weight_g: 235, search: "ドラウトソル draut sol ファイントラック ソフトシェル 行動着 速乾" },
+
+  // フリース追加
+  { name: "クリマプラス200 ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 370, search: "クリマプラス200 climaplus モンベル フリース 中厚手 保温" },
+  { name: "シャミース ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 215, search: "シャミース chameece モンベル フリース 薄手 軽量" },
+  { name: "バーサマイクロジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 225, search: "バーサマイクロ versamicro ノースフェイス フリース 軽量 中間着" },
+  { name: "デナリジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 540, search: "デナリ denali ノースフェイス フリース 厚手 保温" },
+  { name: "ベターセーター ジャケット", brand: "patagonia", category_id: "clothing", weight_g: 430, search: "ベターセーター bettersweater パタゴニア フリース ニット調" },
+  { name: "R1 デイリー ジャケット", brand: "patagonia", category_id: "clothing", weight_g: 315, search: "R1 デイリー パタゴニア フリース グリッド 行動着" },
+  { name: "Kyanite AR Jacket", brand: "Arc'teryx", category_id: "clothing", weight_g: 345, search: "カイヤナイト kyanite AR アークテリクス フリース ストレッチ" },
+  { name: "Aconcagua ML Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 340, search: "アコンカグア aconcagua マムート フリース 中間着 保温" },
+  { name: "Innominata Pro ML Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 410, search: "イノミナータ innominata プロ マムート フリース ハイロフト 保温 冬" },
+  { name: "Kinetic 2.0 Fleece Jacket", brand: "Rab", category_id: "clothing", weight_g: 310, search: "キネティック kinetic ラブ Rab フリース ストレッチ 行動着" },
+
+  // メリノウール系ベースレイヤー
+  { name: "200 Oasis LS Crewe", brand: "Icebreaker", category_id: "clothing", weight_g: 200, search: "200 オアシス oasis アイスブレーカー icebreaker メリノウール ベースレイヤー 中厚手" },
+  { name: "260 Tech LS Crewe", brand: "Icebreaker", category_id: "clothing", weight_g: 260, search: "260 テック tech アイスブレーカー icebreaker メリノウール ベースレイヤー 厚手 冬" },
+  { name: "150 Zone LS Crewe", brand: "Icebreaker", category_id: "clothing", weight_g: 165, search: "150 ゾーン zone アイスブレーカー icebreaker メリノウール ベースレイヤー 薄手 行動着" },
+  { name: "Merino 250 Base Layer Crew", brand: "SmartWool", category_id: "clothing", weight_g: 230, search: "メリノ250 merino スマートウール smartwool ベースレイヤー ウール 厚手" },
+  { name: "Classic Thermal Merino Base Layer Crew", brand: "SmartWool", category_id: "clothing", weight_g: 210, search: "クラシックサーマル メリノ thermal スマートウール smartwool ベースレイヤー ウール" },
+  { name: "スーパーメリノウール EXP. ラウンドネックシャツ", brand: "mont-bell", category_id: "clothing", weight_g: 245, search: "スーパーメリノウール merino EXP モンベル ベースレイヤー ウール 厚手 冬" },
+  { name: "スーパーメリノウール L.W. ラウンドネックシャツ", brand: "mont-bell", category_id: "clothing", weight_g: 140, search: "スーパーメリノウール merino LW モンベル ベースレイヤー ウール 薄手" },
+
+  // 行動着（速乾Tシャツ・シャツ）
+  { name: "WIC.T ハーフスリーブ", brand: "mont-bell", category_id: "clothing", weight_g: 95, search: "ウイックロン WIC.T モンベル 速乾 Tシャツ 行動着 半袖" },
+  { name: "WIC.ロングスリーブ", brand: "mont-bell", category_id: "clothing", weight_g: 125, search: "ウイックロン WIC モンベル 速乾 ロングスリーブ 長袖 行動着" },
+  { name: "クールライトシャツ", brand: "mont-bell", category_id: "clothing", weight_g: 140, search: "クールライト coollight モンベル シャツ 速乾 UVカット 行動着" },
+  { name: "フラッシュドライ3Dクルー", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 120, search: "フラッシュドライ flashdry 3D ノースフェイス 速乾 Tシャツ 行動着" },
+  { name: "ショートスリーブフラッシュドライメリノクルー", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 130, search: "フラッシュドライメリノ flashdry merino ノースフェイス 速乾 メリノ 半袖 行動着" },
+  { name: "キャプリーン クール ライトウェイト シャツ", brand: "patagonia", category_id: "clothing", weight_g: 96, search: "キャプリーン capilene クール ライトウェイト パタゴニア 速乾 行動着 UL" },
+  { name: "キャプリーン クール トレイル シャツ", brand: "patagonia", category_id: "clothing", weight_g: 135, search: "キャプリーン capilene クール トレイル パタゴニア 速乾 行動着 メリノ混" },
+  { name: "Pulse SS Tee", brand: "Rab", category_id: "clothing", weight_g: 100, search: "パルス pulse ラブ Rab 速乾 Tシャツ 行動着 軽量" },
+  { name: "Drynamic Mesh NS Crew", brand: "Millet", category_id: "clothing", weight_g: 55, search: "ドライナミック メッシュ drynamic ミレー アンダーウェア メッシュ 汗冷え防止" },
+
+  // タイツ・パンツ
+  { name: "リッジラインパンツ", brand: "mont-bell", category_id: "clothing", weight_g: 345, search: "リッジライン ridgeline モンベル パンツ トレッキング ストレッチ" },
+  { name: "ストレッチライトパンツ", brand: "mont-bell", category_id: "clothing", weight_g: 260, search: "ストレッチライト stretchlight モンベル パンツ 軽量 行動着" },
+  { name: "サウスフィールドパンツ", brand: "mont-bell", category_id: "clothing", weight_g: 285, search: "サウスフィールド southfield モンベル パンツ トレッキング" },
+  { name: "アルパインライトパンツ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 340, search: "アルパインライト alpinelight ノースフェイス パンツ トレッキング ストレッチ" },
+  { name: "バーブライトスリムパンツ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 290, search: "バーブライトスリム verblightslim ノースフェイス パンツ 軽量 細身" },
+  { name: "Gamma LT Pant", brand: "Arc'teryx", category_id: "clothing", weight_g: 355, search: "ガンマ gamma LT パンツ アークテリクス ソフトシェル ストレッチ" },
+  { name: "Lefroy Pant", brand: "Arc'teryx", category_id: "clothing", weight_g: 280, search: "レフロイ lefroy パンツ アークテリクス トレッキング 軽量 ストレッチ" },
+  { name: "ティフォンストレッチパンツ", brand: "Millet", category_id: "clothing", weight_g: 350, search: "ティフォン tiphon ストレッチ ミレー パンツ トレッキング 防水" },
+  { name: "Trekkers 3.0 Pants", brand: "MAMMUT", category_id: "clothing", weight_g: 310, search: "トレッカーズ trekkers マムート パンツ トレッキング ストレッチ" },
+  { name: "カミノパンツ", brand: "finetrack", category_id: "clothing", weight_g: 280, search: "カミノ camino ファイントラック パンツ ストレッチ 行動着 速乾" },
+  { name: "ジオラインL.W. タイツ", brand: "mont-bell", category_id: "clothing", weight_g: 100, search: "ジオライン geoline LW タイツ モンベル ベースレイヤー 下半身 薄手" },
+  { name: "ジオラインM.W. タイツ", brand: "mont-bell", category_id: "clothing", weight_g: 135, search: "ジオライン geoline MW タイツ モンベル ベースレイヤー 下半身 中厚手" },
+
+  // 防寒着追加（ダウン・化繊インサレーション）
+  { name: "オーロラライト ダウンジャケット", brand: "NANGA", category_id: "clothing", weight_g: 325, search: "オーロラライト auroralight ナンガ NANGA ダウン ジャケット 防寒 国産" },
+  { name: "スーパーライトダウンジャケット", brand: "NANGA", category_id: "clothing", weight_g: 185, search: "スーパーライトダウン ナンガ NANGA ダウン 軽量 コンパクト" },
+  { name: "ダウンインナージャケット", brand: "NANGA", category_id: "clothing", weight_g: 150, search: "ダウンインナー ナンガ NANGA ダウン 中間着 薄手 軽量" },
+  { name: "Broad Peak IN Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 400, search: "ブロードピーク broadpeak マムート ダウン インサレーション フーディ 保温" },
+  { name: "Convey IN Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 340, search: "コンベイ convey マムート ダウン インサレーション フーディ 軽量" },
+  { name: "Microlight Alpine Jacket", brand: "Rab", category_id: "clothing", weight_g: 375, search: "マイクロライト microlight アルパイン ラブ Rab ダウン ジャケット 保温" },
+  { name: "Mythic Alpine Jacket", brand: "Rab", category_id: "clothing", weight_g: 330, search: "ミシック mythic アルパイン ラブ Rab ダウン 軽量 850FP" },
+  { name: "ポリゴンアクト フーディ", brand: "finetrack", category_id: "clothing", weight_g: 270, search: "ポリゴンアクト polygonact フーディ ファイントラック 化繊 インサレーション 行動着 濡れ" },
+  { name: "ゴーストウィスパラー/2 ジャケット", brand: "MOUNTAIN HARDWEAR", category_id: "clothing", weight_g: 195, search: "ゴーストウィスパラー2 ghostwhisperer マウンテンハードウェア ダウン UL 超軽量" },
+  { name: "サーモボール エコ フーディ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 340, search: "サーモボール thermoball エコ ノースフェイス 化繊 インサレーション 濡れ 保温" },
+
+  // レインウェア追加
+  { name: "エバーブレス レグン ジャケット", brand: "finetrack", category_id: "clothing", weight_g: 290, search: "エバーブレス レグン everbreathe regn ファイントラック レインウェア 防水 透湿" },
+  { name: "エバーブレス レグン パンツ", brand: "finetrack", category_id: "clothing", weight_g: 210, search: "エバーブレス レグン everbreathe regn ファイントラック レインパンツ 防水" },
+  { name: "ティフォン50000ウォーム ストレッチ ジャケット", brand: "Millet", category_id: "clothing", weight_g: 430, search: "ティフォン tiphon 50000 ウォーム ミレー レインウェア 裏起毛 保温" },
+  { name: "Kento HS Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 370, search: "ケント kento HS マムート レインウェア ハードシェル ゴアテックス" },
+  { name: "Downpour Plus 2.0 Jacket", brand: "Rab", category_id: "clothing", weight_g: 310, search: "ダウンポアプラス downpour ラブ Rab レインウェア 防水" },
+  { name: "Meridian Jacket", brand: "Rab", category_id: "clothing", weight_g: 390, search: "メリディアン meridian ラブ Rab レインウェア ゴアテックス 防水" },
+
+  // アンダーウェア・ドライレイヤー
+  { name: "ドライレイヤー ウォーム", brand: "finetrack", category_id: "clothing", weight_g: 65, search: "ドライレイヤー ウォーム drylayer warm ファイントラック アンダーウェア 保温 汗冷え防止" },
+  { name: "ドライレイヤー クール", brand: "finetrack", category_id: "clothing", weight_g: 40, search: "ドライレイヤー クール drylayer cool ファイントラック アンダーウェア メッシュ 夏 汗冷え" },
+  { name: "ドライナミックメッシュ ショートスリーブ", brand: "Millet", category_id: "clothing", weight_g: 50, search: "ドライナミック drynamic ミレー メッシュ アンダーウェア 半袖 汗冷え防止" },
+  { name: "ドライナミックメッシュ 3/4 スリーブ", brand: "Millet", category_id: "clothing", weight_g: 60, search: "ドライナミック drynamic ミレー メッシュ アンダーウェア 七分袖 汗冷え防止" },
+  { name: "ジオライン クールメッシュ ラウンドネックシャツ", brand: "mont-bell", category_id: "clothing", weight_g: 55, search: "ジオライン クールメッシュ coolmesh モンベル アンダーウェア 夏 通気性" },
+  { name: "スキンメッシュ ロングスリーブ", brand: "mont-bell", category_id: "clothing", weight_g: 60, search: "スキンメッシュ skinmesh モンベル アンダーウェア メッシュ 汗冷え防止" },
+
   // ═══════════════════════════════════════════
   // 靴・足回り (footwear)
   // ═══════════════════════════════════════════

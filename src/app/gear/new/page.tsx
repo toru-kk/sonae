@@ -257,7 +257,7 @@ export default function GearNewPage() {
               onFocus={() => setShowGearSuggestions(true)}
               onBlur={() => setTimeout(() => setShowGearSuggestions(false), 150)}
               autoComplete="off"
-              placeholder="例：ストームクルーザー、ダウンハガー..."
+              placeholder="入力するとサジェストが表示されます"
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
             {showGearSuggestions && filteredGearSuggestions.length > 0 && (
               <ul className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-white shadow-lg overflow-hidden">
