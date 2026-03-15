@@ -545,8 +545,8 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "X ULTRA PIONEER MID GTX", brand: "Salomon", category_id: "footwear", weight_g: 800, search: "X ULTRA パイオニア pioneer サロモン トレッキング ゴアテックス" },
   { name: "Sense Ride 5", brand: "Salomon", category_id: "footwear", weight_g: 580, search: "センスライド sense ride サロモン トレイルラン" },
   { name: "MOAB 3 GTX", brand: "Merrell", category_id: "footwear", weight_g: 810, search: "モアブ moab メレル ローカット ハイキング ゴアテックス" },
-  { name: "Mach 6", brand: "HOKA", category_id: "footwear", weight_g: 660, search: "マッハ mach ホカ トレイルラン 軽量" },
-  { name: "Speedgoat 6", brand: "HOKA", category_id: "footwear", weight_g: 640, search: "スピードゴート speedgoat ホカ トレイルラン" },
+  { name: "Tecton X 2", brand: "HOKA", category_id: "footwear", weight_g: 580, search: "テクトン tecton X ホカ トレイルラン カーボン 軽量" },
+  { name: "Speedgoat 6", brand: "HOKA", category_id: "footwear", weight_g: 580, search: "スピードゴート speedgoat ホカ トレイルラン" },
   { name: "Lone Peak 8", brand: "Altra", category_id: "footwear", weight_g: 600, search: "ローンピーク lonepeak アルトラ トレイルラン ゼロドロップ" },
   { name: "Olympus 6", brand: "Altra", category_id: "footwear", weight_g: 700, search: "オリンパス olympus アルトラ トレイルラン クッション ゼロドロップ" },
   { name: "ラチェットコンパクト アイゼン", brand: "mont-bell", category_id: "footwear", weight_g: 560, search: "ラチェット アイゼン モンベル 軽アイゼン 10本爪" },
@@ -621,7 +621,7 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
 
   // Nike
   { name: "Pegasus Trail 5", brand: "Nike", category_id: "footwear", weight_g: 610, search: "ペガサストレイル pegasus trail ナイキ トレイルラン" },
-  { name: "Zegama 2", brand: "Nike", category_id: "footwear", weight_g: 620, search: "ゼガマ zegama ナイキ トレイルラン マラソン ZoomX" },
+  { name: "Zegama 2", brand: "Nike", category_id: "footwear", weight_g: 560, search: "ゼガマ zegama ナイキ トレイルラン マラソン ZoomX" },
 
   // Tecnica
   { name: "Forge GTX", brand: "Tecnica", category_id: "footwear", weight_g: 860, search: "フォージ forge テクニカ 登山靴 ゴアテックス トレッキング" },
