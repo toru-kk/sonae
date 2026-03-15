@@ -20,6 +20,13 @@ function formatWeight(g: number) {
   return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
 }
 
+type GearItem = {
+  name: string;
+  brand: string;
+  weight_g: number;
+  category: string | null;
+};
+
 type PublicPackage = {
   id: string;
   name: string;
@@ -31,6 +38,8 @@ type PublicPackage = {
   created_at: string;
   users: { display_name: string | null; avatar_url: string | null } | null;
   gear_package_items: { count: number }[];
+  items?: GearItem[];
+  item_count?: number;
 };
 
 function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: string | null; size?: "sm" | "md" }) {
@@ -115,12 +124,17 @@ export default function ExplorePage() {
 
     supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(0, PAGE_SIZE - 1)
       .then(({ data }) => {
-        const pkgs = (data ?? []) as unknown as PublicPackage[];
+        const pkgs = (data ?? []).map((pkg: Record<string, unknown>) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const gpi = (pkg.gear_package_items ?? []) as any[];
+          const items = gpi.map((pi) => pi.gear_items).filter(Boolean);
+          return { ...pkg, items, item_count: items.length } as unknown as PublicPackage;
+        });
         setAllPackages(pkgs);
         if (pkgs.length < PAGE_SIZE) setHasMore(false);
         setLoading(false);
@@ -218,12 +232,18 @@ export default function ExplorePage() {
     const supabase = createClient();
     const { data } = await supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
     if (!data || data.length < PAGE_SIZE) setHasMore(false);
-    setAllPackages(prev => [...prev, ...(data ?? []) as unknown as PublicPackage[]]);
+    const morePkgs = (data ?? []).map((pkg: Record<string, unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gpi = (pkg.gear_package_items ?? []) as any[];
+      const items = gpi.map((pi) => pi.gear_items).filter(Boolean);
+      return { ...pkg, items, item_count: items.length } as unknown as PublicPackage;
+    });
+    setAllPackages(prev => [...prev, ...morePkgs]);
     setPage(nextPage);
     setLoadingMore(false);
   };
@@ -480,9 +500,10 @@ export default function ExplorePage() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {gearPackages.map((pkg) => {
                     const w = pkg.total_weight_g ?? 0;
-                    const itemCount = pkg.gear_package_items?.[0]?.count ?? 0;
+                    const itemCount = pkg.item_count ?? pkg.gear_package_items?.[0]?.count ?? 0;
                     const creator = pkg.users;
                     const creatorName = creator?.display_name ?? "匿名ユーザー";
+                    const items = pkg.items ?? [];
                     return (
                       <div key={pkg.id} onClick={() => router.push(`/packages/${pkg.id}/public`)}
                         className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden cursor-pointer">
@@ -499,7 +520,32 @@ export default function ExplorePage() {
                             <h2 className="text-sm font-bold text-foreground leading-snug line-clamp-2 flex-1">{pkg.name}</h2>
                           </div>
                           {pkg.description && (
-                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">{pkg.description}</p>
+                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-2">{pkg.description}</p>
+                          )}
+                          {/* 装備アイテム一覧 */}
+                          {items.length > 0 && (
+                            <div className="mb-2">
+                              <div className="flex flex-wrap gap-1">
+                                {items.slice(0, 8).map((item, i) => (
+                                  <span
+                                    key={i}
+                                    className={cn(
+                                      "inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] leading-tight",
+                                      item.name.toLowerCase().includes(gearQuery.toLowerCase()) || item.brand.toLowerCase().includes(gearQuery.toLowerCase())
+                                        ? "bg-primary/10 text-primary font-semibold border border-primary/20"
+                                        : "bg-secondary text-muted-foreground"
+                                    )}
+                                  >
+                                    {item.name}
+                                  </span>
+                                ))}
+                                {items.length > 8 && (
+                                  <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] text-muted-foreground bg-secondary">
+                                    +{items.length - 8}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           )}
                           <div className="flex flex-wrap items-center gap-1.5">
                             {pkg.mountain_type && (
@@ -656,9 +702,10 @@ export default function ExplorePage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {packages.map((pkg) => {
                 const w = pkg.total_weight_g ?? 0;
-                const itemCount = pkg.gear_package_items?.[0]?.count ?? 0;
+                const itemCount = pkg.item_count ?? pkg.gear_package_items?.[0]?.count ?? 0;
                 const creator = pkg.users;
                 const creatorName = creator?.display_name ?? "匿名ユーザー";
+                const items = pkg.items ?? [];
                 return (
                   <div key={pkg.id} onClick={() => router.push(`/packages/${pkg.id}/public`)}
                     className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden cursor-pointer">
@@ -675,7 +722,24 @@ export default function ExplorePage() {
                         <h2 className="text-sm font-bold text-foreground leading-snug line-clamp-2 flex-1">{pkg.name}</h2>
                       </div>
                       {pkg.description && (
-                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">{pkg.description}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-2">{pkg.description}</p>
+                      )}
+                      {/* 装備アイテム一覧 */}
+                      {items.length > 0 && (
+                        <div className="mb-2">
+                          <div className="flex flex-wrap gap-1">
+                            {items.slice(0, 6).map((item, i) => (
+                              <span key={i} className="inline-flex items-center rounded-md bg-secondary px-1.5 py-0.5 text-[10px] leading-tight text-muted-foreground">
+                                {item.name}
+                              </span>
+                            ))}
+                            {items.length > 6 && (
+                              <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] text-muted-foreground bg-secondary">
+                                +{items.length - 6}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       )}
                       <div className="flex flex-wrap items-center gap-1.5">
                         {pkg.mountain_type && (

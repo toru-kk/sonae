@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   let q = (supabase as any)
     .from("gear_packages")
     .select(
-      "id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(count)"
+      "id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category))"
     )
     .eq("is_public", true)
     .in("user_id", followedIds)
@@ -60,8 +60,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // gear_package_items をフラットな items 配列に変換
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const packages = (data ?? []).map((pkg: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const items = (pkg.gear_package_items ?? [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((pi: any) => pi.gear_items)
+      .filter(Boolean);
+    return {
+      ...pkg,
+      gear_package_items: undefined,
+      items,
+      item_count: items.length,
+    };
+  });
+
   return NextResponse.json({
-    packages: data ?? [],
-    hasMore: (data ?? []).length === PAGE_SIZE,
+    packages,
+    hasMore: packages.length === PAGE_SIZE,
   });
 }
