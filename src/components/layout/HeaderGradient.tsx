@@ -110,10 +110,13 @@ function SvgPattern({ id }: { id: string }) {
       );
     case "ridge":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 200 100">
-          <path d="M0 85 Q10 78 18 70 Q22 65 28 58 Q32 53 38 48 Q42 44 48 38 Q52 34 55 30 Q58 34 62 40 Q66 46 72 52 Q78 48 82 42 Q86 36 90 28 Q94 32 98 38 Q102 44 108 50 Q114 46 118 40 Q122 34 128 30 Q132 34 136 40 Q140 46 148 55 Q156 50 162 45 Q168 48 175 55 Q182 60 190 65 Q196 70 200 72 L200 100 L0 100Z" fill="white" fillOpacity="0.3" />
-          <path d="M0 90 Q12 84 20 78 Q28 72 36 65 Q42 60 50 55 Q56 58 62 63 Q68 60 74 54 Q80 48 86 42 Q92 46 98 52 Q104 56 112 60 Q118 56 124 50 Q130 46 138 42 Q144 46 150 52 Q158 58 166 62 Q174 58 182 55 Q190 60 200 65 L200 100 L0 100Z" fill="white" fillOpacity="0.18" />
-          <path d="M0 94 Q15 90 30 86 Q40 83 50 80 Q60 82 70 85 Q80 80 90 76 Q100 78 110 82 Q120 78 130 74 Q140 76 155 80 Q170 78 185 75 Q195 78 200 80 L200 100 L0 100Z" fill="white" fillOpacity="0.1" />
+        <svg className="absolute inset-0 h-full w-full opacity-[0.10]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 400 100">
+          {/* 奥の山並み — なだらかで大きな稜線 */}
+          <path d="M0 82 Q30 75 60 68 Q80 62 100 55 Q120 48 140 44 Q160 48 180 54 Q200 50 220 45 Q240 50 260 56 Q280 52 300 48 Q320 52 340 58 Q360 62 380 66 Q395 70 400 72 L400 100 L0 100Z" fill="white" fillOpacity="0.25" />
+          {/* 中景の稜線 */}
+          <path d="M0 88 Q40 82 70 76 Q100 70 130 65 Q150 68 170 72 Q190 66 210 62 Q230 65 250 70 Q270 66 290 62 Q310 66 340 72 Q370 76 400 78 L400 100 L0 100Z" fill="white" fillOpacity="0.15" />
+          {/* 手前の丘 */}
+          <path d="M0 94 Q50 90 100 87 Q150 84 200 82 Q250 84 300 87 Q350 89 400 86 L400 100 L0 100Z" fill="white" fillOpacity="0.08" />
         </svg>
       );
     case "stars":
