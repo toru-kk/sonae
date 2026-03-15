@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { categoryStyle } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
+import { GEAR_SUGGESTIONS } from "@/lib/gear-suggestions";
 
 const categories: { id: string; label: string; icon: React.ComponentType<LucideProps> }[] = [
   { id: "shelter",    label: "シェルター",    icon: Tent        },
@@ -112,6 +113,7 @@ export default function GearNewPage() {
   const [isEssential, setIsEssential] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showGearSuggestions, setShowGearSuggestions] = useState(false);
 
   const selected = categories.find((c) => c.id === selectedCategory);
   const style = selectedCategory ? categoryStyle[selectedCategory] : null;
@@ -120,6 +122,30 @@ export default function GearNewPage() {
     brandInput.length > 0 &&
     b.search.toLowerCase().includes(brandInput.toLowerCase())
   );
+
+  // ひらがな→カタカナ変換（「すとーむ」→「ストーム」で検索可能に）
+  const toKatakana = (s: string) =>
+    s.replace(/[\u3041-\u3096]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+
+  const filteredGearSuggestions = GEAR_SUGGESTIONS
+    .filter(g => !selectedCategory || g.category_id === selectedCategory)
+    .filter(g => {
+      const q = name.toLowerCase();
+      if (q.length < 1) return false;
+      const searchTarget = g.search.toLowerCase();
+      // ひらがな入力もカタカナに変換してマッチ
+      return searchTarget.includes(q) || searchTarget.includes(toKatakana(q));
+    })
+    .slice(0, 6);
+
+  const handleGearSuggestionSelect = (g: typeof GEAR_SUGGESTIONS[number]) => {
+    setName(g.name);
+    setBrand(g.brand);
+    setBrandInput(g.brand);
+    setWeightValue(String(g.weight_g));
+    setWeightUnit("g");
+    setShowGearSuggestions(false);
+  };
 
   const handleBrandSelect = (b: string) => {
     setBrand(b);
@@ -222,13 +248,33 @@ export default function GearNewPage() {
         <div className="rounded-xl border border-border bg-card p-5 space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">基本情報</p>
 
-          <div>
+          <div className="relative">
             <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
               装備名 <span className="text-red-500">*</span>
             </label>
-            <input type="text" required value={name} onChange={(e) => setName(e.target.value)}
-              placeholder="例：モンベル レインダンサー ジャケット"
+            <input type="text" required value={name}
+              onChange={(e) => { setName(e.target.value); setShowGearSuggestions(true); }}
+              onFocus={() => setShowGearSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowGearSuggestions(false), 150)}
+              autoComplete="off"
+              placeholder="例：ストームクルーザー、ダウンハガー..."
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+            {showGearSuggestions && filteredGearSuggestions.length > 0 && (
+              <ul className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-white shadow-lg overflow-hidden">
+                {filteredGearSuggestions.map((g) => (
+                  <li key={`${g.category_id}-${g.name}`}>
+                    <button
+                      type="button"
+                      onPointerDown={(e) => { e.preventDefault(); handleGearSuggestionSelect(g); }}
+                      className="w-full px-3.5 py-3 text-left hover:bg-accent transition-colors"
+                    >
+                      <span className="text-sm font-medium text-foreground">{g.name}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">{g.brand} · {g.weight_g}g</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* ブランド（サジェスト付き） */}
