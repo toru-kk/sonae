@@ -74,18 +74,18 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "スーパーライトツェルト 2", brand: "ARAI TENT", category_id: "shelter", weight_g: 280, search: "スーパーライトツェルト アライテント ツェルト UL 超軽量 緊急 ビバーク 2人用" },
   // MSR追加
   { name: "Access 2", brand: "MSR", category_id: "shelter", weight_g: 1700, search: "アクセス access MSR テント 2人用 冬山 4シーズン アルパイン" },
-  { name: "Remote 2", brand: "MSR", category_id: "shelter", weight_g: 2200, search: "リモート remote MSR テント 2人用 厳冬期 4シーズン 山岳" },
+  { name: "Remote 2", brand: "MSR", category_id: "shelter", weight_g: 2720, search: "リモート remote MSR テント 2人用 厳冬期 4シーズン 山岳" },
   // NEMO追加
   { name: "Aurora 2P", brand: "NEMO", category_id: "shelter", weight_g: 2100, search: "オーロラ aurora ニーモ NEMO テント 2人用 4シーズン 冬山" },
   // Snow Peak
-  { name: "ランドブリーズ Pro.2", brand: "Snow Peak", category_id: "shelter", weight_g: 2100, search: "ランドブリーズ landbrieze プロ スノーピーク テント 2人用 山岳" },
-  { name: "ファル Pro.air 2", brand: "Snow Peak", category_id: "shelter", weight_g: 890, search: "ファル pro air スノーピーク テント UL 軽量 2人用" },
+  { name: "ランドブリーズ Pro.2", brand: "Snow Peak", category_id: "shelter", weight_g: 3800, search: "ランドブリーズ landbrieze プロ スノーピーク テント 2人用 山岳" },
+  { name: "ファル Pro.air 2", brand: "Snow Peak", category_id: "shelter", weight_g: 1230, search: "ファル pro air スノーピーク テント UL 軽量 2人用" },
   // CAPTAIN STAG
   { name: "キャプテンスタッグ ツーリングテント UV", brand: "CAPTAIN STAG", category_id: "shelter", weight_g: 2000, search: "キャプテンスタッグ captain stag テント ツーリング UVカット" },
   { name: "スカイラインメッシュテント", brand: "CAPTAIN STAG", category_id: "shelter", weight_g: 1800, search: "キャプテンスタッグ captain stag スカイライン メッシュ テント" },
   // Coleman
   { name: "ツーリングドームST", brand: "Coleman", category_id: "shelter", weight_g: 2750, search: "ツーリングドーム touring dome コールマン coleman テント ソロ ツーリング" },
-  { name: "タフスクリーン2ルームハウス", brand: "Coleman", category_id: "shelter", weight_g: 9000, search: "タフスクリーン 2ルーム コールマン coleman テント ファミリー キャンプ" },
+  { name: "タフスクリーン2ルームハウス", brand: "Coleman", category_id: "shelter", weight_g: 16000, search: "タフスクリーン 2ルーム コールマン coleman テント ファミリー キャンプ" },
   // DOD
   { name: "ライダーズワンタッチテント", brand: "DOD", category_id: "shelter", weight_g: 2400, search: "ライダーズ ワンタッチ ドッペルギャンガー DOD テント ソロ ツーリング" },
   { name: "ショウネンテント", brand: "DOD", category_id: "shelter", weight_g: 1900, search: "少年テント ショウネン ドッペルギャンガー DOD テント ソロ 軽量" },
@@ -175,8 +175,8 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "スパイラルダウンハガー800 #1", brand: "mont-bell", category_id: "sleeping", weight_g: 848, search: "スパイラルダウンハガー spiral downhugger モンベル シュラフ 冬用" },
   // SEA TO SUMMIT シュラフ
   { name: "Spark SpIV", brand: "Sea to Summit", category_id: "sleeping", weight_g: 310, search: "スパーク spark シートゥサミット シュラフ 寝袋 UL 夏 軽量" },
-  { name: "Spark SpII", brand: "Sea to Summit", category_id: "sleeping", weight_g: 495, search: "スパーク spark シートゥサミット シュラフ 寝袋 UL 3シーズン" },
-  { name: "Spark SpI", brand: "Sea to Summit", category_id: "sleeping", weight_g: 600, search: "スパーク spark シートゥサミット シュラフ 寝袋 UL 冬" },
+  { name: "Spark SpII", brand: "Sea to Summit", category_id: "sleeping", weight_g: 620, search: "スパーク spark シートゥサミット シュラフ 寝袋 UL 3シーズン" },
+  { name: "Spark SpI", brand: "Sea to Summit", category_id: "sleeping", weight_g: 850, search: "スパーク spark シートゥサミット シュラフ 寝袋 UL 冬" },
   // Western Mountaineering
   { name: "UltraLite 20°F", brand: "Western Mountaineering", category_id: "sleeping", weight_g: 737, search: "ウエスタンマウンテニアリング ultralite ウルトラライト シュラフ ダウン UL" },
   { name: "Versalite 10°F", brand: "Western Mountaineering", category_id: "sleeping", weight_g: 900, search: "ウエスタンマウンテニアリング versalite バーサライト シュラフ ダウン 冬" },
@@ -250,7 +250,7 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   // 衣類 (clothing)
   // ═══════════════════════════════════════════
   { name: "ストームクルーザー ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 254, search: "ストームクルーザー stormcruiser モンベル レインウェア ゴアテックス" },
-  { name: "ストームクルーザー パンツ", brand: "mont-bell", category_id: "clothing", weight_g: 195, search: "ストームクルーザー stormcruiser モンベル レインパンツ ゴアテックス" },
+  { name: "ストームクルーザー パンツ", brand: "mont-bell", category_id: "clothing", weight_g: 255, search: "ストームクルーザー stormcruiser モンベル レインパンツ ゴアテックス" },
   { name: "トレントフライヤー ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 198, search: "トレントフライヤー torrentflyer モンベル レインウェア 軽量" },
   { name: "クライムベリーライト ジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 200, search: "クライムベリーライト climbverylight ノースフェイス レインウェア ゴアテックス" },
   { name: "クラウドジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 310, search: "クラウドジャケット cloud ノースフェイス レインウェア" },
@@ -270,7 +270,7 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "レインダンサー ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 285, search: "レインダンサー raindancer モンベル レインウェア ゴアテックス" },
   { name: "レインダンサー パンツ", brand: "mont-bell", category_id: "clothing", weight_g: 215, search: "レインダンサー raindancer モンベル レインパンツ ゴアテックス" },
   { name: "ピークシェル ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 128, search: "ピークシェル peakshell モンベル レインウェア UL 軽量" },
-  { name: "バーサライトジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 114, search: "バーサライト versalite モンベル レインウェア UL 超軽量" },
+  { name: "バーサライトジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 200, search: "バーサライト versalite モンベル レインウェア UL 超軽量" },
   { name: "ウインドブラスト パーカ", brand: "mont-bell", category_id: "clothing", weight_g: 110, search: "ウインドブラスト windblast モンベル ウインドシェル" },
   { name: "EXライト ウインドジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 52, search: "EXライト ウインド モンベル ウインドシェル UL 超軽量" },
   { name: "クリマプラス100 ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 290, search: "クリマプラス100 climaplus モンベル フリース 中間着" },
@@ -372,8 +372,8 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "クリマプラス200 ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 370, search: "クリマプラス200 climaplus モンベル フリース 中厚手 保温" },
   { name: "シャミース ジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 215, search: "シャミース chameece モンベル フリース 薄手 軽量" },
   { name: "バーサマイクロジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 225, search: "バーサマイクロ versamicro ノースフェイス フリース 軽量 中間着" },
-  { name: "デナリジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 540, search: "デナリ denali ノースフェイス フリース 厚手 保温" },
-  { name: "ベターセーター ジャケット", brand: "patagonia", category_id: "clothing", weight_g: 430, search: "ベターセーター bettersweater パタゴニア フリース ニット調" },
+  { name: "デナリジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 880, search: "デナリ denali ノースフェイス フリース 厚手 保温" },
+  { name: "ベターセーター ジャケット", brand: "patagonia", category_id: "clothing", weight_g: 680, search: "ベターセーター bettersweater パタゴニア フリース ニット調" },
   { name: "R1 デイリー ジャケット", brand: "patagonia", category_id: "clothing", weight_g: 315, search: "R1 デイリー パタゴニア フリース グリッド 行動着" },
   { name: "Kyanite AR Jacket", brand: "Arc'teryx", category_id: "clothing", weight_g: 345, search: "カイヤナイト kyanite AR アークテリクス フリース ストレッチ" },
   { name: "Aconcagua ML Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 340, search: "アコンカグア aconcagua マムート フリース 中間着 保温" },
@@ -441,13 +441,89 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "ドライナミックメッシュ 3/4 スリーブ", brand: "Millet", category_id: "clothing", weight_g: 60, search: "ドライナミック drynamic ミレー メッシュ アンダーウェア 七分袖 汗冷え防止" },
   { name: "ジオライン クールメッシュ ラウンドネックシャツ", brand: "mont-bell", category_id: "clothing", weight_g: 55, search: "ジオライン クールメッシュ coolmesh モンベル アンダーウェア 夏 通気性" },
   { name: "スキンメッシュ ロングスリーブ", brand: "mont-bell", category_id: "clothing", weight_g: 60, search: "スキンメッシュ skinmesh モンベル アンダーウェア メッシュ 汗冷え防止" },
+  // mont-bell 追加
+  { name: "ウイックロン ZEO ロングスリーブT", brand: "mont-bell", category_id: "clothing", weight_g: 155, search: "ウイックロン ゼオ wickron ZEO モンベル 速乾 長袖 行動着 ストレッチ" },
+  { name: "ライトシェルジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 295, search: "ライトシェル lightshell モンベル ソフトシェル 防風 ストレッチ 行動着" },
+  { name: "ライトシェルパーカ", brand: "mont-bell", category_id: "clothing", weight_g: 320, search: "ライトシェルパーカ lightshell parka モンベル ソフトシェル 防風 フード" },
+  { name: "トレールアクションジャケット", brand: "mont-bell", category_id: "clothing", weight_g: 340, search: "トレールアクション trailaction モンベル フリース ストレッチ 行動着 保温" },
+  { name: "U.L.ダウンインナージャケット", brand: "mont-bell", category_id: "clothing", weight_g: 110, search: "ULダウンインナー UL down inner モンベル ダウン 超軽量 中間着 コンパクト" },
+  { name: "スペリオダウン パーカ", brand: "mont-bell", category_id: "clothing", weight_g: 230, search: "スペリオダウン パーカ superior down parka モンベル ダウン フード 中間着" },
+  { name: "ストレッチ O.D.パンツ", brand: "mont-bell", category_id: "clothing", weight_g: 310, search: "ストレッチOD stretch OD モンベル パンツ トレッキング ストレッチ" },
+  { name: "リッジラインパンツ Women's", brand: "mont-bell", category_id: "clothing", weight_g: 315, search: "リッジライン ridgeline ウィメンズ モンベル パンツ レディース トレッキング" },
+  { name: "マルチフォールディングタオル", brand: "mont-bell", category_id: "clothing", weight_g: 30, search: "マルチフォールディングタオル multi folding towel モンベル タオル 速乾 軽量" },
+  // THE NORTH FACE 追加
+  { name: "マウンテンライトジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 381, search: "マウンテンライト mountainlight ノースフェイス ゴアテックス シェル 定番" },
+  { name: "オールマウンテンジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 310, search: "オールマウンテン allmountain ノースフェイス ゴアテックス ハードシェル 軽量" },
+  { name: "バーブパンツ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 330, search: "バーブパンツ verb pants ノースフェイス パンツ トレッキング ストレッチ 定番" },
+  { name: "ドットショットジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 375, search: "ドットショット dotshot ノースフェイス レインウェア ハイベント 防水 定番" },
+  { name: "コンパクトジャケット", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 240, search: "コンパクトジャケット compact ノースフェイス レインウェア 軽量 パッカブル" },
+  { name: "エクスプローラーパーセルコート", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 450, search: "エクスプローラーパーセル explorer parcel coat ノースフェイス コート ゴアテックス 防水" },
+  { name: "フレキシブルアンクルパンツ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 285, search: "フレキシブルアンクル flexible ankle ノースフェイス パンツ ストレッチ 9分丈 行動着" },
+  // Arc'teryx 追加
+  { name: "Covert Cardigan", brand: "Arc'teryx", category_id: "clothing", weight_g: 365, search: "コバート covert カーディガン アークテリクス フリース ニット調 中間着" },
+  { name: "Kyanite AR Hoody", brand: "Arc'teryx", category_id: "clothing", weight_g: 380, search: "カイヤナイト kyanite AR フーディ アークテリクス フリース ストレッチ フード" },
+  { name: "Gamma AR Pant", brand: "Arc'teryx", category_id: "clothing", weight_g: 435, search: "ガンマ gamma AR パンツ アークテリクス ソフトシェル 厚手 防風 冬" },
+  { name: "Konseal Pant", brand: "Arc'teryx", category_id: "clothing", weight_g: 310, search: "コンシール konseal パンツ アークテリクス クライミング ストレッチ 軽量" },
+  // MAMMUT 追加
+  { name: "Nordwand Advanced HS Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 490, search: "ノルドワンド nordwand アドバンスド マムート ハードシェル ゴアテックス アルパイン" },
+  { name: "Ayako Pro HS Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 395, search: "アヤコ ayako プロ マムート ハードシェル ゴアテックス レインウェア" },
+  { name: "Rime Light IN Flex Hooded Jacket", brand: "MAMMUT", category_id: "clothing", weight_g: 340, search: "ライム rime ライト フレックス マムート 化繊 インサレーション 軽量 行動着" },
+  { name: "Eisfeld Light SO Pants", brand: "MAMMUT", category_id: "clothing", weight_g: 380, search: "アイスフェルド eisfeld ライト マムート ソフトシェル パンツ アルパイン 冬" },
+  // patagonia 追加
+  { name: "ナノエア フーディ", brand: "patagonia", category_id: "clothing", weight_g: 312, search: "ナノエア nanoair パタゴニア 化繊 インサレーション 行動着 通気性 フーディ" },
+  { name: "フーディニ エア ジャケット", brand: "patagonia", category_id: "clothing", weight_g: 130, search: "フーディニ エア houdini air パタゴニア ウインドシェル 通気性 ランニング" },
+  { name: "ベターセーター ジャケット Women's", brand: "patagonia", category_id: "clothing", weight_g: 395, search: "ベターセーター bettersweater ウィメンズ パタゴニア フリース ニット調 レディース" },
+  { name: "アルトヴィア トレイルパンツ", brand: "patagonia", category_id: "clothing", weight_g: 280, search: "アルトヴィア altvia トレイル パタゴニア パンツ トレッキング ストレッチ 軽量" },
+  // Rab 追加
+  { name: "Kinetic Alpine 2.0 Jacket", brand: "Rab", category_id: "clothing", weight_g: 350, search: "キネティック kinetic アルパイン ラブ Rab プロフレックス 防水 ストレッチ" },
+  { name: "Xenair Alpine Jacket", brand: "Rab", category_id: "clothing", weight_g: 370, search: "ゼンエアー xenair アルパイン ラブ Rab 化繊 インサレーション 行動着 通気性" },
+  { name: "Phantom Pull-On", brand: "Rab", category_id: "clothing", weight_g: 310, search: "ファントム phantom プルオン ラブ Rab ダウン プルオーバー 超軽量 保温" },
+  { name: "Torque Pants", brand: "Rab", category_id: "clothing", weight_g: 395, search: "トルク torque パンツ ラブ Rab ソフトシェル ストレッチ クライミング" },
+  // HOUDINI
+  { name: "Power Houdi", brand: "HOUDINI", category_id: "clothing", weight_g: 340, search: "パワーフーディ power houdi フーディニ ポーラテック フリース 行動着 保温" },
+  { name: "Pace Wind Jacket", brand: "HOUDINI", category_id: "clothing", weight_g: 85, search: "ペースウインド pace wind フーディニ ウインドシェル UL 超軽量 パッカブル" },
+  { name: "MTM Thrill Twill Pants", brand: "HOUDINI", category_id: "clothing", weight_g: 295, search: "MTM スリルツイル thrill twill フーディニ パンツ ストレッチ サステナブル" },
+  // Teton Bros
+  { name: "Breath Jacket", brand: "Teton Bros", category_id: "clothing", weight_g: 270, search: "ブレスジャケット breath ティートンブロス レインウェア 防水 透湿 ポーラテック" },
+  { name: "Tsurugi Jacket", brand: "Teton Bros", category_id: "clothing", weight_g: 340, search: "ツルギジャケット tsurugi ティートンブロス ハードシェル 防水 アルパイン" },
+  { name: "Crag Pant", brand: "Teton Bros", category_id: "clothing", weight_g: 285, search: "クラッグパンツ crag pant ティートンブロス パンツ クライミング ストレッチ" },
+  { name: "Wind River Hoody", brand: "Teton Bros", category_id: "clothing", weight_g: 195, search: "ウインドリバーフーディ wind river hoody ティートンブロス ウインドシェル 行動着 通気性" },
+  // finetrack 追加
+  { name: "ストームゴージュ アルパインパンツ", brand: "finetrack", category_id: "clothing", weight_g: 220, search: "ストームゴージュ stormgorge アルパイン ファイントラック レインパンツ 防水 軽量" },
+  { name: "ポリゴン2ULジャケット", brand: "finetrack", category_id: "clothing", weight_g: 140, search: "ポリゴン2UL polygon2UL ファイントラック 化繊 インサレーション UL 超軽量 コンパクト" },
+  { name: "フロウラップ フーディ", brand: "finetrack", category_id: "clothing", weight_g: 220, search: "フロウラップ flowwrap ファイントラック ソフトシェル 行動着 通気性 防風" },
+  // AXESQUIN (アクシーズクイン)
+  { name: "ヨヒヤミ", brand: "AXESQUIN", category_id: "clothing", weight_g: 185, search: "ヨヒヤミ yohiyami アクシーズクイン ウインドシェル 和 UL 軽量 凌 しのぎ" },
+  { name: "アメノヒ 2.5", brand: "AXESQUIN", category_id: "clothing", weight_g: 220, search: "アメノヒ amenohi 2.5 アクシーズクイン レインウェア 防水 和 凌" },
+  { name: "クナイ", brand: "AXESQUIN", category_id: "clothing", weight_g: 160, search: "クナイ kunai アクシーズクイン パンツ 行動着 和 凌 ストレッチ" },
+  { name: "ウキグモ", brand: "AXESQUIN", category_id: "clothing", weight_g: 95, search: "ウキグモ ukigumo アクシーズクイン 化繊 インサレーション UL 超軽量 凌" },
+  // 山と道
+  { name: "UL Shirt", brand: "山と道", category_id: "clothing", weight_g: 110, search: "ULシャツ UL shirt 山と道 yamatomichi メリノ 行動着 UL 軽量" },
+  { name: "5-Pocket Shorts", brand: "山と道", category_id: "clothing", weight_g: 175, search: "5ポケットショーツ 5-pocket shorts 山と道 yamatomichi ハイキング UL ショートパンツ" },
+  { name: "Light Alpha Vest", brand: "山と道", category_id: "clothing", weight_g: 95, search: "ライトアルファベスト light alpha vest 山と道 yamatomichi 化繊 保温 UL 超軽量" },
+  { name: "Merino Shirt", brand: "山と道", category_id: "clothing", weight_g: 145, search: "メリノシャツ merino shirt 山と道 yamatomichi メリノウール ベースレイヤー 行動着" },
+  // Millet 追加
+  { name: "K シールドフーディー", brand: "Millet", category_id: "clothing", weight_g: 350, search: "K シールドフーディー shield hoodie ミレー ソフトシェル 防風 行動着 フード" },
+  { name: "モンテローザパンツ", brand: "Millet", category_id: "clothing", weight_g: 320, search: "モンテローザ monte rosa ミレー パンツ トレッキング ストレッチ" },
+  // Columbia 追加
+  { name: "セイバーV ジャケット", brand: "Columbia", category_id: "clothing", weight_g: 345, search: "セイバー saber V コロンビア レインウェア オムニテック 防水 トレッキング" },
+  { name: "ヘイゼンジャケット", brand: "Columbia", category_id: "clothing", weight_g: 285, search: "ヘイゼン hazen コロンビア ウインドシェル 撥水 軽量 パッカブル" },
+  // バラクラバ・ネックウォーマー
+  { name: "ジオラインバラクラバ", brand: "mont-bell", category_id: "clothing", weight_g: 32, search: "ジオラインバラクラバ balaclava モンベル 目出し帽 防寒 冬山 雪山" },
+  { name: "マイクロフリースバラクラバ", brand: "THE NORTH FACE", category_id: "clothing", weight_g: 45, search: "マイクロフリースバラクラバ microfleece balaclava ノースフェイス 目出し帽 防寒 冬" },
+  { name: "オリジナル ネックウェア", brand: "BUFF", category_id: "clothing", weight_g: 36, search: "バフ BUFF オリジナル ネックウォーマー ネックゲイター 多機能 UVカット" },
+  // サングラス
+  { name: "Sutro", brand: "Oakley", category_id: "clothing", weight_g: 48, search: "サトロ sutro オークリー Oakley サングラス スポーツ プリズムレンズ UVカット" },
+  { name: "Aerolite", brand: "Julbo", category_id: "clothing", weight_g: 32, search: "エアロライト aerolite ジュルボ Julbo サングラス 軽量 登山 トレイルラン" },
+  { name: "Wildcat", brand: "Smith", category_id: "clothing", weight_g: 49, search: "ワイルドキャット wildcat スミス Smith サングラス クロマポップ スポーツ" },
+  { name: "Airless Wave", brand: "SWANS", category_id: "clothing", weight_g: 18, search: "エアレスウェイブ airless wave スワンズ SWANS サングラス 超軽量 日本製 登山" },
 
   // ═══════════════════════════════════════════
   // 靴・足回り (footwear)
   // ═══════════════════════════════════════════
   { name: "ツオロミーブーツ ワイド", brand: "mont-bell", category_id: "footwear", weight_g: 1060, search: "ツオロミー tuolumne モンベル 登山靴 トレッキング" },
   { name: "タイオガブーツ ワイド", brand: "mont-bell", category_id: "footwear", weight_g: 990, search: "タイオガ tioga モンベル 登山靴 トレッキング" },
-  { name: "Verto S6K Alpine GTX", brand: "THE NORTH FACE", category_id: "footwear", weight_g: 1100, search: "ヴェルト verto ノースフェイス アルパイン 登山靴" },
+  { name: "Verto S6K Alpine GTX", brand: "THE NORTH FACE", category_id: "footwear", weight_g: 1360, search: "ヴェルト verto ノースフェイス アルパイン 登山靴" },
   { name: "X ULTRA 4 GTX", brand: "Salomon", category_id: "footwear", weight_g: 740, search: "X ULTRA サロモン ハイキング ゴアテックス" },
   { name: "Speedcross 6", brand: "Salomon", category_id: "footwear", weight_g: 600, search: "スピードクロス speedcross サロモン トレイルラン" },
   { name: "MOAB 3 MID GTX", brand: "Merrell", category_id: "footwear", weight_g: 880, search: "モアブ moab メレル ハイキング トレッキング ゴアテックス" },
@@ -457,15 +533,15 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "ディスタンスカーボンZ", brand: "Black Diamond", category_id: "footwear", weight_g: 310, search: "ディスタンスカーボン distance carbon ブラックダイヤモンド ポール 軽量" },
   { name: "マウンテンクルーザー600 ワイド", brand: "mont-bell", category_id: "footwear", weight_g: 1160, search: "マウンテンクルーザー600 mountaincruiser モンベル 登山靴 本格" },
   { name: "マウンテンクルーザー400 ワイド", brand: "mont-bell", category_id: "footwear", weight_g: 1020, search: "マウンテンクルーザー400 mountaincruiser モンベル 登山靴" },
-  { name: "アルパインクルーザー 2000", brand: "mont-bell", category_id: "footwear", weight_g: 1410, search: "アルパインクルーザー2000 alpinecruiser モンベル 冬山 アルパイン" },
-  { name: "アルパインクルーザー 2500", brand: "mont-bell", category_id: "footwear", weight_g: 1560, search: "アルパインクルーザー2500 alpinecruiser モンベル 冬山 厳冬期" },
+  { name: "アルパインクルーザー 2000", brand: "mont-bell", category_id: "footwear", weight_g: 1560, search: "アルパインクルーザー2000 alpinecruiser モンベル 冬山 アルパイン" },
+  { name: "アルパインクルーザー 2500", brand: "mont-bell", category_id: "footwear", weight_g: 1740, search: "アルパインクルーザー2500 alpinecruiser モンベル 冬山 厳冬期" },
   { name: "ラップランドブーツ ワイド", brand: "mont-bell", category_id: "footwear", weight_g: 860, search: "ラップランド lappland モンベル 登山靴 軽量 ハイキング" },
   { name: "Vectiv Fastpack Mid FUTURELIGHT", brand: "THE NORTH FACE", category_id: "footwear", weight_g: 680, search: "ベクティブ vectiv ファストパック ノースフェイス ハイキング 軽量" },
   { name: "Creston Mid GTX", brand: "THE NORTH FACE", category_id: "footwear", weight_g: 860, search: "クレストン creston ノースフェイス トレッキング ゴアテックス" },
   { name: "Acrux TR GTX", brand: "Arc'teryx", category_id: "footwear", weight_g: 900, search: "アクルックス acrux TR アークテリクス トレッキング ゴアテックス" },
   { name: "Aerios FL 2 MID GTX", brand: "Arc'teryx", category_id: "footwear", weight_g: 720, search: "エアリオス aerios アークテリクス ハイキング 軽量 ゴアテックス" },
   { name: "Ducan High GTX", brand: "MAMMUT", category_id: "footwear", weight_g: 940, search: "デュカン ducan マムート トレッキング ゴアテックス" },
-  { name: "Kento Advanced High GTX", brand: "MAMMUT", category_id: "footwear", weight_g: 1180, search: "ケント kento マムート アルパイン 登山靴 ゴアテックス" },
+  { name: "Kento Advanced High GTX", brand: "MAMMUT", category_id: "footwear", weight_g: 1300, search: "ケント kento マムート アルパイン 登山靴 ゴアテックス" },
   { name: "X ULTRA PIONEER MID GTX", brand: "Salomon", category_id: "footwear", weight_g: 800, search: "X ULTRA パイオニア pioneer サロモン トレッキング ゴアテックス" },
   { name: "Sense Ride 5", brand: "Salomon", category_id: "footwear", weight_g: 580, search: "センスライド sense ride サロモン トレイルラン" },
   { name: "MOAB 3 GTX", brand: "Merrell", category_id: "footwear", weight_g: 810, search: "モアブ moab メレル ローカット ハイキング ゴアテックス" },
@@ -480,14 +556,14 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
 
   // La Sportiva
   { name: "TX4 GTX", brand: "La Sportiva", category_id: "footwear", weight_g: 760, search: "TX4 ラスポルティバ アプローチシューズ ゴアテックス" },
-  { name: "Trango Tower GTX", brand: "La Sportiva", category_id: "footwear", weight_g: 1100, search: "トランゴタワー trango tower ラスポルティバ 登山靴 アルパイン ゴアテックス" },
+  { name: "Trango Tower GTX", brand: "La Sportiva", category_id: "footwear", weight_g: 1360, search: "トランゴタワー trango tower ラスポルティバ 登山靴 アルパイン ゴアテックス" },
 
   // SCARPA
-  { name: "Zodiac Plus GTX", brand: "SCARPA", category_id: "footwear", weight_g: 1140, search: "ゾディアック zodiac スカルパ 登山靴 アプローチ ゴアテックス" },
+  { name: "Zodiac Plus GTX", brand: "SCARPA", category_id: "footwear", weight_g: 1280, search: "ゾディアック zodiac スカルパ 登山靴 アプローチ ゴアテックス" },
   { name: "Rush TRK GTX", brand: "SCARPA", category_id: "footwear", weight_g: 950, search: "ラッシュ rush スカルパ トレッキング ゴアテックス" },
 
   // LOWA
-  { name: "Tibet GTX", brand: "LOWA", category_id: "footwear", weight_g: 1260, search: "チベット tibet ローバ 登山靴 冬山 ゴアテックス" },
+  { name: "Tibet GTX", brand: "LOWA", category_id: "footwear", weight_g: 1700, search: "チベット tibet ローバ 登山靴 冬山 ゴアテックス" },
   { name: "Renegade GTX Mid", brand: "LOWA", category_id: "footwear", weight_g: 970, search: "レネゲード renegade ローバ ハイキング トレッキング ゴアテックス" },
 
   // inov-8
@@ -496,9 +572,9 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
 
   // ワカン・スノーシュー
   { name: "ワカン", brand: "mont-bell", category_id: "footwear", weight_g: 640, search: "ワカン モンベル 輪かん 雪山 深雪 アルミ" },
-  { name: "MSR EVO Trail", brand: "MSR", category_id: "footwear", weight_g: 1150, search: "イーボトレイル evo trail MSR スノーシュー 雪山 ハイキング" },
-  { name: "MSR Lightning Ascent", brand: "MSR", category_id: "footwear", weight_g: 1070, search: "ライトニングアセント lightning ascent MSR スノーシュー 急斜面 アルパイン" },
-  { name: "FLEX NXT", brand: "TUBBS", category_id: "footwear", weight_g: 1030, search: "フレックス flex タブス TUBBS スノーシュー" },
+  { name: "MSR EVO Trail", brand: "MSR", category_id: "footwear", weight_g: 1770, search: "イーボトレイル evo trail MSR スノーシュー 雪山 ハイキング" },
+  { name: "MSR Lightning Ascent", brand: "MSR", category_id: "footwear", weight_g: 1810, search: "ライトニングアセント lightning ascent MSR スノーシュー 急斜面 アルパイン" },
+  { name: "FLEX NXT", brand: "TUBBS", category_id: "footwear", weight_g: 1860, search: "フレックス flex タブス TUBBS スノーシュー" },
 
   // サンダル
   { name: "UNEEK", brand: "KEEN", category_id: "footwear", weight_g: 420, search: "ユニーク uneek キーン サンダル アウトドア" },
@@ -612,11 +688,11 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "Anasazi VCS", brand: "Five Ten", category_id: "footwear", weight_g: 460, search: "アナサジ anasazi VCS ファイブテン クライミングシューズ ベルクロ ステルスラバー" },
 
   // スキーブーツ / バックカントリー
-  { name: "Maestrale RS", brand: "SCARPA", category_id: "footwear", weight_g: 1430, search: "マエストラーレ maestrale RS スカルパ スキーブーツ バックカントリー AT テレマーク" },
-  { name: "TLT X", brand: "Dynafit", category_id: "footwear", weight_g: 1050, search: "TLT X ディナフィット スキーブーツ バックカントリー AT 軽量 スキーモ" },
+  { name: "Maestrale RS", brand: "SCARPA", category_id: "footwear", weight_g: 2580, search: "マエストラーレ maestrale RS スカルパ スキーブーツ バックカントリー AT テレマーク" },
+  { name: "TLT X", brand: "Dynafit", category_id: "footwear", weight_g: 2100, search: "TLT X ディナフィット スキーブーツ バックカントリー AT 軽量 スキーモ" },
 
   // クランポン用ブーツ追加
-  { name: "Crow GTX", brand: "Salewa", category_id: "footwear", weight_g: 1300, search: "クロウ crow サレワ salewa 登山靴 アルパイン ゴアテックス アイゼン対応 冬山" },
+  { name: "Crow GTX", brand: "Salewa", category_id: "footwear", weight_g: 1400, search: "クロウ crow サレワ salewa 登山靴 アルパイン ゴアテックス アイゼン対応 冬山" },
 
   // 地下足袋
   { name: "プロガードスパイク", brand: "丸五", category_id: "footwear", weight_g: 480, search: "プロガード スパイク 丸五 地下足袋 林業 沢 岩場 スパイク付き" },
@@ -825,10 +901,10 @@ export const GEAR_SUGGESTIONS: GearSuggestion[] = [
   { name: "Wall Rider", brand: "MAMMUT", category_id: "safety", weight_g: 240, search: "ウォールライダー wall rider マムート MAMMUT ヘルメット 軽量 MIPS" },
   { name: "Storm", brand: "Camp", category_id: "safety", weight_g: 230, search: "ストーム storm カンプ camp ヘルメット 軽量 アルパイン クライミング" },
   // アイゼン
-  { name: "スノースパイク 10", brand: "mont-bell", category_id: "safety", weight_g: 850, search: "スノースパイク snowspike 10本爪 モンベル アイゼン クランポン 冬山 雪山" },
-  { name: "G12", brand: "Grivel", category_id: "safety", weight_g: 930, search: "G12 グリベル grivel アイゼン クランポン 12本爪 冬山 アルパイン" },
-  { name: "IRVIS", brand: "PETZL", category_id: "safety", weight_g: 770, search: "イルビス irvis ペツル petzl アイゼン クランポン 10本爪 冬山 軽量" },
-  { name: "セラック クリップ", brand: "Black Diamond", category_id: "safety", weight_g: 920, search: "セラック serac クリップ ブラックダイヤモンド アイゼン クランポン 12本爪 冬山" },
+  { name: "スノースパイク 10", brand: "mont-bell", category_id: "safety", weight_g: 425, search: "スノースパイク snowspike 10本爪 モンベル アイゼン クランポン 冬山 雪山" },
+  { name: "G12", brand: "Grivel", category_id: "safety", weight_g: 465, search: "G12 グリベル grivel アイゼン クランポン 12本爪 冬山 アルパイン" },
+  { name: "IRVIS", brand: "PETZL", category_id: "safety", weight_g: 385, search: "イルビス irvis ペツル petzl アイゼン クランポン 10本爪 冬山 軽量" },
+  { name: "セラック クリップ", brand: "Black Diamond", category_id: "safety", weight_g: 460, search: "セラック serac クリップ ブラックダイヤモンド アイゼン クランポン 12本爪 冬山" },
   // ピッケル追加
   { name: "アルパインアックス", brand: "mont-bell", category_id: "safety", weight_g: 430, search: "アルパインアックス alpine axe モンベル ピッケル 冬山 縦走 雪山" },
   { name: "サミットエボ", brand: "PETZL", category_id: "safety", weight_g: 340, search: "サミットエボ summit evo ペツル petzl ピッケル アイスアックス 冬山 軽量 アルパイン" },
