@@ -3,7 +3,7 @@
 // Force Vercel rebuild - clear cache
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart, Trophy } from "lucide-react";
+import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart, Trophy, Backpack } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
@@ -46,7 +46,7 @@ function Avatar({ name, avatarUrl, size = "sm" }: { name: string; avatarUrl?: st
   );
 }
 
-type SortKey = "new" | "light" | "popular" | "follow" | "users";
+type SortKey = "new" | "light" | "popular" | "follow" | "users" | "gear";
 
 const EXPERIENCE_LABEL: Record<string, string> = {
   under1: "1年未満", "1to3": "1〜3年", "3to10": "3〜10年", over10: "10年以上",
@@ -87,6 +87,14 @@ export default function ExplorePage() {
   const [feedLoading, setFeedLoading] = useState(false);
   const [feedFetched, setFeedFetched] = useState(false);
   const [feedLoadingMore, setFeedLoadingMore] = useState(false);
+
+  // 装備で探す用の状態
+  const [gearQuery, setGearQuery] = useState("");
+  const [gearPackages, setGearPackages] = useState<PublicPackage[]>([]);
+  const [gearSearchLoading, setGearSearchLoading] = useState(false);
+  const [gearSearched, setGearSearched] = useState(false);
+  const [gearPage, setGearPage] = useState(0);
+  const [gearHasMore, setGearHasMore] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -153,6 +161,28 @@ export default function ExplorePage() {
       setFeedPage(nextPage);
     } catch { /* ignore */ }
     setFeedLoadingMore(false);
+  };
+
+  // 装備で検索
+  const searchByGear = async (q?: string, p = 0) => {
+    const searchText = q ?? gearQuery;
+    if (!searchText.trim()) return;
+    if (p === 0) setGearSearchLoading(true);
+    const params = new URLSearchParams({ q: searchText.trim(), page: String(p) });
+    if (selectedType) params.set("mountain_type", selectedType);
+    try {
+      const res = await fetch(`/api/gear-search?${params}`);
+      const data = await res.json();
+      if (p === 0) {
+        setGearPackages(data.packages ?? []);
+      } else {
+        setGearPackages((prev) => [...prev, ...(data.packages ?? [])]);
+      }
+      setGearHasMore(data.hasMore ?? false);
+      setGearPage(p);
+      setGearSearched(true);
+    } catch { /* ignore */ }
+    setGearSearchLoading(false);
   };
 
   // ユーザータブ選択時にユーザー詳細を取得
@@ -267,6 +297,7 @@ export default function ExplorePage() {
     { key: "popular", label: "人気順", icon: <Heart className="h-3.5 w-3.5" /> },
     { key: "follow", label: "フォロー中", loginRequired: true },
     { key: "users", label: "ユーザー", icon: <Users className="h-3.5 w-3.5" /> },
+    { key: "gear", label: "装備で探す", icon: <Backpack className="h-3.5 w-3.5" /> },
   ];
 
   return (
@@ -330,17 +361,44 @@ export default function ExplorePage() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative flex-1 min-w-[160px] max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={sort === "users" ? "ユーザー名・エリアで検索" : "パッケージ名・ユーザーで検索"}
-                className="w-full rounded-lg border border-border bg-card pl-8 pr-3 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              {query && (
-                <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  <X className="h-3.5 w-3.5" />
-                </button>
+              {sort === "gear" ? (
+                <>
+                  <input
+                    type="text"
+                    value={gearQuery}
+                    onChange={(e) => setGearQuery(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") searchByGear(); }}
+                    placeholder="装備名・ブランドで検索（Enter）"
+                    className="w-full rounded-lg border border-border bg-card pl-8 pr-16 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  {gearQuery && (
+                    <button onClick={() => { setGearQuery(""); setGearPackages([]); setGearSearched(false); }} className="absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => searchByGear()}
+                    disabled={!gearQuery.trim() || gearSearchLoading}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-colors"
+                  >
+                    検索
+                  </button>
+                </>
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder={sort === "users" ? "ユーザー名・エリアで検索" : "パッケージ名・ユーザーで検索"}
+                    className="w-full rounded-lg border border-border bg-card pl-8 pr-3 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  {query && (
+                    <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </>
               )}
             </div>
             {sort !== "users" && (
@@ -391,6 +449,106 @@ export default function ExplorePage() {
           </div>
           <span className="text-xs font-medium text-amber-600 group-hover:underline">見る →</span>
         </Link>
+
+        {/* 装備で探す */}
+        {sort === "gear" && (
+          <>
+            {!gearSearched && !gearSearchLoading && (
+              <div className="rounded-xl border border-dashed border-border py-24 text-center">
+                <Backpack className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
+                <p className="text-sm font-semibold text-foreground mb-1">装備名やブランドで検索</p>
+                <p className="text-xs text-muted-foreground">例：「ダウンハガー」「ストームクルーザー」「mont-bell」</p>
+              </div>
+            )}
+            {gearSearchLoading && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="h-48 rounded-xl border border-border bg-card animate-pulse" />
+                ))}
+              </div>
+            )}
+            {gearSearched && !gearSearchLoading && gearPackages.length === 0 && (
+              <div className="rounded-xl border border-dashed border-border py-24 text-center">
+                <Search className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
+                <p className="text-sm font-semibold text-foreground mb-1">「{gearQuery}」を含むパッケージが見つかりません</p>
+                <p className="text-xs text-muted-foreground">別の装備名やブランド名で試してみてください</p>
+              </div>
+            )}
+            {gearSearched && !gearSearchLoading && gearPackages.length > 0 && (
+              <>
+                <p className="text-xs text-muted-foreground mb-4">「{gearQuery}」を含むパッケージ {gearPackages.length} 件{gearHasMore ? "+" : ""}</p>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {gearPackages.map((pkg) => {
+                    const w = pkg.total_weight_g ?? 0;
+                    const itemCount = pkg.gear_package_items?.[0]?.count ?? 0;
+                    const creator = pkg.users;
+                    const creatorName = creator?.display_name ?? "匿名ユーザー";
+                    return (
+                      <div key={pkg.id} onClick={() => router.push(`/packages/${pkg.id}/public`)}
+                        className="group flex flex-col rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden cursor-pointer">
+                        <div className="flex-1 p-4 pb-3">
+                          <Link
+                            href={`/u/${pkg.user_id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1.5 mb-3 hover:opacity-80 transition-opacity w-fit"
+                          >
+                            <Avatar name={creatorName} avatarUrl={creator?.avatar_url} size="sm" />
+                            <span className="text-xs text-muted-foreground truncate">{creatorName}</span>
+                          </Link>
+                          <div className="flex items-start justify-between gap-3 mb-2">
+                            <h2 className="text-sm font-bold text-foreground leading-snug line-clamp-2 flex-1">{pkg.name}</h2>
+                          </div>
+                          {pkg.description && (
+                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">{pkg.description}</p>
+                          )}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {pkg.mountain_type && (
+                              <span className="rounded-full border border-border bg-accent/50 px-2 py-0.5 text-[10px] font-medium text-primary">
+                                {pkg.mountain_type}
+                              </span>
+                            )}
+                            {w > 0 && <ULScore weightG={w} />}
+                          </div>
+                        </div>
+                        <div className="border-t border-border px-4 py-3 bg-secondary/20">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-bold text-foreground tabular-nums">
+                                {w > 0 ? formatWeight(w) : "—"}
+                              </span>
+                              {itemCount > 0 && (
+                                <span className="text-xs text-muted-foreground">{itemCount} 点</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <LikeButton packageId={pkg.id} initialLikeCount={pkg.like_count} compact />
+                              <CopyPackageButton packageId={pkg.id} creatorId={pkg.user_id} compact />
+                            </div>
+                          </div>
+                          {w > 0 && (
+                            <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
+                              <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (w / 12000) * 100)}%` }} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {gearHasMore && (
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={() => searchByGear(undefined, gearPage + 1)}
+                      className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                    >
+                      もっと見る
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
 
         {/* ユーザー一覧 */}
         {sort === "users" && (
@@ -456,7 +614,7 @@ export default function ExplorePage() {
           </>
         )}
 
-        {sort !== "users" && (sort === "follow" ? feedLoading : loading) && (
+        {sort !== "users" && sort !== "gear" && (sort === "follow" ? feedLoading : loading) && (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="h-48 rounded-xl border border-border bg-card animate-pulse" />
@@ -464,7 +622,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {sort !== "users" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && (
+        {sort !== "users" && sort !== "gear" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-24 text-center">
             <Compass className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
             {sort === "follow" ? (
@@ -492,7 +650,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {sort !== "users" && !(sort === "follow" ? feedLoading : loading) && packages.length > 0 && (
+        {sort !== "users" && sort !== "gear" && !(sort === "follow" ? feedLoading : loading) && packages.length > 0 && (
           <>
             <p className="text-xs text-muted-foreground mb-4">{packages.length} 件</p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

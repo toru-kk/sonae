@@ -34,7 +34,7 @@ const VARIANTS: Record<
     gradient: "bg-gradient-to-br from-[#03080d] via-[#071d13] to-[#185535]",
     radial:
       "bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(20,75,44,0.4),transparent)]",
-    patternId: "ridge",
+    patternId: "hexagon",
   },
   plans: {
     gradient: "bg-gradient-to-r from-[#03080d] via-[#201a08] to-[#352a10]",
@@ -108,15 +108,17 @@ function SvgPattern({ id }: { id: string }) {
           <rect width="100%" height="100%" fill="url(#p-neural)" />
         </svg>
       );
-    case "ridge":
+    case "hexagon":
       return (
-        <svg className="absolute inset-0 h-full w-full opacity-[0.10]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 400 100">
-          {/* 奥の山並み — なだらかで大きな稜線 */}
-          <path d="M0 82 Q30 75 60 68 Q80 62 100 55 Q120 48 140 44 Q160 48 180 54 Q200 50 220 45 Q240 50 260 56 Q280 52 300 48 Q320 52 340 58 Q360 62 380 66 Q395 70 400 72 L400 100 L0 100Z" fill="white" fillOpacity="0.25" />
-          {/* 中景の稜線 */}
-          <path d="M0 88 Q40 82 70 76 Q100 70 130 65 Q150 68 170 72 Q190 66 210 62 Q230 65 250 70 Q270 66 290 62 Q310 66 340 72 Q370 76 400 78 L400 100 L0 100Z" fill="white" fillOpacity="0.15" />
-          {/* 手前の丘 */}
-          <path d="M0 94 Q50 90 100 87 Q150 84 200 82 Q250 84 300 87 Q350 89 400 86 L400 100 L0 100Z" fill="white" fillOpacity="0.08" />
+        <svg className="absolute inset-0 h-full w-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="p-hex" x="0" y="0" width="56" height="48.5" patternUnits="userSpaceOnUse">
+              <path d="M28 0 L56 14 L56 38 L28 48.5 L0 38 L0 14Z" fill="none" stroke="white" strokeWidth="0.5" />
+              <path d="M28 48.5 L56 62.5 L56 86.5" fill="none" stroke="white" strokeWidth="0.5" />
+              <path d="M28 48.5 L0 62.5 L0 86.5" fill="none" stroke="white" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#p-hex)" />
         </svg>
       );
     case "stars":
