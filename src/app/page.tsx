@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle, Sparkles, Layers, Backpack, ChevronRight, Thermometer, BatteryLow, ClipboardList, Scale, MapPin, Archive } from "lucide-react";
+import { CheckCircle, Sparkles, Layers, Backpack, ChevronRight, Thermometer, BatteryLow, ClipboardList, Scale, MapPin, Archive, Tent, Shirt, Apple } from "lucide-react";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { HeroCTA } from "@/components/HeroCTA";
 import { StatsBar } from "@/components/StatsBar";
@@ -228,52 +228,109 @@ export default function Home() {
                         </div>
                         <span className="text-xs font-bold text-white/90 truncate max-w-[120px]">北アルプス縦走セット</span>
                       </div>
-                      <span className="text-[10px] font-medium text-green-400 tabular-nums">5 / 8</span>
+                      <span className="text-[10px] font-medium text-green-400 tabular-nums">5 / 6</span>
                     </div>
                     {/* プログレスバー */}
                     <div className="mt-2 h-1 rounded-full bg-white/10">
-                      <div className="h-full w-[62%] rounded-full bg-green-500 transition-all" />
+                      <div className="h-full w-[83%] rounded-full bg-green-500 transition-all" />
                     </div>
                   </div>
-                  {/* チェックリスト */}
-                  <div className="px-3 py-2 space-y-0.5">
-                    {[
-                      { name: "ダウンジャケット",   brand: "mont-bell",     weight: "340g",  done: true  },
-                      { name: "テント",             brand: "MSR",           weight: "1.5kg", done: true  },
-                      { name: "シュラフ",           brand: "NANGA",         weight: "820g",  done: true  },
-                      { name: "ヘッドランプ",       brand: "PETZL",         weight: "91g",   done: true  },
-                      { name: "レインウェア",       brand: "Patagonia",     weight: "450g",  done: true  },
-                      { name: "トレッキングポール", brand: "Black Diamond", weight: "480g",  done: false },
-                      { name: "ファーストエイド",   brand: "—",             weight: "200g",  done: false },
-                      { name: "非常食",             brand: "—",             weight: "300g",  done: false },
-                    ].map((item) => (
-                      <div key={item.name}
-                        className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 ${item.done ? "bg-green-500/10" : "bg-white/4"}`}>
-                        <div className={`shrink-0 h-4 w-4 rounded-full border flex items-center justify-center
-                          ${item.done ? "bg-green-500 border-green-500" : "border-white/25 bg-transparent"}`}>
-                          {item.done && (
+                  {/* チェックリスト（カテゴリ別） */}
+                  <div className="px-3 py-2 space-y-1">
+                    {/* シェルター */}
+                    <div>
+                      <div className="flex items-center gap-1.5 px-1 py-1">
+                        <Tent className="h-2.5 w-2.5 text-orange-400" />
+                        <span className="text-[9px] font-bold text-white/50">シェルター</span>
+                        <span className="text-[8px] text-green-400 ml-auto">2 / 2</span>
+                      </div>
+                      {[
+                        { name: "テント",   brand: "MSR",   weight: "1.5kg" },
+                        { name: "シュラフ", brand: "NANGA", weight: "820g" },
+                      ].map((item) => (
+                        <div key={item.name}
+                          className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 bg-green-500/10 mt-0.5">
+                          <div className="shrink-0 h-4 w-4 rounded-full bg-green-500 border border-green-500 flex items-center justify-center">
                             <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" fill="none">
                               <path d="M2 5.5L4 7.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
-                          )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-medium leading-tight truncate text-white/40 line-through">{item.name}</p>
+                            <p className="text-[9px] text-white/30 truncate">{item.brand} · {item.weight}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* 衣類 */}
+                    <div>
+                      <div className="flex items-center gap-1.5 px-1 py-1">
+                        <Shirt className="h-2.5 w-2.5 text-blue-400" />
+                        <span className="text-[9px] font-bold text-white/50">衣類</span>
+                        <span className="text-[8px] text-green-400 ml-auto">2 / 2</span>
+                      </div>
+                      {[
+                        { name: "ダウンジャケット", brand: "mont-bell", weight: "340g" },
+                        { name: "レインウェア",     brand: "Patagonia", weight: "450g" },
+                      ].map((item) => (
+                        <div key={item.name}
+                          className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 bg-green-500/10 mt-0.5">
+                          <div className="shrink-0 h-4 w-4 rounded-full bg-green-500 border border-green-500 flex items-center justify-center">
+                            <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" fill="none">
+                              <path d="M2 5.5L4 7.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1">
+                              <p className="text-[10px] font-medium leading-tight truncate text-white/40 line-through">{item.name}</p>
+                              <span className="shrink-0 text-[7px] px-1 py-0.5 rounded bg-violet-500/20 text-violet-300 font-medium">着用</span>
+                            </div>
+                            <p className="text-[9px] text-white/30 truncate">{item.brand} · {item.weight}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* 食料 */}
+                    <div>
+                      <div className="flex items-center gap-1.5 px-1 py-1">
+                        <Apple className="h-2.5 w-2.5 text-red-400" />
+                        <span className="text-[9px] font-bold text-white/50">食料</span>
+                        <span className="text-[8px] text-white/40 ml-auto">1 / 2</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 bg-green-500/10">
+                        <div className="shrink-0 h-4 w-4 rounded-full bg-green-500 border border-green-500 flex items-center justify-center">
+                          <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" fill="none">
+                            <path d="M2 5.5L4 7.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-[10px] font-medium leading-tight truncate ${item.done ? "text-white/40 line-through" : "text-white/85"}`}>
-                            {item.name}
-                          </p>
-                          <p className="text-[9px] text-white/30 truncate">{item.brand} · {item.weight}</p>
+                          <div className="flex items-center gap-1">
+                            <p className="text-[10px] font-medium leading-tight truncate text-white/40 line-through">行動食</p>
+                            <span className="shrink-0 text-[7px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-medium">消耗</span>
+                          </div>
+                          <p className="text-[9px] text-white/30 truncate">井村屋 · 200g</p>
                         </div>
                       </div>
-                    ))}
+                      <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 bg-white/4 mt-0.5">
+                        <div className="shrink-0 h-4 w-4 rounded-full border border-white/25 bg-transparent" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <p className="text-[10px] font-medium leading-tight truncate text-white/85">非常食</p>
+                            <span className="shrink-0 text-[7px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-medium">消耗</span>
+                          </div>
+                          <p className="text-[9px] text-white/30 truncate">— · 300g</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   {/* フッター */}
                   <div className="border-t border-white/10 bg-white/3 px-4 py-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] text-white/50">残り <span className="font-semibold text-white/80">3</span> 点</span>
-                      <span className="text-[10px] font-semibold text-green-400">4.0 kg / 4.2 kg</span>
+                      <span className="text-[10px] text-white/50">残り <span className="font-semibold text-white/80">1</span> 点</span>
+                      <span className="text-[10px] font-semibold text-green-400">3.9 kg / 4.2 kg</span>
                     </div>
                     <div className="w-full rounded-lg bg-green-600/30 py-2 text-center text-[10px] font-bold text-green-300 border border-green-500/30">
-                      出発準備中... 62%
+                      出発準備中... 83%
                     </div>
                   </div>
                   {/* ホームバー */}

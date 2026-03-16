@@ -240,7 +240,7 @@ export default async function PublicPackagePage(
                 {packageBadges.map((badge) => (
                   <span
                     key={badge.key}
-                    className={`inline-flex items-center gap-1 rounded-full border ${badge.chipBorder} ${badge.chipBg} px-2.5 py-1 text-xs font-semibold ${badge.chipText}`}
+                    className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/15 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white"
                   >
                     <SpecialtyBadgeIcon badgeKey={badge.key} className="h-3.5 w-3.5" />
                     {badge.label}

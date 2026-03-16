@@ -20,7 +20,7 @@ const BAR_COLORS = [
 ];
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -43,7 +43,6 @@ export async function GET(
   const itemCount: number = data?.gear_package_items?.length ?? 0;
   const totalWeightG: number = data?.total_weight_g ?? 0;
 
-  // カテゴリ別重量計算
   const catWeights: Record<string, number> = {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (data?.gear_package_items ?? []).forEach((pi: any) => {
@@ -63,7 +62,6 @@ export async function GET(
   const avatarUrl: string | null = data?.users?.avatar_url ?? null;
   const avatarInitial = creatorName.slice(0, 1).toUpperCase();
 
-  // アバター画像をfetchして埋め込み（2秒タイムアウト、失敗したらイニシャル表示）
   let avatarData: string | null = null;
   if (avatarUrl) {
     try {
@@ -77,134 +75,152 @@ export async function GET(
         const mime = res.headers.get("content-type") ?? "image/jpeg";
         avatarData = `data:${mime};base64,${base64}`;
       }
-    } catch { /* fallback to initials */ }
+    } catch { /* fallback */ }
   }
 
   return new ImageResponse(
     (
       <div style={{
         width: "100%", height: "100%",
-        display: "flex", flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "60px",
-        background: "linear-gradient(135deg, #03080d 0%, #071d13 50%, #185535 100%)",
+        display: "flex",
+        background: "linear-gradient(155deg, #03080d 0%, #071a10 30%, #0f3322 65%, #185535 100%)",
         fontFamily: "sans-serif",
+        position: "relative",
+        overflow: "hidden",
       }}>
-        {/* ブランド */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{
-            width: "40px", height: "40px", borderRadius: "12px",
-            background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
-              <path d="M2 16 Q4 16 6.5 9 Q8 13 9.5 12.5 Q11.2 8.5 13 4 Q14.8 9 18 16 Z" fill="white" />
-              <circle cx="13" cy="4" r="1.2" fill="#f59e0b" />
-            </svg>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: "20px", fontWeight: "900", color: "white", lineHeight: 1 }}>Sonae</span>
-            <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", marginTop: "2px" }}>備え・登山装備管理</span>
-          </div>
+        {/* 背景の山シルエット（右下） */}
+        <svg width="600" height="300" viewBox="0 0 600 300" fill="none"
+          style={{ position: "absolute", bottom: "0", right: "0" }}>
+          <path d="M100 300 L200 120 L260 180 L340 60 L420 160 L500 100 L600 300 Z"
+            fill="rgba(52,211,153,0.04)" />
+          <path d="M0 300 L120 200 L200 240 L300 140 L380 220 L500 180 L600 300 Z"
+            fill="rgba(52,211,153,0.07)" />
+        </svg>
+
+        {/* 装飾ドット（右上） */}
+        <div style={{
+          display: "flex", flexWrap: "wrap",
+          gap: "20px", opacity: 0.1,
+          width: "200px",
+          position: "absolute", top: "50px", right: "50px",
+        }}>
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} style={{
+              display: "flex",
+              width: "4px", height: "4px", borderRadius: "50%",
+              background: "#6ee7b7",
+            }} />
+          ))}
         </div>
 
-        {/* パッケージ名 */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {mountainType && (
+        {/* メインコンテンツ */}
+        <div style={{
+          display: "flex", flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "56px 56px 56px 64px",
+          width: "100%",
+        }}>
+          {/* 上部: ブランド + 山タイプ */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{
+                width: "44px", height: "44px", borderRadius: "14px",
+                background: "rgba(52,211,153,0.15)", border: "1.5px solid rgba(52,211,153,0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width="26" height="26" viewBox="0 0 20 20" fill="none">
+                  <path d="M2 16 Q4 16 6.5 9 Q8 13 9.5 12.5 Q11.2 8.5 13 4 Q14.8 9 18 16 Z" fill="#6ee7b7" />
+                  <circle cx="13" cy="4" r="1.2" fill="#f59e0b" />
+                </svg>
+              </div>
+              <span style={{ fontSize: "22px", fontWeight: "900", color: "white" }}>Sonae</span>
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              {mountainType && (
+                <span style={{
+                  padding: "7px 18px", borderRadius: "100px",
+                  background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.25)",
+                  color: "#6ee7b7", fontSize: "14px", fontWeight: "600",
+                }}>{mountainType}</span>
+              )}
+              <span style={{
+                padding: "7px 18px", borderRadius: "100px",
+                background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.15)",
+                color: "#6ee7b7", fontSize: "13px", fontWeight: "600",
+              }}>sonae.vercel.app</span>
+            </div>
+          </div>
+
+          {/* 中央: パッケージ名 + 重量バー */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <span style={{
-              display: "inline-flex", alignSelf: "flex-start",
-              padding: "6px 16px", borderRadius: "100px",
-              background: "rgba(52,211,153,0.15)", border: "1px solid rgba(52,211,153,0.3)",
-              color: "#6ee7b7", fontSize: "16px", fontWeight: "600",
-            }}>{mountainType}</span>
-          )}
-          <div style={{
-            fontSize: name.length > 15 ? "52px" : "64px",
-            fontWeight: "900", color: "white",
-            lineHeight: 1.1, letterSpacing: "-0.02em",
-          }}>{name}</div>
-        </div>
+              fontSize: name.length > 15 ? "48px" : "58px",
+              fontWeight: "900", color: "white",
+              lineHeight: 1.1, letterSpacing: "-0.03em",
+            }}>{name}</span>
 
-        {/* 重量バー */}
-        {totalWeightG > 0 && categoryGroups.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <div style={{ display: "flex", height: "12px", borderRadius: "6px", overflow: "hidden", background: "rgba(255,255,255,0.08)" }}>
-              {categoryGroups.map(([catId, weight], idx) => {
-                const pct = (weight / totalWeightG) * 100;
-                if (pct < 1) return null;
-                return (
-                  <div key={catId} style={{ width: `${pct}%`, height: "100%", background: BAR_COLORS[CATEGORIES[catId]?.sort_order ? CATEGORIES[catId].sort_order - 1 : idx] }} />
-                );
-              })}
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-              {categoryGroups.filter(([, w]) => w > 0).slice(0, 6).map(([catId], idx) => (
-                <div key={catId} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: BAR_COLORS[CATEGORIES[catId]?.sort_order ? CATEGORIES[catId].sort_order - 1 : idx] }} />
-                  <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{CATEGORIES[catId]?.name_ja}</span>
+            {totalWeightG > 0 && categoryGroups.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div style={{ display: "flex", height: "12px", borderRadius: "6px", overflow: "hidden", background: "rgba(255,255,255,0.06)", width: "70%" }}>
+                  {categoryGroups.map(([catId, weight], idx) => {
+                    const pct = (weight / totalWeightG) * 100;
+                    if (pct < 1) return null;
+                    return (
+                      <div key={catId} style={{ display: "flex", width: `${pct}%`, height: "100%", background: BAR_COLORS[CATEGORIES[catId]?.sort_order ? CATEGORIES[catId].sort_order - 1 : idx] }} />
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* フッター：統計 + クリエイター */}
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-          {/* 統計 */}
-          <div style={{ display: "flex", gap: "32px", alignItems: "flex-end" }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "36px", fontWeight: "800", color: "white" }}>{weightStr}</span>
-              <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>推定総重量</span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "36px", fontWeight: "800", color: "white" }}>
-                {itemCount}<span style={{ fontSize: "18px", fontWeight: "400", marginLeft: "4px" }}>点</span>
-              </span>
-              <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>装備アイテム</span>
-            </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "14px" }}>
+                  {categoryGroups.filter(([, w]) => w > 0).slice(0, 6).map(([catId], idx) => (
+                    <div key={catId} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <div style={{ display: "flex", width: "8px", height: "8px", borderRadius: "50%", background: BAR_COLORS[CATEGORIES[catId]?.sort_order ? CATEGORIES[catId].sort_order - 1 : idx] }} />
+                      <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{CATEGORIES[catId]?.name_ja}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* クリエイター + sonae.appバッジ */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "12px" }}>
-            {/* sonae.appバッジ */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: "8px",
-              background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.25)",
-              borderRadius: "100px", padding: "6px 16px 6px 10px",
-            }}>
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                <path d="M2 16 Q4 16 6.5 9 Q8 13 9.5 12.5 Q11.2 8.5 13 4 Q14.8 9 18 16 Z" fill="#6ee7b7" />
-                <circle cx="13" cy="4" r="1.2" fill="#f59e0b" />
-              </svg>
-              <span style={{ fontSize: "14px", fontWeight: "700", color: "#6ee7b7", letterSpacing: "0.03em" }}>sonae.app で作成</span>
+          {/* 下部: 統計 + クリエイター */}
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "40px", alignItems: "flex-end" }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ fontSize: "38px", fontWeight: "800", color: "white" }}>{weightStr}</span>
+                <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "2px" }}>総重量</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", alignItems: "baseline" }}>
+                  <span style={{ fontSize: "38px", fontWeight: "800", color: "white" }}>{itemCount}</span>
+                  <span style={{ fontSize: "18px", fontWeight: "400", color: "rgba(255,255,255,0.5)", marginLeft: "4px" }}>点</span>
+                </div>
+                <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "2px" }}>装備アイテム</span>
+              </div>
             </div>
 
             {/* クリエイター */}
             <div style={{
-              display: "flex", alignItems: "center", gap: "12px",
-              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "100px", padding: "10px 20px 10px 10px",
+              display: "flex", alignItems: "center", gap: "10px",
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "100px", padding: "8px 20px 8px 8px",
             }}>
               {avatarData ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={avatarData}
-                  width={44} height={44}
+                  width={38} height={38}
                   style={{ borderRadius: "50%", objectFit: "cover" }}
                   alt=""
                 />
               ) : (
                 <div style={{
-                  width: "44px", height: "44px", borderRadius: "50%",
+                  width: "38px", height: "38px", borderRadius: "50%",
                   background: "linear-gradient(135deg, #14532d, #22c55e)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "18px", fontWeight: "900", color: "white",
+                  fontSize: "16px", fontWeight: "900", color: "white",
                 }}>{avatarInitial}</div>
               )}
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "2px" }}>作成者</span>
-                <span style={{ fontSize: "16px", fontWeight: "700", color: "white" }}>{creatorName}</span>
-              </div>
+              <span style={{ fontSize: "15px", fontWeight: "700", color: "rgba(255,255,255,0.8)" }}>{creatorName}</span>
             </div>
           </div>
         </div>
