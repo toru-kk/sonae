@@ -102,6 +102,13 @@ type Props = {
   placeholder?: string;
 };
 
+/** カタカナ → ひらがな変換 */
+function toHiragana(s: string): string {
+  return s.replace(/[\u30A1-\u30F6]/g, (c) =>
+    String.fromCharCode(c.charCodeAt(0) - 0x60)
+  );
+}
+
 export function MountainSuggest({ value, onChange, onSelect, className, placeholder }: Props) {
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -109,12 +116,15 @@ export function MountainSuggest({ value, onChange, onSelect, className, placehol
   const inputRef = useRef<HTMLInputElement>(null);
 
   const filtered = value.trim()
-    ? MOUNTAINS.filter(
-        (m) =>
-          m.name.includes(value) ||
-          m.reading.includes(value) ||
-          m.pref.includes(value)
-      ).slice(0, 8)
+    ? (() => {
+        const q = toHiragana(value.trim());
+        return MOUNTAINS.filter(
+          (m) =>
+            m.name.includes(value) ||
+            m.reading.includes(q) ||
+            m.pref.includes(value)
+        ).slice(0, 8);
+      })()
     : [];
 
   const handleSelect = useCallback((m: Mountain) => {
