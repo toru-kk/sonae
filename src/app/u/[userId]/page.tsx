@@ -265,55 +265,55 @@ export default async function UserProfilePage(
               )}
             </div>
           </div>
+
+          {/* バッジコレクション */}
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-[11px] text-white/40">バッジコレクション</p>
+              <span className="text-[10px] text-white/25">{earnedBadges.length} / {SPECIALTY_BADGE_DEFS.length} 獲得</span>
+            </div>
+            {(["specialty", "action", "community", "mastery", "style"] as BadgeCategory[]).map((cat) => {
+              const badges = badgeGroups[cat];
+              if (badges.length === 0) return null;
+              return (
+                <div key={cat} className="mb-2">
+                  <p className="text-[9px] text-white/25 mb-1">{BADGE_CATEGORY_LABELS[cat]}</p>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                    {badges.map((badge) => {
+                      const earned = earnedKeys.has(badge.key);
+                      return (
+                        <div
+                          key={badge.key}
+                          className={`flex flex-col items-center gap-1 rounded-lg border px-1.5 py-2 transition-all ${
+                            earned
+                              ? `${badge.chipBorder} ${badge.chipBg} ${badge.glowClass} badge-shimmer scale-105`
+                              : "border-white/10 bg-white/5 grayscale opacity-40"
+                          }`}
+                        >
+                          <div className="relative">
+                            <SpecialtyBadgeIcon
+                              badgeKey={badge.key}
+                              className={`h-5 w-5 ${earned ? "text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]" : "text-white/40"}`}
+                            />
+                            {!earned && (
+                              <Lock className="absolute -bottom-0.5 -right-0.5 h-2 w-2 text-white/30" />
+                            )}
+                          </div>
+                          <span className={`text-[9px] font-semibold leading-tight text-center ${
+                            earned ? "text-white" : "text-white/50"
+                          }`}>
+                            {badge.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </HeaderGradient>
-
-      {/* バッジコレクション */}
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 pt-8">
-        <div className="flex items-center gap-2 mb-3">
-          <h2 className="text-sm font-bold text-foreground">バッジコレクション</h2>
-          <span className="text-xs text-muted-foreground">{earnedBadges.length} / {SPECIALTY_BADGE_DEFS.length} 獲得</span>
-        </div>
-        {(["specialty", "action", "community", "mastery", "style"] as BadgeCategory[]).map((cat) => {
-          const badges = badgeGroups[cat];
-          if (badges.length === 0) return null;
-          return (
-            <div key={cat} className="mb-3">
-              <p className="text-[10px] text-muted-foreground/60 mb-1.5">{BADGE_CATEGORY_LABELS[cat]}</p>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {badges.map((badge) => {
-                  const earned = earnedKeys.has(badge.key);
-                  return (
-                    <div
-                      key={badge.key}
-                      className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-all ${
-                        earned
-                          ? `${badge.chipBorder} ${badge.chipBg} ${badge.glowClassLight} badge-shimmer badge-shimmer-light scale-105`
-                          : "border-border bg-muted/50 grayscale opacity-40"
-                      }`}
-                    >
-                      <div className="relative">
-                        <SpecialtyBadgeIcon
-                          badgeKey={badge.key}
-                          className={`h-6 w-6 ${earned ? badge.chipTextLight : "text-muted-foreground/50"}`}
-                        />
-                        {!earned && (
-                          <Lock className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground/50" />
-                        )}
-                      </div>
-                      <span className={`text-[10px] font-semibold leading-tight text-center ${
-                        earned ? badge.chipTextLight : "text-muted-foreground/60"
-                      }`}>
-                        {badge.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
       {/* パッケージ一覧 */}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
