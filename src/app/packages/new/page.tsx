@@ -64,6 +64,12 @@ export default function PackageNewPage() {
   const baseWeight = selectedItems
     .filter((item) => (wearTypes[item.id] ?? 'carried') === 'carried')
     .reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
+  const wornWeight = selectedItems
+    .filter((item) => wearTypes[item.id] === 'worn')
+    .reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
+  const consumableWeight = selectedItems
+    .filter((item) => wearTypes[item.id] === 'consumable')
+    .reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
 
   const handleSave = async () => {
     if (!name.trim()) return;
@@ -171,7 +177,13 @@ export default function PackageNewPage() {
                   <Weight className="h-3 w-3" />{formatWeight(totalWeight)}
                 </span>
                 {baseWeight !== totalWeight && (
-                  <span className="text-primary font-medium">ベースウェイト {formatWeight(baseWeight)}</span>
+                  <span className="text-primary font-medium">携行 {formatWeight(baseWeight)}</span>
+                )}
+                {wornWeight > 0 && (
+                  <span className="text-violet-600 font-medium">着用 {formatWeight(wornWeight)}</span>
+                )}
+                {consumableWeight > 0 && (
+                  <span className="text-amber-600 font-medium">消耗 {formatWeight(consumableWeight)}</span>
                 )}
               </div>
             )}
