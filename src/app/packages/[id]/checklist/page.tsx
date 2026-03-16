@@ -49,6 +49,12 @@ export default function ChecklistPage() {
   const pkg = packages.find((p) => p.id === id);
   const gearMap = Object.fromEntries(gearItems.map((g) => [g.id, g]));
   const items: GearItem[] = (pkg?.item_ids ?? []).map((iid) => gearMap[iid]).filter(Boolean);
+  const wearTypes: Record<string, string> = pkg?.item_wear_types ?? {};
+
+  const WEAR_BADGE: Record<string, { label: string; class: string }> = {
+    worn: { label: '着用', class: 'border-violet-200 bg-violet-50 text-violet-600' },
+    consumable: { label: '消耗', class: 'border-amber-200 bg-amber-50 text-amber-600' },
+  };
 
   // チェック変更時に自動保存
   useEffect(() => {
@@ -350,6 +356,14 @@ export default function ChecklistPage() {
                             {item.is_essential && !checked && (
                               <span className="inline-flex items-center shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-500 border border-red-100">必須</span>
                             )}
+                            {(() => {
+                              const wb = WEAR_BADGE[wearTypes[item.id]];
+                              return wb ? (
+                                <span className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-bold ${wb.class}`}>
+                                  {wb.label}
+                                </span>
+                              ) : null;
+                            })()}
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
                             {item.brand && <span className="text-xs text-stone-400 truncate">{item.brand}</span>}
