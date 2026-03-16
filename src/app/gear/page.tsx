@@ -117,7 +117,7 @@ export default function GearPage() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-red-800">Freeプランの上限に達しました</p>
             <p className="text-xs text-red-700 mt-0.5">装備30点まで。Standardプランで200点まで登録できます。</p>
-            <Link href="/pricing" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
+            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
               Standardプランへ →
             </Link>
           </div>
@@ -128,7 +128,7 @@ export default function GearPage() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-amber-800">Freeプランの上限まで残り {30 - gearItems.length} 点</p>
             <p className="text-xs text-amber-700 mt-0.5">Freeプランは装備30点まで。Standardプランで200点まで登録できます。</p>
-            <Link href="/pricing" className="mt-2 inline-flex items-center gap-1 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors">
+            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors">
               プランを確認する →
             </Link>
           </div>
