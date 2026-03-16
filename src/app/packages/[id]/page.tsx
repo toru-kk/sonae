@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight, Globe, Trash2, Share2, Check } from "lucide-react";
+import { WeightTooltip } from "@/components/WeightTooltip";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { useGear } from "@/hooks/useGear";
@@ -297,7 +298,10 @@ export default function PackageDetailPage() {
         <div className="mb-6 rounded-xl border border-border bg-card p-4">
           <div className="flex items-baseline gap-4">
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">ベースウェイト</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">ベースウェイト</p>
+                <WeightTooltip variant="light" />
+              </div>
               <p className="text-xl font-black text-primary tabular-nums">{formatWeight(baseWeight)}</p>
             </div>
             {wornWeight > 0 && (

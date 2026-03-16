@@ -11,6 +11,7 @@ import { LikeButton } from "@/components/LikeButton";
 import { PackageComments } from "@/components/PackageComments";
 import { ShareButtons } from "@/components/ShareButtons";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
+import { WeightTooltip } from "@/components/WeightTooltip";
 import { getSpecialtyBadges } from "@/lib/badges";
 import { SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 
@@ -249,7 +250,10 @@ export default async function PublicPackagePage(
             <div className="shrink-0 text-right">
               {hasWearTypes ? (
                 <>
-                  <p className="text-[10px] uppercase tracking-wider text-white/40 mb-0.5">ベースウェイト</p>
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <p className="text-[10px] uppercase tracking-wider text-white/40">ベースウェイト</p>
+                    <WeightTooltip variant="dark" />
+                  </div>
                   <p className="text-3xl font-bold text-white tabular-nums">{formatWeight(baseWeight)}</p>
                   <p className="mt-1 text-xs text-white/40 tabular-nums">
                     合計 {formatWeight(totalWeight)}{wornWeight > 0 && ` / 着用 ${formatWeight(wornWeight)}`}
