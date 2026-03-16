@@ -182,7 +182,7 @@ export default function PackageEditPage() {
                   <Weight className="h-3 w-3" />{formatWeight(totalWeight)}
                 </span>
                 {baseWeight !== totalWeight && (
-                  <span className="text-primary font-medium">BW {formatWeight(baseWeight)}</span>
+                  <span className="text-primary font-medium">ベースウェイト {formatWeight(baseWeight)}</span>
                 )}
               </div>
             )}

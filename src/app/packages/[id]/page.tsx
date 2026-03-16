@@ -217,7 +217,7 @@ export default function PackageDetailPage() {
                     <p className="text-2xl font-black text-white tabular-nums">{formatWeight(totalWeight)}</p>
                     <p className="text-[11px] text-white/40">{items.length} 点</p>
                     {hasWearTypes && (
-                      <p className="text-[11px] text-emerald-300 font-semibold mt-0.5">BW {formatWeight(baseWeight)}</p>
+                      <p className="text-[11px] text-emerald-300 font-semibold mt-0.5">ベースウェイト {formatWeight(baseWeight)}</p>
                     )}
                   </div>
                 </div>
