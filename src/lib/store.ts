@@ -78,6 +78,7 @@ const initialPackages = mockPackages.map((p) => ({
   description: p.description ?? null,
   mountain_type: p.mountain_type ?? null,
   total_weight_g: p.total_weight_g,
+  base_weight_g: p.total_weight_g,
   is_public: p.is_public,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
@@ -163,6 +164,7 @@ export const useGearStore = create<GearStore>()(
           description: input.description ?? null,
           mountain_type: input.mountain_type ?? null,
           total_weight_g: calcTotalWeight(input.item_ids, get().gearItems),
+          base_weight_g: calcTotalWeight(input.item_ids, get().gearItems),
           is_public: input.is_public,
           created_at: now,
           updated_at: now,
@@ -182,6 +184,7 @@ export const useGearStore = create<GearStore>()(
               ...input,
               item_ids,
               total_weight_g: calcTotalWeight(item_ids, s.gearItems),
+              base_weight_g: calcTotalWeight(item_ids, s.gearItems),
               updated_at: new Date().toISOString(),
             };
           }),
@@ -197,7 +200,8 @@ export const useGearStore = create<GearStore>()(
           packages: s.packages.map((p) => {
             if (p.id !== packageId || p.item_ids.includes(gearId)) return p;
             const item_ids = [...p.item_ids, gearId];
-            return { ...p, item_ids, total_weight_g: calcTotalWeight(item_ids, s.gearItems) };
+            const tw = calcTotalWeight(item_ids, s.gearItems);
+            return { ...p, item_ids, total_weight_g: tw, base_weight_g: tw };
           }),
         }));
       },
@@ -207,7 +211,8 @@ export const useGearStore = create<GearStore>()(
           packages: s.packages.map((p) => {
             if (p.id !== packageId) return p;
             const item_ids = p.item_ids.filter((i) => i !== gearId);
-            return { ...p, item_ids, total_weight_g: calcTotalWeight(item_ids, s.gearItems) };
+            const tw = calcTotalWeight(item_ids, s.gearItems);
+            return { ...p, item_ids, total_weight_g: tw, base_weight_g: tw };
           }),
         }));
       },

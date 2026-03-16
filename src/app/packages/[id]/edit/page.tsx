@@ -43,6 +43,7 @@ export default function PackageEditPage() {
   const [mountainType, setMountainType] = useState<string>(MOUNTAIN_TYPES[0]);
   const [isPublic, setIsPublic] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [wearTypes, setWearTypes] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
@@ -54,6 +55,7 @@ export default function PackageEditPage() {
       setMountainType(pkg.mountain_type ?? MOUNTAIN_TYPES[0]);
       setIsPublic(pkg.is_public ?? false);
       setSelectedIds(new Set(pkg.item_ids ?? []));
+      setWearTypes(pkg.item_wear_types ?? {});
       setInitialized(true);
     }
   }, [pkg, initialized]);
@@ -72,6 +74,15 @@ export default function PackageEditPage() {
 
   const selectedItems = gearItems.filter((item) => selectedIds.has(item.id));
   const totalWeight = selectedItems.reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
+  const baseWeight = selectedItems
+    .filter((item) => (wearTypes[item.id] ?? 'carried') === 'carried')
+    .reduce((sum, item) => sum + (item.weight_g ?? 0), 0);
+
+  const WEAR_TYPE_OPTIONS = [
+    { key: 'carried', label: '携行', color: 'border-primary bg-primary/10 text-primary' },
+    { key: 'worn', label: '着用', color: 'border-violet-400 bg-violet-50 text-violet-600' },
+    { key: 'consumable', label: '消耗', color: 'border-amber-400 bg-amber-50 text-amber-600' },
+  ] as const;
 
   if (pkgLoading || gearLoading) {
     return (
@@ -108,6 +119,7 @@ export default function PackageEditPage() {
       mountain_type: mountainType,
       is_public: isPublic,
       item_ids: Array.from(selectedIds),
+      item_wear_types: wearTypes,
     });
     setSaving(false);
     router.push(`/packages/${id}`);
@@ -169,6 +181,9 @@ export default function PackageEditPage() {
                 <span className="inline-flex items-center gap-1">
                   <Weight className="h-3 w-3" />{formatWeight(totalWeight)}
                 </span>
+                {baseWeight !== totalWeight && (
+                  <span className="text-primary font-medium">BW {formatWeight(baseWeight)}</span>
+                )}
               </div>
             )}
           </div>
@@ -188,33 +203,55 @@ export default function PackageEditPage() {
                   <div className="rounded-xl border border-border bg-card overflow-hidden">
                     {items.map((item, idx) => {
                       const isSelected = selectedIds.has(item.id);
+                      const currentWearType = wearTypes[item.id] ?? 'carried';
                       return (
-                        <button key={item.id} type="button" onClick={() => toggleItem(item.id)}
-                          className={cn(
-                            "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
-                            idx < items.length - 1 && "border-b border-border",
-                            isSelected ? "bg-primary/5" : "hover:bg-secondary/50"
-                          )}>
-                          <div className={cn(
-                            "shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-colors",
-                            isSelected ? "border-primary bg-primary" : "border-border bg-card"
-                          )}>
-                            {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
-                          </div>
-                          <CategoryIcon categoryId={item.category_id} iconName={CATEGORY_META[item.category_id]?.icon} size="sm" variant="flat" className="shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
-                              {item.is_essential && (
-                                <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-500 border border-red-100">必須</span>
-                              )}
+                        <div key={item.id} className={cn(
+                          idx < items.length - 1 && "border-b border-border",
+                          isSelected ? "bg-primary/5" : ""
+                        )}>
+                          <button type="button" onClick={() => toggleItem(item.id)}
+                            className={cn(
+                              "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
+                              !isSelected && "hover:bg-secondary/50"
+                            )}>
+                            <div className={cn(
+                              "shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-colors",
+                              isSelected ? "border-primary bg-primary" : "border-border bg-card"
+                            )}>
+                              {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
                             </div>
-                            {item.brand && <p className="text-xs text-muted-foreground">{item.brand}</p>}
-                          </div>
-                          <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">
-                            {item.weight_g ? `${item.weight_g} g` : "—"}
-                          </span>
-                        </button>
+                            <CategoryIcon categoryId={item.category_id} iconName={CATEGORY_META[item.category_id]?.icon} size="sm" variant="flat" className="shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                                {item.is_essential && (
+                                  <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-500 border border-red-100">必須</span>
+                                )}
+                              </div>
+                              {item.brand && <p className="text-xs text-muted-foreground">{item.brand}</p>}
+                            </div>
+                            <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">
+                              {item.weight_g ? `${item.weight_g} g` : "—"}
+                            </span>
+                          </button>
+                          {isSelected && (
+                            <div className="flex gap-1 px-4 pb-2.5 pl-[52px]">
+                              {WEAR_TYPE_OPTIONS.map(({ key, label, color }) => (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setWearTypes(prev => ({ ...prev, [item.id]: key })); }}
+                                  className={cn(
+                                    "rounded-full border px-2.5 py-0.5 text-[10px] font-semibold transition-colors",
+                                    currentWearType === key ? color : "border-border text-muted-foreground hover:bg-secondary"
+                                  )}
+                                >
+                                  {label}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>

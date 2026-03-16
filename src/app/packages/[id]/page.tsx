@@ -93,6 +93,19 @@ export default function PackageDetailPage() {
 
   const items = pkg.item_ids.map((iid) => gearMap[iid]).filter(Boolean);
   const totalWeight = items.reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
+  const wearTypes = pkg.item_wear_types ?? {};
+  const baseWeight = items
+    .filter((i) => (wearTypes[i.id] ?? 'carried') === 'carried')
+    .reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
+  const wornWeight = items
+    .filter((i) => wearTypes[i.id] === 'worn')
+    .reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
+  const hasWearTypes = Object.values(wearTypes).some(v => v !== 'carried');
+
+  const WEAR_BADGE: Record<string, { label: string; cls: string }> = {
+    worn: { label: '着用', cls: 'border-violet-200 bg-violet-50 text-violet-600' },
+    consumable: { label: '消耗品', cls: 'border-amber-200 bg-amber-50 text-amber-600' },
+  };
 
   const categoryGroups = (() => {
     const groups: Record<string, typeof items> = {};
@@ -203,6 +216,9 @@ export default function PackageDetailPage() {
                   <div className="shrink-0 text-right">
                     <p className="text-2xl font-black text-white tabular-nums">{formatWeight(totalWeight)}</p>
                     <p className="text-[11px] text-white/40">{items.length} 点</p>
+                    {hasWearTypes && (
+                      <p className="text-[11px] text-emerald-300 font-semibold mt-0.5">BW {formatWeight(baseWeight)}</p>
+                    )}
                   </div>
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-3">
@@ -276,6 +292,28 @@ export default function PackageDetailPage() {
         </div>
       )}
 
+      {/* 重量サマリー */}
+      {hasWearTypes && totalWeight > 0 && (
+        <div className="mb-6 rounded-xl border border-border bg-card p-4">
+          <div className="flex items-baseline gap-4">
+            <div>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">ベースウェイト</p>
+              <p className="text-xl font-black text-primary tabular-nums">{formatWeight(baseWeight)}</p>
+            </div>
+            {wornWeight > 0 && (
+              <div>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">着用</p>
+                <p className="text-base font-bold text-violet-600 tabular-nums">{formatWeight(wornWeight)}</p>
+              </div>
+            )}
+            <div>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">合計</p>
+              <p className="text-base font-bold text-foreground tabular-nums">{formatWeight(totalWeight)}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6 mb-8">
         {categoryGroups.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-10 text-center">
@@ -298,7 +336,14 @@ export default function PackageDetailPage() {
                   )}>
                   <CategoryIcon categoryId={item.category_id} iconName={CATEGORY_META[item.category_id]?.icon} size="md" variant="gradient" className="shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                      {WEAR_BADGE[wearTypes[item.id]] && (
+                        <span className={cn("shrink-0 rounded border px-1.5 py-px text-[9px] font-bold", WEAR_BADGE[wearTypes[item.id]].cls)}>
+                          {WEAR_BADGE[wearTypes[item.id]].label}
+                        </span>
+                      )}
+                    </div>
                     {item.brand && <p className="text-xs text-muted-foreground">{item.brand}</p>}
                   </div>
                   <div className="shrink-0 flex items-center gap-2">

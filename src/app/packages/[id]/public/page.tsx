@@ -45,11 +45,11 @@ function createAnonClient() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchPackage(id: string): Promise<{ pkg: any; items: any[]; creator: { id: string | null; display_name: string | null; avatar_url: string | null } } | null> {
+async function fetchPackage(id: string): Promise<{ pkg: any; items: any[]; creator: { id: string | null; display_name: string | null; avatar_url: string | null }; wearTypes: Record<string, string> } | null> {
   const supabase = createAnonClient();
   const { data, error } = await supabase
     .from("gear_packages")
-    .select(`*, copy_count, gear_package_items(gear_item_id, gear_items(*)), users(id, display_name, avatar_url)`)
+    .select(`*, copy_count, gear_package_items(gear_item_id, wear_type, gear_items(*)), users(id, display_name, avatar_url)`)
     .eq("id", id)
     .eq("is_public", true)
     .single();
@@ -57,13 +57,18 @@ async function fetchPackage(id: string): Promise<{ pkg: any; items: any[]; creat
   if (error || !data) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const items = (data.gear_package_items ?? []).map((pi: any) => pi.gear_items).filter(Boolean);
+  const gpi = (data.gear_package_items ?? []) as any[];
+  const items = gpi.map((pi) => pi.gear_items).filter(Boolean);
+  const wearTypes: Record<string, string> = {};
+  for (const pi of gpi) {
+    if (pi.gear_items?.id) wearTypes[pi.gear_items.id] = pi.wear_type ?? 'carried';
+  }
   const creator = {
     id: data.users?.id ?? null,
     display_name: data.users?.display_name ?? null,
     avatar_url: data.users?.avatar_url ?? null,
   };
-  return { pkg: data, items, creator };
+  return { pkg: data, items, creator, wearTypes };
 }
 
 export async function generateMetadata(
@@ -97,10 +102,29 @@ export default async function PublicPackagePage(
   const result = await fetchPackage(id);
   if (!result) notFound();
 
-  const { pkg, items, creator } = result;
+  const { pkg, items, creator, wearTypes } = result;
   const totalWeight: number = items.reduce((s: number, i: { weight_g: number | null }) => s + (i.weight_g ?? 0), 0);
   const creatorName = creator.display_name ?? "Sonaeユーザー";
   const creatorInitial = creatorName.slice(0, 1).toUpperCase();
+
+  // ベースウェイト計算（carried のみ）
+  const wearMap: Record<string, string> = wearTypes ?? {};
+  const hasWearTypes = Object.values(wearMap).some((v) => v !== 'carried');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const baseWeight: number = (items as any[]).reduce((s: number, i: any) => {
+    const wt = wearMap[i.id] ?? 'carried';
+    return wt === 'carried' ? s + (i.weight_g ?? 0) : s;
+  }, 0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const wornWeight: number = (items as any[]).reduce((s: number, i: any) => {
+    const wt = wearMap[i.id] ?? 'carried';
+    return wt === 'worn' ? s + (i.weight_g ?? 0) : s;
+  }, 0);
+
+  const WEAR_BADGE: Record<string, { label: string; class: string }> = {
+    worn: { label: '着用', class: 'border-violet-300 bg-violet-50 text-violet-600' },
+    consumable: { label: '消耗', class: 'border-amber-300 bg-amber-50 text-amber-600' },
+  };
 
   // パッケージの専門バッジを計算
   const packageBadges = getSpecialtyBadges([{ mountain_type: pkg.mountain_type, total_weight_g: totalWeight }]);
@@ -223,9 +247,19 @@ export default async function PublicPackagePage(
               )}
             </div>
             <div className="shrink-0 text-right">
-              <p className="text-3xl font-bold text-white tabular-nums">{formatWeight(totalWeight)}</p>
+              {hasWearTypes ? (
+                <>
+                  <p className="text-[10px] uppercase tracking-wider text-white/40 mb-0.5">ベースウェイト</p>
+                  <p className="text-3xl font-bold text-white tabular-nums">{formatWeight(baseWeight)}</p>
+                  <p className="mt-1 text-xs text-white/40 tabular-nums">
+                    合計 {formatWeight(totalWeight)}{wornWeight > 0 && ` / 着用 ${formatWeight(wornWeight)}`}
+                  </p>
+                </>
+              ) : (
+                <p className="text-3xl font-bold text-white tabular-nums">{formatWeight(totalWeight)}</p>
+              )}
               <p className="mt-1 text-sm text-white/50">{items.length} 点</p>
-              {totalWeight > 0 && <ULScore weightG={totalWeight} className="mt-2" />}
+              {totalWeight > 0 && <ULScore weightG={hasWearTypes ? baseWeight : totalWeight} className="mt-2" />}
             </div>
           </div>
 
@@ -278,6 +312,14 @@ export default async function PublicPackagePage(
                           <CheckCircle className="h-2.5 w-2.5" />必須
                         </span>
                       )}
+                      {(() => {
+                        const wb = WEAR_BADGE[wearMap[item.id]];
+                        return wb ? (
+                          <span className={`shrink-0 rounded border px-1.5 py-px text-[9px] font-bold ${wb.class}`}>
+                            {wb.label}
+                          </span>
+                        ) : null;
+                      })()}
                     </div>
                     {item.brand && <p className="text-xs text-muted-foreground">{item.brand}</p>}
                   </div>

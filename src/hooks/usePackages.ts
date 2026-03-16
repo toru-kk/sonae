@@ -5,7 +5,10 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { GearPackage } from "@/types/gear";
 
-export type PackageWithItemIds = GearPackage & { item_ids: string[] };
+export type PackageWithItemIds = GearPackage & {
+  item_ids: string[];
+  item_wear_types: Record<string, string>;
+};
 
 export type PackageInput = {
   name: string;
@@ -13,6 +16,7 @@ export type PackageInput = {
   mountain_type?: string | null;
   is_public: boolean;
   item_ids: string[];
+  item_wear_types?: Record<string, string>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,17 +32,23 @@ export function usePackages() {
     const supabase = createClient() as AnyClient;
     const { data, error: err } = await supabase
       .from("gear_packages")
-      .select(`*, gear_package_items(gear_item_id)`)
+      .select(`*, gear_package_items(gear_item_id, wear_type)`)
       .order("created_at", { ascending: false });
 
     if (err) { setError(err.message); }
     else if (data) {
-      const mapped: PackageWithItemIds[] = data.map((p: AnyClient) => ({
-        ...p,
-        item_ids: (p.gear_package_items ?? []).map(
-          (i: { gear_item_id: string }) => i.gear_item_id
-        ),
-      }));
+      const mapped: PackageWithItemIds[] = data.map((p: AnyClient) => {
+        const gpi = p.gear_package_items ?? [];
+        const wearTypes: Record<string, string> = {};
+        for (const i of gpi) {
+          wearTypes[i.gear_item_id] = i.wear_type ?? 'carried';
+        }
+        return {
+          ...p,
+          item_ids: gpi.map((i: { gear_item_id: string }) => i.gear_item_id),
+          item_wear_types: wearTypes,
+        };
+      });
       setPackages(mapped);
     }
     setLoading(false);
@@ -50,11 +60,11 @@ export function usePackages() {
     const supabase = createClient() as AnyClient;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError("ログインが必要です"); return null; }
-    const { item_ids, ...pkgData } = input;
+    const { item_ids, item_wear_types, ...pkgData } = input;
 
     const { data: pkg, error: err1 } = await supabase
       .from("gear_packages")
-      .insert({ ...pkgData, user_id: user.id, total_weight_g: 0 })
+      .insert({ ...pkgData, user_id: user.id, total_weight_g: 0, base_weight_g: 0 })
       .select()
       .single();
     if (err1 || !pkg) { setError(err1?.message ?? "error"); return null; }
@@ -63,6 +73,7 @@ export function usePackages() {
       const rows = item_ids.map((gear_item_id: string) => ({
         package_id: pkg.id,
         gear_item_id,
+        wear_type: item_wear_types?.[gear_item_id] ?? 'carried',
       }));
       const { error: err2 } = await supabase.from("gear_package_items").insert(rows);
       if (err2) { setError(err2.message); return null; }
@@ -74,7 +85,7 @@ export function usePackages() {
 
   const updatePackage = useCallback(async (id: string, input: Partial<PackageInput>) => {
     const supabase = createClient() as AnyClient;
-    const { item_ids, ...pkgData } = input;
+    const { item_ids, item_wear_types, ...pkgData } = input;
 
     if (Object.keys(pkgData).length > 0) {
       await supabase.from("gear_packages").update(pkgData).eq("id", id);
@@ -86,6 +97,7 @@ export function usePackages() {
         const rows = item_ids.map((gear_item_id: string) => ({
           package_id: id,
           gear_item_id,
+          wear_type: item_wear_types?.[gear_item_id] ?? 'carried',
         }));
         await supabase.from("gear_package_items").insert(rows);
       }

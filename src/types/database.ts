@@ -120,6 +120,7 @@ export interface Database {
           description: string | null;
           mountain_type: string | null;
           total_weight_g: number;
+          base_weight_g: number;
           is_public: boolean;
           created_at: string;
           updated_at: string;
@@ -129,6 +130,7 @@ export interface Database {
           description?: string | null;
           mountain_type?: string | null;
           total_weight_g?: number;
+          base_weight_g?: number;
           is_public?: boolean;
         };
         Update: {
@@ -136,6 +138,7 @@ export interface Database {
           description?: string | null;
           mountain_type?: string | null;
           total_weight_g?: number;
+          base_weight_g?: number;
           is_public?: boolean;
         };
       };
@@ -145,6 +148,7 @@ export interface Database {
           package_id: string;
           gear_item_id: string;
           quantity: number;
+          wear_type: 'worn' | 'carried' | 'consumable';
           sort_order: number | null;
           notes: string | null;
         };
@@ -152,11 +156,13 @@ export interface Database {
           package_id: string;
           gear_item_id: string;
           quantity?: number;
+          wear_type?: 'worn' | 'carried' | 'consumable';
           sort_order?: number | null;
           notes?: string | null;
         };
         Update: {
           quantity?: number;
+          wear_type?: 'worn' | 'carried' | 'consumable';
           sort_order?: number | null;
           notes?: string | null;
         };
