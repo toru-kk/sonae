@@ -3,104 +3,106 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MapPin } from "lucide-react";
 
-type Mountain = { name: string; pref: string; elevation?: number };
+type Mountain = { name: string; reading: string; pref: string; elevation?: number };
 
 const MOUNTAINS: Mountain[] = [
   // 北海道
-  { name: "大雪山", pref: "北海道", elevation: 2291 },
-  { name: "十勝岳", pref: "北海道", elevation: 2077 },
-  { name: "羊蹄山", pref: "北海道", elevation: 1898 },
-  { name: "利尻山", pref: "北海道", elevation: 1721 },
-  { name: "トムラウシ山", pref: "北海道", elevation: 2141 },
+  { name: "大雪山", reading: "たいせつざん", pref: "北海道", elevation: 2291 },
+  { name: "十勝岳", reading: "とかちだけ", pref: "北海道", elevation: 2077 },
+  { name: "羊蹄山", reading: "ようていざん", pref: "北海道", elevation: 1898 },
+  { name: "利尻山", reading: "りしりざん", pref: "北海道", elevation: 1721 },
+  { name: "トムラウシ山", reading: "とむらうしやま", pref: "北海道", elevation: 2141 },
   // 東北
-  { name: "岩手山", pref: "岩手県", elevation: 2038 },
-  { name: "鳥海山", pref: "山形県・秋田県", elevation: 2236 },
-  { name: "月山", pref: "山形県", elevation: 1984 },
-  { name: "蔵王山", pref: "山形県・宮城県", elevation: 1841 },
-  { name: "飯豊山", pref: "山形県・新潟県・福島県", elevation: 2105 },
-  { name: "朝日岳", pref: "山形県", elevation: 1870 },
-  { name: "磐梯山", pref: "福島県", elevation: 1816 },
-  { name: "安達太良山", pref: "福島県", elevation: 1700 },
+  { name: "岩手山", reading: "いわてさん", pref: "岩手県", elevation: 2038 },
+  { name: "鳥海山", reading: "ちょうかいさん", pref: "山形県・秋田県", elevation: 2236 },
+  { name: "月山", reading: "がっさん", pref: "山形県", elevation: 1984 },
+  { name: "蔵王山", reading: "ざおうさん", pref: "山形県・宮城県", elevation: 1841 },
+  { name: "飯豊山", reading: "いいでさん", pref: "山形県・新潟県・福島県", elevation: 2105 },
+  { name: "朝日岳", reading: "あさひだけ", pref: "山形県", elevation: 1870 },
+  { name: "磐梯山", reading: "ばんだいさん", pref: "福島県", elevation: 1816 },
+  { name: "安達太良山", reading: "あだたらやま", pref: "福島県", elevation: 1700 },
   // 関東
-  { name: "筑波山", pref: "茨城県", elevation: 877 },
-  { name: "男体山", pref: "栃木県", elevation: 2486 },
-  { name: "日光白根山", pref: "栃木県・群馬県", elevation: 2578 },
-  { name: "那須岳", pref: "栃木県", elevation: 1917 },
-  { name: "赤城山", pref: "群馬県", elevation: 1828 },
-  { name: "谷川岳", pref: "群馬県・新潟県", elevation: 1977 },
-  { name: "武尊山", pref: "群馬県", elevation: 2158 },
-  { name: "両神山", pref: "埼玉県", elevation: 1723 },
-  { name: "雲取山", pref: "東京都・埼玉県・山梨県", elevation: 2017 },
-  { name: "高尾山", pref: "東京都", elevation: 599 },
-  { name: "大山", pref: "神奈川県", elevation: 1252 },
-  { name: "丹沢山", pref: "神奈川県", elevation: 1567 },
-  { name: "塔ノ岳", pref: "神奈川県", elevation: 1491 },
+  { name: "筑波山", reading: "つくばさん", pref: "茨城県", elevation: 877 },
+  { name: "男体山", reading: "なんたいさん", pref: "栃木県", elevation: 2486 },
+  { name: "日光白根山", reading: "にっこうしらねさん", pref: "栃木県・群馬県", elevation: 2578 },
+  { name: "那須岳", reading: "なすだけ", pref: "栃木県", elevation: 1917 },
+  { name: "赤城山", reading: "あかぎやま", pref: "群馬県", elevation: 1828 },
+  { name: "谷川岳", reading: "たにがわだけ", pref: "群馬県・新潟県", elevation: 1977 },
+  { name: "武尊山", reading: "ほたかやま", pref: "群馬県", elevation: 2158 },
+  { name: "両神山", reading: "りょうかみさん", pref: "埼玉県", elevation: 1723 },
+  { name: "雲取山", reading: "くもとりやま", pref: "東京都・埼玉県・山梨県", elevation: 2017 },
+  { name: "高尾山", reading: "たかおさん", pref: "東京都", elevation: 599 },
+  { name: "大山", reading: "おおやま", pref: "神奈川県", elevation: 1252 },
+  { name: "丹沢山", reading: "たんざわさん", pref: "神奈川県", elevation: 1567 },
+  { name: "塔ノ岳", reading: "とうのだけ", pref: "神奈川県", elevation: 1491 },
   // 中部・北アルプス
-  { name: "槍ヶ岳", pref: "長野県・岐阜県", elevation: 3180 },
-  { name: "穂高岳", pref: "長野県・岐阜県", elevation: 3190 },
-  { name: "奥穂高岳", pref: "長野県・岐阜県", elevation: 3190 },
-  { name: "北穂高岳", pref: "長野県・岐阜県", elevation: 3106 },
-  { name: "前穂高岳", pref: "長野県", elevation: 3090 },
-  { name: "常念岳", pref: "長野県", elevation: 2857 },
-  { name: "燕岳", pref: "長野県", elevation: 2763 },
-  { name: "蝶ヶ岳", pref: "長野県", elevation: 2677 },
-  { name: "立山", pref: "富山県", elevation: 3015 },
-  { name: "剱岳", pref: "富山県", elevation: 2999 },
-  { name: "薬師岳", pref: "富山県", elevation: 2926 },
-  { name: "白馬岳", pref: "長野県・富山県", elevation: 2932 },
-  { name: "唐松岳", pref: "長野県・富山県", elevation: 2696 },
-  { name: "五竜岳", pref: "長野県・富山県", elevation: 2814 },
-  { name: "鹿島槍ヶ岳", pref: "長野県・富山県", elevation: 2889 },
-  { name: "笠ヶ岳", pref: "岐阜県", elevation: 2898 },
-  { name: "乗鞍岳", pref: "長野県・岐阜県", elevation: 3026 },
-  { name: "焼岳", pref: "長野県・岐阜県", elevation: 2455 },
+  { name: "槍ヶ岳", reading: "やりがたけ", pref: "長野県・岐阜県", elevation: 3180 },
+  { name: "穂高岳", reading: "ほたかだけ", pref: "長野県・岐阜県", elevation: 3190 },
+  { name: "奥穂高岳", reading: "おくほたかだけ", pref: "長野県・岐阜県", elevation: 3190 },
+  { name: "北穂高岳", reading: "きたほたかだけ", pref: "長野県・岐阜県", elevation: 3106 },
+  { name: "前穂高岳", reading: "まえほたかだけ", pref: "長野県", elevation: 3090 },
+  { name: "常念岳", reading: "じょうねんだけ", pref: "長野県", elevation: 2857 },
+  { name: "燕岳", reading: "つばくろだけ", pref: "長野県", elevation: 2763 },
+  { name: "蝶ヶ岳", reading: "ちょうがたけ", pref: "長野県", elevation: 2677 },
+  { name: "立山", reading: "たてやま", pref: "富山県", elevation: 3015 },
+  { name: "剱岳", reading: "つるぎだけ", pref: "富山県", elevation: 2999 },
+  { name: "薬師岳", reading: "やくしだけ", pref: "富山県", elevation: 2926 },
+  { name: "白馬岳", reading: "しろうまだけ", pref: "長野県・富山県", elevation: 2932 },
+  { name: "唐松岳", reading: "からまつだけ", pref: "長野県・富山県", elevation: 2696 },
+  { name: "五竜岳", reading: "ごりゅうだけ", pref: "長野県・富山県", elevation: 2814 },
+  { name: "鹿島槍ヶ岳", reading: "かしまやりがたけ", pref: "長野県・富山県", elevation: 2889 },
+  { name: "笠ヶ岳", reading: "かさがたけ", pref: "岐阜県", elevation: 2898 },
+  { name: "乗鞍岳", reading: "のりくらだけ", pref: "長野県・岐阜県", elevation: 3026 },
+  { name: "焼岳", reading: "やけだけ", pref: "長野県・岐阜県", elevation: 2455 },
   // 中部・南アルプス
-  { name: "北岳", pref: "山梨県", elevation: 3193 },
-  { name: "間ノ岳", pref: "山梨県・静岡県", elevation: 3190 },
-  { name: "甲斐駒ヶ岳", pref: "山梨県・長野県", elevation: 2967 },
-  { name: "仙丈ヶ岳", pref: "長野県", elevation: 3033 },
-  { name: "赤石岳", pref: "静岡県・長野県", elevation: 3121 },
-  { name: "聖岳", pref: "静岡県・長野県", elevation: 3013 },
-  { name: "光岳", pref: "静岡県・長野県", elevation: 2592 },
+  { name: "北岳", reading: "きただけ", pref: "山梨県", elevation: 3193 },
+  { name: "間ノ岳", reading: "あいのだけ", pref: "山梨県・静岡県", elevation: 3190 },
+  { name: "甲斐駒ヶ岳", reading: "かいこまがたけ", pref: "山梨県・長野県", elevation: 2967 },
+  { name: "仙丈ヶ岳", reading: "せんじょうがたけ", pref: "長野県", elevation: 3033 },
+  { name: "赤石岳", reading: "あかいしだけ", pref: "静岡県・長野県", elevation: 3121 },
+  { name: "聖岳", reading: "ひじりだけ", pref: "静岡県・長野県", elevation: 3013 },
+  { name: "光岳", reading: "てかりだけ", pref: "静岡県・長野県", elevation: 2592 },
   // 中部・八ヶ岳ほか
-  { name: "八ヶ岳", pref: "長野県・山梨県", elevation: 2899 },
-  { name: "赤岳", pref: "長野県・山梨県", elevation: 2899 },
-  { name: "蓼科山", pref: "長野県", elevation: 2531 },
-  { name: "霧ヶ峰", pref: "長野県", elevation: 1925 },
-  { name: "美ヶ原", pref: "長野県", elevation: 2034 },
-  { name: "浅間山", pref: "長野県・群馬県", elevation: 2568 },
-  { name: "妙高山", pref: "新潟県", elevation: 2454 },
-  { name: "火打山", pref: "新潟県", elevation: 2462 },
-  { name: "苗場山", pref: "新潟県・長野県", elevation: 2145 },
-  { name: "巻機山", pref: "新潟県・群馬県", elevation: 1967 },
+  { name: "八ヶ岳", reading: "やつがたけ", pref: "長野県・山梨県", elevation: 2899 },
+  { name: "赤岳", reading: "あかだけ", pref: "長野県・山梨県", elevation: 2899 },
+  { name: "蓼科山", reading: "たてしなやま", pref: "長野県", elevation: 2531 },
+  { name: "霧ヶ峰", reading: "きりがみね", pref: "長野県", elevation: 1925 },
+  { name: "美ヶ原", reading: "うつくしがはら", pref: "長野県", elevation: 2034 },
+  { name: "浅間山", reading: "あさまやま", pref: "長野県・群馬県", elevation: 2568 },
+  { name: "妙高山", reading: "みょうこうさん", pref: "新潟県", elevation: 2454 },
+  { name: "火打山", reading: "ひうちやま", pref: "新潟県", elevation: 2462 },
+  { name: "苗場山", reading: "なえばさん", pref: "新潟県・長野県", elevation: 2145 },
+  { name: "巻機山", reading: "まきはたやま", pref: "新潟県・群馬県", elevation: 1967 },
   // 富士山
-  { name: "富士山", pref: "山梨県・静岡県", elevation: 3776 },
+  { name: "富士山", reading: "ふじさん", pref: "山梨県・静岡県", elevation: 3776 },
   // 近畿
-  { name: "大台ヶ原", pref: "奈良県・三重県", elevation: 1695 },
-  { name: "大峰山", pref: "奈良県", elevation: 1915 },
-  { name: "伊吹山", pref: "滋賀県・岐阜県", elevation: 1377 },
-  { name: "比良山", pref: "滋賀県", elevation: 1214 },
-  { name: "六甲山", pref: "兵庫県", elevation: 931 },
+  { name: "大台ヶ原", reading: "おおだいがはら", pref: "奈良県・三重県", elevation: 1695 },
+  { name: "大峰山", reading: "おおみねさん", pref: "奈良県", elevation: 1915 },
+  { name: "伊吹山", reading: "いぶきやま", pref: "滋賀県・岐阜県", elevation: 1377 },
+  { name: "比良山", reading: "ひらさん", pref: "滋賀県", elevation: 1214 },
+  { name: "六甲山", reading: "ろっこうさん", pref: "兵庫県", elevation: 931 },
   // 中国・四国
-  { name: "大山", pref: "鳥取県", elevation: 1729 },
-  { name: "石鎚山", pref: "愛媛県", elevation: 1982 },
-  { name: "剣山", pref: "徳島県", elevation: 1955 },
+  { name: "大山", reading: "だいせん", pref: "鳥取県", elevation: 1729 },
+  { name: "石鎚山", reading: "いしづちさん", pref: "愛媛県", elevation: 1982 },
+  { name: "剣山", reading: "つるぎさん", pref: "徳島県", elevation: 1955 },
   // 九州
-  { name: "阿蘇山", pref: "熊本県", elevation: 1592 },
-  { name: "くじゅう連山", pref: "大分県", elevation: 1791 },
-  { name: "祖母山", pref: "大分県・宮崎県", elevation: 1756 },
-  { name: "霧島山", pref: "宮崎県・鹿児島県", elevation: 1700 },
-  { name: "開聞岳", pref: "鹿児島県", elevation: 924 },
-  { name: "屋久島・宮之浦岳", pref: "鹿児島県", elevation: 1936 },
+  { name: "阿蘇山", reading: "あそさん", pref: "熊本県", elevation: 1592 },
+  { name: "くじゅう連山", reading: "くじゅうれんざん", pref: "大分県", elevation: 1791 },
+  { name: "祖母山", reading: "そぼさん", pref: "大分県・宮崎県", elevation: 1756 },
+  { name: "霧島山", reading: "きりしまやま", pref: "宮崎県・鹿児島県", elevation: 1700 },
+  { name: "開聞岳", reading: "かいもんだけ", pref: "鹿児島県", elevation: 924 },
+  { name: "屋久島・宮之浦岳", reading: "やくしま・みやのうらだけ", pref: "鹿児島県", elevation: 1936 },
 ];
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
+  onSelect?: (name: string) => void;
   className?: string;
+  placeholder?: string;
 };
 
-export function MountainSuggest({ value, onChange, className }: Props) {
+export function MountainSuggest({ value, onChange, onSelect, className, placeholder }: Props) {
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -110,15 +112,17 @@ export function MountainSuggest({ value, onChange, className }: Props) {
     ? MOUNTAINS.filter(
         (m) =>
           m.name.includes(value) ||
+          m.reading.includes(value) ||
           m.pref.includes(value)
       ).slice(0, 8)
     : [];
 
   const handleSelect = useCallback((m: Mountain) => {
     onChange(m.name);
+    onSelect?.(m.name);
     setOpen(false);
     inputRef.current?.blur();
-  }, [onChange]);
+  }, [onChange, onSelect]);
 
   // Close on click outside
   useEffect(() => {
@@ -145,7 +149,7 @@ export function MountainSuggest({ value, onChange, className }: Props) {
           setOpen(true);
         }}
         onFocus={() => { setFocused(true); setOpen(true); }}
-        placeholder="例：槍ヶ岳、富士山、高尾山"
+        placeholder={placeholder ?? "例：槍ヶ岳、富士山、高尾山"}
         className={className}
       />
       {showDropdown && (

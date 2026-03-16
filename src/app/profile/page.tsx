@@ -8,6 +8,7 @@ import { Check, Mail, User, Crown, Camera, Loader2, ExternalLink, Mountain, MapP
 import { getLevelBadge, getAllBadges, SPECIALTY_BADGE_DEFS, BADGE_CATEGORY_LABELS, getBadgesByCategory, type SpecialtyBadge, type BadgeCategory } from "@/lib/badges";
 import { LevelBadgeIcon, SpecialtyBadgeIcon } from "@/components/BadgeIcons";
 import { PlanPortalButton } from "@/components/PlanPortalButton";
+import { MountainSuggest } from "@/components/MountainSuggest";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
 
 const EXPERIENCE_LEVELS = [
@@ -472,14 +473,17 @@ export default function ProfilePage() {
           </div>
           {favoriteMountains.length < 3 && (
             <div className="flex gap-2">
-              <input
-                ref={mountainInputRef}
-                type="text"
+              <MountainSuggest
                 value={mountainInput}
-                onChange={(e) => setMountainInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMountain(); } }}
+                onChange={setMountainInput}
+                onSelect={(name) => {
+                  if (favoriteMountains.length < 3 && !favoriteMountains.includes(name)) {
+                    setFavoriteMountains([...favoriteMountains, name]);
+                    setMountainInput("");
+                  }
+                }}
+                placeholder="山名を入力（ひらがなOK）"
                 className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="山名を入力"
               />
               <button
                 onClick={addMountain}

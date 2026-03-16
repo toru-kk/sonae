@@ -170,7 +170,7 @@ export function PackageComments({ packageId }: { packageId: string }) {
               }}
               rows={2}
               placeholder="装備について質問・感想を書く…"
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
             />
             <p className="mt-0.5 text-right text-xs text-muted-foreground">{content.length}/500</p>
           </div>
