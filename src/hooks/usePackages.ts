@@ -49,10 +49,6 @@ export function usePackages() {
           item_wear_types: wearTypes,
         };
       });
-      // デバッグ: wear_typeが正しく読めているか
-      const nonCarried = mapped.flatMap(p => Object.entries(p.item_wear_types).filter(([,v]) => v !== 'carried'));
-      if (nonCarried.length > 0) console.log("[usePackages] non-carried items:", nonCarried);
-      else console.log("[usePackages] all items are carried (no wear_type set)");
       setPackages(mapped);
     }
     setLoading(false);
@@ -74,13 +70,17 @@ export function usePackages() {
     if (err1 || !pkg) { setError(err1?.message ?? "error"); return null; }
 
     if (item_ids.length > 0) {
-      const rows = item_ids.map((gear_item_id: string) => ({
-        package_id: pkg.id,
-        gear_item_id,
-        wear_type: item_wear_types?.[gear_item_id] ?? 'carried',
-      }));
-      const { error: err2 } = await supabase.from("gear_package_items").insert(rows);
-      if (err2) { setError(err2.message); return null; }
+      // APIルート経由でアイテムを挿入（RLSバイパス）
+      const res = await fetch(`/api/packages/${pkg.id}/items`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_ids, item_wear_types }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        setError(err.error ?? "アイテムの保存に失敗しました");
+        return null;
+      }
     }
 
     await load();
@@ -97,18 +97,17 @@ export function usePackages() {
     }
 
     if (item_ids !== undefined) {
-      const { error: delErr } = await supabase.from("gear_package_items").delete().eq("package_id", id);
-      if (delErr) { console.error("gear_package_items delete error:", delErr); setError(delErr.message); return; }
-      if (item_ids.length > 0) {
-        const rows = item_ids.map((gear_item_id: string) => ({
-          package_id: id,
-          gear_item_id,
-          wear_type: item_wear_types?.[gear_item_id] ?? 'carried',
-        }));
-        console.log("[usePackages] inserting rows:", JSON.stringify(rows.map(r => ({ id: r.gear_item_id.slice(0,8), wear_type: r.wear_type }))));
-        const { data: insData, error: insErr } = await supabase.from("gear_package_items").insert(rows).select();
-        console.log("[usePackages] insert result:", insData?.length, "rows, error:", insErr);
-        if (insErr) { console.error("gear_package_items insert error:", insErr); setError(insErr.message); return; }
+      // APIルート経由でアイテムを更新（RLSバイパス）
+      const res = await fetch(`/api/packages/${id}/items`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_ids, item_wear_types }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("items update error:", err);
+        setError(err.error ?? "アイテムの更新に失敗しました");
+        return;
       }
     }
 
