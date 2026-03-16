@@ -88,18 +88,21 @@ export function usePackages() {
     const { item_ids, item_wear_types, ...pkgData } = input;
 
     if (Object.keys(pkgData).length > 0) {
-      await supabase.from("gear_packages").update(pkgData).eq("id", id);
+      const { error: updErr } = await supabase.from("gear_packages").update(pkgData).eq("id", id);
+      if (updErr) { console.error("gear_packages update error:", updErr); setError(updErr.message); return; }
     }
 
     if (item_ids !== undefined) {
-      await supabase.from("gear_package_items").delete().eq("package_id", id);
+      const { error: delErr } = await supabase.from("gear_package_items").delete().eq("package_id", id);
+      if (delErr) { console.error("gear_package_items delete error:", delErr); setError(delErr.message); return; }
       if (item_ids.length > 0) {
         const rows = item_ids.map((gear_item_id: string) => ({
           package_id: id,
           gear_item_id,
           wear_type: item_wear_types?.[gear_item_id] ?? 'carried',
         }));
-        await supabase.from("gear_package_items").insert(rows);
+        const { error: insErr } = await supabase.from("gear_package_items").insert(rows);
+        if (insErr) { console.error("gear_package_items insert error:", insErr); setError(insErr.message); return; }
       }
     }
 
