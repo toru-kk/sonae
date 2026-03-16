@@ -35,7 +35,7 @@ export function usePackages() {
       .select(`*, gear_package_items(gear_item_id, wear_type)`)
       .order("created_at", { ascending: false });
 
-    if (err) { setError(err.message); }
+    if (err) { setError(err.message); console.error("[usePackages] load error:", err); }
     else if (data) {
       const mapped: PackageWithItemIds[] = data.map((p: AnyClient) => {
         const gpi = p.gear_package_items ?? [];
@@ -49,6 +49,10 @@ export function usePackages() {
           item_wear_types: wearTypes,
         };
       });
+      // デバッグ: wear_typeが正しく読めているか
+      const nonCarried = mapped.flatMap(p => Object.entries(p.item_wear_types).filter(([,v]) => v !== 'carried'));
+      if (nonCarried.length > 0) console.log("[usePackages] non-carried items:", nonCarried);
+      else console.log("[usePackages] all items are carried (no wear_type set)");
       setPackages(mapped);
     }
     setLoading(false);
@@ -101,7 +105,9 @@ export function usePackages() {
           gear_item_id,
           wear_type: item_wear_types?.[gear_item_id] ?? 'carried',
         }));
-        const { error: insErr } = await supabase.from("gear_package_items").insert(rows);
+        console.log("[usePackages] inserting rows:", JSON.stringify(rows.map(r => ({ id: r.gear_item_id.slice(0,8), wear_type: r.wear_type }))));
+        const { data: insData, error: insErr } = await supabase.from("gear_package_items").insert(rows).select();
+        console.log("[usePackages] insert result:", insData?.length, "rows, error:", insErr);
         if (insErr) { console.error("gear_package_items insert error:", insErr); setError(insErr.message); return; }
       }
     }
