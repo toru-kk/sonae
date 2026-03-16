@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Check, Globe, Lock, Weight } from "lucide-react";
+import { ArrowLeft, Check, Globe, Lock, Weight, Backpack, Shirt, Droplets } from "lucide-react";
 import { mockCategories } from "@/lib/mock-data";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { usePackages } from "@/hooks/usePackages";
@@ -177,13 +177,13 @@ export default function PackageNewPage() {
                   <Weight className="h-3 w-3" />{formatWeight(totalWeight)}
                 </span>
                 {baseWeight !== totalWeight && (
-                  <span className="text-primary font-medium">携行 {formatWeight(baseWeight)}</span>
+                  <span className="inline-flex items-center gap-0.5 text-primary font-medium"><Backpack className="h-3 w-3" />{formatWeight(baseWeight)}</span>
                 )}
                 {wornWeight > 0 && (
-                  <span className="text-violet-600 font-medium">着用 {formatWeight(wornWeight)}</span>
+                  <span className="inline-flex items-center gap-0.5 text-violet-600 font-medium"><Shirt className="h-3 w-3" />{formatWeight(wornWeight)}</span>
                 )}
                 {consumableWeight > 0 && (
-                  <span className="text-amber-600 font-medium">消耗 {formatWeight(consumableWeight)}</span>
+                  <span className="inline-flex items-center gap-0.5 text-amber-600 font-medium"><Droplets className="h-3 w-3" />{formatWeight(consumableWeight)}</span>
                 )}
               </div>
             )}

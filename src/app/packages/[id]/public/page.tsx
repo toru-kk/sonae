@@ -121,6 +121,11 @@ export default async function PublicPackagePage(
     const wt = wearMap[i.id] ?? 'carried';
     return wt === 'worn' ? s + (i.weight_g ?? 0) : s;
   }, 0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const consumableWeight: number = (items as any[]).reduce((s: number, i: any) => {
+    const wt = wearMap[i.id] ?? 'carried';
+    return wt === 'consumable' ? s + (i.weight_g ?? 0) : s;
+  }, 0);
 
   const WEAR_BADGE: Record<string, { label: string; class: string }> = {
     worn: { label: '着用', class: 'border-violet-300 bg-violet-50 text-violet-600' },
@@ -256,7 +261,7 @@ export default async function PublicPackagePage(
                   </div>
                   <p className="text-3xl font-bold text-white tabular-nums">{formatWeight(baseWeight)}</p>
                   <p className="mt-1 text-xs text-white/40 tabular-nums">
-                    合計 {formatWeight(totalWeight)}{wornWeight > 0 && ` / 着用 ${formatWeight(wornWeight)}`}
+                    合計 {formatWeight(totalWeight)}{wornWeight > 0 && ` / 着用 ${formatWeight(wornWeight)}`}{consumableWeight > 0 && ` / 消耗 ${formatWeight(consumableWeight)}`}
                   </p>
                 </>
               ) : (

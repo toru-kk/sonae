@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Globe, Trash2, Share2, Check } from "lucide-react";
+import { ArrowLeft, ChevronRight, Globe, Trash2, Share2, Check, Backpack, Shirt, Droplets, Scale } from "lucide-react";
 import { WeightTooltip } from "@/components/WeightTooltip";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
@@ -100,6 +100,9 @@ export default function PackageDetailPage() {
     .reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
   const wornWeight = items
     .filter((i) => wearTypes[i.id] === 'worn')
+    .reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
+  const consumableWeight = items
+    .filter((i) => wearTypes[i.id] === 'consumable')
     .reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
   const hasWearTypes = Object.values(wearTypes).some(v => v !== 'carried');
 
@@ -218,7 +221,11 @@ export default function PackageDetailPage() {
                     <p className="text-2xl font-black text-white tabular-nums">{formatWeight(totalWeight)}</p>
                     <p className="text-[11px] text-white/40">{items.length} 点</p>
                     {hasWearTypes && (
-                      <p className="text-[11px] text-emerald-300 font-semibold mt-0.5">ベースウェイト {formatWeight(baseWeight)}</p>
+                      <p className="text-[11px] text-emerald-300 font-semibold mt-0.5">
+                        携行 {formatWeight(baseWeight)}
+                        {wornWeight > 0 && <span className="text-violet-300 ml-1.5">着用 {formatWeight(wornWeight)}</span>}
+                        {consumableWeight > 0 && <span className="text-amber-300 ml-1.5">消耗 {formatWeight(consumableWeight)}</span>}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -296,23 +303,31 @@ export default function PackageDetailPage() {
       {/* 重量サマリー */}
       {hasWearTypes && totalWeight > 0 && (
         <div className="mb-6 rounded-xl border border-border bg-card p-4">
-          <div className="flex items-baseline gap-4">
-            <div>
-              <div className="flex items-center gap-1">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">ベースウェイト</p>
-                <WeightTooltip variant="light" />
-              </div>
-              <p className="text-xl font-black text-primary tabular-nums">{formatWeight(baseWeight)}</p>
+          <div className="flex items-center gap-1 mb-3">
+            <Scale className="h-3.5 w-3.5 text-muted-foreground" />
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">重量内訳</p>
+            <WeightTooltip variant="light" />
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            <div className="rounded-lg bg-primary/5 border border-primary/20 p-2.5 text-center">
+              <Backpack className="h-4 w-4 text-primary mx-auto mb-1" />
+              <p className="text-[10px] font-semibold text-primary/70">携行</p>
+              <p className="text-sm font-black text-primary tabular-nums">{formatWeight(baseWeight)}</p>
             </div>
-            {wornWeight > 0 && (
-              <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">着用</p>
-                <p className="text-base font-bold text-violet-600 tabular-nums">{formatWeight(wornWeight)}</p>
-              </div>
-            )}
-            <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">合計</p>
-              <p className="text-base font-bold text-foreground tabular-nums">{formatWeight(totalWeight)}</p>
+            <div className="rounded-lg bg-violet-50 border border-violet-200 p-2.5 text-center">
+              <Shirt className="h-4 w-4 text-violet-500 mx-auto mb-1" />
+              <p className="text-[10px] font-semibold text-violet-400">着用</p>
+              <p className="text-sm font-black text-violet-600 tabular-nums">{formatWeight(wornWeight)}</p>
+            </div>
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-2.5 text-center">
+              <Droplets className="h-4 w-4 text-amber-500 mx-auto mb-1" />
+              <p className="text-[10px] font-semibold text-amber-400">消耗</p>
+              <p className="text-sm font-black text-amber-600 tabular-nums">{formatWeight(consumableWeight)}</p>
+            </div>
+            <div className="rounded-lg bg-secondary/50 border border-border p-2.5 text-center">
+              <Scale className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
+              <p className="text-[10px] font-semibold text-muted-foreground">合計</p>
+              <p className="text-sm font-black text-foreground tabular-nums">{formatWeight(totalWeight)}</p>
             </div>
           </div>
         </div>
