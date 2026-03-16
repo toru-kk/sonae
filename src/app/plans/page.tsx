@@ -27,8 +27,8 @@ async function getCurrentPlan(): Promise<"free" | "standard" | "premium" | null>
 
 const FEATURES = [
   { label: "装備登録",       free: "30点",   standard: "200点",  premium: "無制限" },
-  { label: "パッケージ作成", free: "3つ",    standard: "20つ",   premium: "無制限" },
-  { label: "AI装備提案",     free: "3回/月", standard: "30回/月", premium: "無制限" },
+  { label: "パッケージ作成", free: "3パッケージ", standard: "20パッケージ", premium: "無制限" },
+  { label: "AI装備提案",     free: "3回/月", standard: "30回/月", premium: "100回/月" },
   { label: "パッケージ公開・シェア", free: "✓", standard: "✓",  premium: "✓" },
   { label: "チェックリスト", free: "✓",     standard: "✓",      premium: "✓" },
   { label: "優先サポート",   free: "—",     standard: "—",      premium: "✓" },
@@ -51,7 +51,7 @@ export default async function PlansPage() {
             </div>
             <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-2">Pricing</p>
             <h1 className="text-2xl sm:text-3xl font-black text-white mb-2">まずは無料で始められる</h1>
-            <p className="text-sm text-white/60">装備管理・シェア機能はすべて無料。AIが必要になったらアップグレード。</p>
+            <p className="text-sm text-white/60">もっと装備を記録したい。もっと色んな山に挑戦したい。その気持ちに応えるプラン。</p>
           </div>
         </HeaderGradient>
       </div>
@@ -71,10 +71,10 @@ export default async function PlansPage() {
             <div className="flex items-baseline gap-1">
               <span className="text-3xl font-black text-foreground">¥0</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">まず試してみたい人に</p>
+            <p className="mt-1 text-xs text-muted-foreground">まずは気軽に装備を記録してみよう</p>
           </div>
           <ul className="space-y-2.5 flex-1 mb-6">
-            {["装備 30点まで登録", "パッケージ 3つまで", "AI提案 3回/月", "パッケージ公開・シェア", "チェックリスト"].map((f) => (
+            {["装備 30点まで登録", "パッケージ 3つまで作成", "AI提案 3回/月", "パッケージ公開・シェア", "チェックリスト"].map((f) => (
               <li key={f} className="flex items-center gap-2 text-sm text-foreground">
                 <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
                 {f}
@@ -103,10 +103,10 @@ export default async function PlansPage() {
               <span className="text-3xl font-black">¥480</span>
               <span className="text-sm text-primary-foreground/60">/月</span>
             </div>
-            <p className="mt-1 text-xs text-primary-foreground/70">本格的に使いたい人に</p>
+            <p className="mt-1 text-xs text-primary-foreground/70">装備が増えてきた。色んな山に行きたい人に</p>
           </div>
           <ul className="space-y-2.5 flex-1 mb-6">
-            {["装備 200点まで登録", "パッケージ 20つまで", "AI提案 30回/月", "パッケージ公開・シェア", "チェックリスト"].map((f) => (
+            {["装備 200点まで登録", "パッケージ 20つまで作成", "AI提案 30回/月", "パッケージ公開・シェア", "チェックリスト"].map((f) => (
               <li key={f} className="flex items-center gap-2 text-sm">
                 <CheckCircle className="h-4 w-4 shrink-0 text-green-300" />
                 {f}
@@ -140,10 +140,10 @@ export default async function PlansPage() {
               <span className="text-3xl font-black text-foreground">¥980</span>
               <span className="text-sm text-muted-foreground">/月</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">制限なく使い倒したい人に</p>
+            <p className="mt-1 text-xs text-muted-foreground">装備も山も、制限なく追求したい人に</p>
           </div>
           <ul className="space-y-2.5 flex-1 mb-6">
-            {["装備 無制限", "パッケージ 無制限", "AI提案 無制限", "パッケージ公開・シェア", "チェックリスト", "優先サポート"].map((f) => (
+            {["装備 無制限", "パッケージ 無制限", "AI提案 100回/月", "パッケージ公開・シェア", "チェックリスト", "優先サポート"].map((f) => (
               <li key={f} className="flex items-center gap-2 text-sm text-foreground">
                 <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
                 {f}
@@ -191,7 +191,7 @@ export default async function PlansPage() {
         <div className="space-y-3">
           {[
             { q: "解約はいつでもできますか？", a: "はい。いつでもキャンセル可能で、次回の更新日以降に自動的に無料プランへ戻ります。" },
-            { q: "プランをダウングレードしたらデータは消えますか？", a: "装備・パッケージのデータは保持されます。ただし無料プランの上限を超えた分は新規追加ができなくなります。" },
+            { q: "プランをダウングレードしたらデータは消えますか？", a: "装備・パッケージのデータは削除されません。ただし無料プランの上限（装備30点・3パッケージ）を超えている場合、超過分はロックされ閲覧のみ可能になります。編集・新規追加はプランの上限内でのみ行えます。" },
             { q: "支払い方法は何が使えますか？", a: "Stripeを通じてクレジットカード・デビットカードがご利用いただけます。" },
             { q: "AIはどんな提案をしてくれますか？", a: "登録済みの装備の中から最適なセットを選定し、不足している装備の提案と安全警告を出します。山名・月・泊数を入力するだけです。" },
           ].map(({ q, a }) => (
@@ -216,8 +216,8 @@ export default async function PlansPage() {
             <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
-            <p className="text-white font-bold mb-1">AI提案を使って、山の準備を完璧に</p>
-            <p className="text-white/60 text-sm mb-5">スタンダードプランからAI提案が月30回使えます</p>
+            <p className="text-white font-bold mb-1">次の山、もっと自由に備えよう</p>
+            <p className="text-white/60 text-sm mb-5">装備を増やして、パッケージを増やして、新しい山に挑戦しよう</p>
             {isLoggedIn ? (
               <PlanCheckoutButton plan="standard" label="スタンダードプランを始める" />
             ) : (

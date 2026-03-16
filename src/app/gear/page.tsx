@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
-import { Plus, Weight, Search, ChevronRight, X, AlertTriangle, Layers } from "lucide-react";
+import { Plus, Weight, Search, ChevronRight, X, AlertTriangle, Layers, Lock } from "lucide-react";
 import { mockCategories } from "@/lib/mock-data";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
+import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
@@ -17,6 +18,7 @@ function formatWeight(g: number | null) {
 
 export default function GearPage() {
   const { gearItems, loading } = useGear();
+  const { limits, plan } = usePlan();
   const [query, setQuery] = useState("");
   const [filterCat, setFilterCat] = useState("");
   const [nudgeDismissed, setNudgeDismissed] = useState(true);
@@ -24,6 +26,17 @@ export default function GearPage() {
   useEffect(() => {
     setNudgeDismissed(!!localStorage.getItem("nudge-gear-to-package-dismissed"));
   }, []);
+
+  const gearLimit = limits.gear;
+  const isAtLimit = gearItems.length >= gearLimit;
+  const isNearLimit = !isAtLimit && gearItems.length >= gearLimit - 5;
+  // Items beyond the plan limit are "locked" (viewable only)
+  const lockedGearIds = useMemo(() => {
+    if (gearItems.length <= gearLimit) return new Set<string>();
+    // gearItems sorted by created_at DESC (newest first) → lock the oldest (tail)
+    return new Set(gearItems.slice(gearLimit).map((g) => g.id));
+  }, [gearItems, gearLimit]);
+  const hasLockedItems = lockedGearIds.size > 0;
 
   const categoryMap = Object.fromEntries(mockCategories.map((c) => [c.id, c]));
   const totalWeight = gearItems.reduce((s, g) => s + (g.weight_g ?? 0), 0);
@@ -61,10 +74,10 @@ export default function GearPage() {
               <p className="text-xs text-white/50">
                 {loading ? "読み込み中..." : (
                   <>
-                    <span className={gearItems.length >= 25 ? "text-amber-400 font-semibold" : ""}>
+                    <span className={isNearLimit || isAtLimit ? "text-amber-400 font-semibold" : ""}>
                       {gearItems.length}
                     </span>
-                    <span className="text-white/30"> / 30点</span>
+                    <span className="text-white/30"> / {gearLimit === Infinity ? "∞" : `${gearLimit}点`}</span>
                     {` · 合計 ${formatWeight(totalWeight)} · 必須 ${essentialCount} 点`}
                   </>
                 )}
@@ -110,24 +123,43 @@ export default function GearPage() {
         </div>
       )}
 
-      {/* Freeプラン上限警告 */}
-      {!loading && gearItems.length >= 30 ? (
-        <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-          <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+      {/* ロック通知（ダウングレードで上限超過） */}
+      {!loading && hasLockedItems && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
+          <Lock className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-red-800">Freeプランの上限に達しました</p>
-            <p className="text-xs text-red-700 mt-0.5">装備30点まで。Standardプランで200点まで登録できます。</p>
-            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
-              Standardプランへ →
+            <p className="text-sm font-semibold text-amber-800">
+              {lockedGearIds.size}点の装備がロックされています
+            </p>
+            <p className="text-xs text-amber-700 mt-0.5">
+              現在のプラン（{gearLimit}点まで）の上限を超えた装備は閲覧のみ可能です。編集するにはプランをアップグレードしてください。
+            </p>
+            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-700 transition-colors">
+              プランをアップグレード →
             </Link>
           </div>
         </div>
-      ) : !loading && gearItems.length >= 25 && (
+      )}
+
+      {/* プラン上限警告 */}
+      {!loading && !hasLockedItems && isAtLimit && gearLimit !== Infinity && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-red-800">プランの上限に達しました</p>
+            <p className="text-xs text-red-700 mt-0.5">装備{gearLimit}点まで。プランをアップグレードするとさらに登録できます。</p>
+            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
+              プランを確認する →
+            </Link>
+          </div>
+        </div>
+      )}
+      {!loading && !hasLockedItems && isNearLimit && gearLimit !== Infinity && (
         <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
           <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-amber-800">Freeプランの上限まで残り {30 - gearItems.length} 点</p>
-            <p className="text-xs text-amber-700 mt-0.5">Freeプランは装備30点まで。Standardプランで200点まで登録できます。</p>
+            <p className="text-sm font-semibold text-amber-800">プランの上限まで残り {gearLimit - gearItems.length} 点</p>
+            <p className="text-xs text-amber-700 mt-0.5">現在のプランは装備{gearLimit}点まで。プランをアップグレードするとさらに登録できます。</p>
             <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors">
               プランを確認する →
             </Link>
@@ -277,32 +309,53 @@ export default function GearPage() {
                 <span className="text-xs text-muted-foreground">{cat.items.length} 点</span>
               </div>
               <div className="grid gap-2 sm:grid-cols-2">
-                {cat.items.map((item) => (
-                  <Link key={item.id} href={`/gear/${item.id}`}
-                    className="group flex items-center gap-3.5 rounded-xl border border-border bg-card p-3.5 hover:border-primary/40 hover:shadow-sm transition-all">
-                    <CategoryIcon
-                      categoryId={item.category_id}
-                      iconName={categoryMap[item.category_id]?.icon}
-                      size="lg"
-                      variant="gradient"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-1.5">
-                        <p className="text-sm font-semibold text-foreground leading-snug truncate">{item.name}</p>
-                        {item.is_essential && (
-                          <span className="shrink-0 mt-0.5 rounded border border-red-200 bg-red-50 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-red-600">必須</span>
-                        )}
+                {cat.items.map((item) => {
+                  const isLocked = lockedGearIds.has(item.id);
+                  const inner = (
+                    <>
+                      <CategoryIcon
+                        categoryId={item.category_id}
+                        iconName={categoryMap[item.category_id]?.icon}
+                        size="lg"
+                        variant="gradient"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start gap-1.5">
+                          <p className="text-sm font-semibold text-foreground leading-snug truncate">{item.name}</p>
+                          {isLocked && (
+                            <span className="shrink-0 mt-0.5 rounded border border-amber-300 bg-amber-50 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-amber-700 inline-flex items-center gap-0.5">
+                              <Lock className="h-2.5 w-2.5" />ロック
+                            </span>
+                          )}
+                          {!isLocked && item.is_essential && (
+                            <span className="shrink-0 mt-0.5 rounded border border-red-200 bg-red-50 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-red-600">必須</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                          {[item.brand, item.notes].filter(Boolean).join(" · ") || "—"}
+                        </p>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[item.brand, item.notes].filter(Boolean).join(" · ") || "—"}
-                      </p>
+                      <div className="shrink-0 flex flex-col items-end gap-1">
+                        <span className="text-sm font-bold text-foreground tabular-nums">{formatWeight(item.weight_g)}</span>
+                        {isLocked
+                          ? <Lock className="h-3.5 w-3.5 text-amber-500" />
+                          : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        }
+                      </div>
+                    </>
+                  );
+                  return isLocked ? (
+                    <div key={item.id}
+                      className="group flex items-center gap-3.5 rounded-xl border border-border/50 bg-card/60 p-3.5 opacity-60 cursor-not-allowed">
+                      {inner}
                     </div>
-                    <div className="shrink-0 flex flex-col items-end gap-1">
-                      <span className="text-sm font-bold text-foreground tabular-nums">{formatWeight(item.weight_g)}</span>
-                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </Link>
-                ))}
+                  ) : (
+                    <Link key={item.id} href={`/gear/${item.id}`}
+                      className="group flex items-center gap-3.5 rounded-xl border border-border bg-card p-3.5 hover:border-primary/40 hover:shadow-sm transition-all">
+                      {inner}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           ))}

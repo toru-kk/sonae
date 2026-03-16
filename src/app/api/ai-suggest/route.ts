@@ -47,10 +47,10 @@ export async function POST(req: NextRequest) {
   }
 
   // プランに応じた月間制限
-  const PLAN_LIMITS: Record<string, number | null> = {
+  const PLAN_LIMITS: Record<string, number> = {
     free: 3,
     standard: 30,
-    premium: null, // 無制限
+    premium: 100,
   };
 
   const { data: userRow } = await supabase
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     .maybeSingle() as { data: { count: number } | null };
 
   const currentCount = usage?.count ?? 0;
-  if (monthlyLimit !== null && currentCount >= monthlyLimit) {
+  if (currentCount >= monthlyLimit) {
     return NextResponse.json(
       { error: `月間AI提案の上限（${monthlyLimit}回）に達しました。来月またご利用ください。`, limit_reached: true, plan: userPlan },
       { status: 429 }
@@ -182,7 +182,7 @@ ${gearList || "（装備が登録されていません）"}
 
     return NextResponse.json({
       ...enriched, mountain, month, nights,
-      remaining: monthlyLimit === null ? null : monthlyLimit - currentCount - 1,
+      remaining: monthlyLimit - currentCount - 1,
       plan: userPlan,
     });
   } catch (err) {

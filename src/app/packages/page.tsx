@@ -11,6 +11,8 @@ import { mockCategories } from "@/lib/mock-data";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { usePackages } from "@/hooks/usePackages";
 import { useGear } from "@/hooks/useGear";
+import { usePlan } from "@/hooks/usePlan";
+import { cn } from "@/lib/utils";
 
 const categoryMap = Object.fromEntries(mockCategories.map((c) => [c.id, c]));
 
@@ -18,8 +20,18 @@ export default function PackagesPage() {
   const router = useRouter();
   const { packages, loading, updatePackage } = usePackages();
   const { gearItems } = useGear();
+  const { limits } = usePlan();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [nudgeDismissed, setNudgeDismissed] = useState(true);
+
+  const pkgLimit = limits.packages;
+  const isAtLimit = packages.length >= pkgLimit;
+  const isNearLimit = !isAtLimit && packages.length >= pkgLimit - 1;
+  // Packages beyond limit are locked (sorted by created_at DESC via usePackages)
+  const lockedPkgIds = new Set(
+    packages.length > pkgLimit ? packages.slice(pkgLimit).map((p) => p.id) : []
+  );
+  const hasLockedPkgs = lockedPkgIds.size > 0;
 
   useEffect(() => {
     setNudgeDismissed(!!localStorage.getItem("nudge-pkg-to-checklist-dismissed"));
@@ -78,7 +90,7 @@ export default function PackagesPage() {
                   <span className="text-[10px] font-semibold tracking-widest text-white/35 uppercase">Sonae</span>
                 </div>
                 <p className="text-xs text-white/50">
-                  {loading ? "読み込み中..." : `${packages.length} セット`}
+                  {loading ? "読み込み中..." : `${packages.length} / ${pkgLimit === Infinity ? "∞" : pkgLimit} セット`}
                 </p>
               </div>
             </div>
@@ -124,24 +136,43 @@ export default function PackagesPage() {
         </div>
       )}
 
-      {/* Freeプラン上限警告 */}
-      {packages.length >= 3 ? (
-        <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-          <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+      {/* ロック通知（ダウングレードで上限超過） */}
+      {hasLockedPkgs && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
+          <Lock className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-red-800">Freeプランの上限に達しました</p>
-            <p className="text-xs text-red-700 mt-0.5">パッケージ3つまで。Standardプランで20セットまで作成できます。</p>
-            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
-              Standardプランへ →
+            <p className="text-sm font-semibold text-amber-800">
+              {lockedPkgIds.size}つのパッケージがロックされています
+            </p>
+            <p className="text-xs text-amber-700 mt-0.5">
+              現在のプラン（{pkgLimit}パッケージまで）の上限を超えたパッケージは閲覧のみ可能です。編集するにはプランをアップグレードしてください。
+            </p>
+            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-700 transition-colors">
+              プランをアップグレード →
             </Link>
           </div>
         </div>
-      ) : packages.length === 2 && (
+      )}
+
+      {/* プラン上限警告 */}
+      {!hasLockedPkgs && isAtLimit && pkgLimit !== Infinity && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-red-800">プランの上限に達しました</p>
+            <p className="text-xs text-red-700 mt-0.5">パッケージ{pkgLimit}つまで。プランをアップグレードするとさらに作成できます。</p>
+            <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
+              プランを確認する →
+            </Link>
+          </div>
+        </div>
+      )}
+      {!hasLockedPkgs && isNearLimit && pkgLimit !== Infinity && (
         <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
           <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-amber-800">Freeプランの上限まで残り 1 セット</p>
-            <p className="text-xs text-amber-700 mt-0.5">Freeプランはパッケージ3つまで。Standardプランで20セットまで作れます。</p>
+            <p className="text-sm font-semibold text-amber-800">プランの上限まで残り {pkgLimit - packages.length} セット</p>
+            <p className="text-xs text-amber-700 mt-0.5">現在のプランはパッケージ{pkgLimit}つまで。プランをアップグレードするとさらに作れます。</p>
             <Link href="/plans" className="mt-2 inline-flex items-center gap-1 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors">
               プランを確認する →
             </Link>
@@ -168,25 +199,28 @@ export default function PackagesPage() {
           const essentialCount = items.filter((i) => i.is_essential).length;
           const totalWeight = items.reduce((sum, i) => sum + (i.weight_g ?? 0), 0);
           const catGroups = groupByCategory(pkg.item_ids);
+          const isLocked = lockedPkgIds.has(pkg.id);
 
-          return (
-            <Link key={pkg.id} href={`/packages/${pkg.id}`}
-              className="block rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden">
-
+          const cardContent = (
+            <>
               {/* カードヘッダー */}
               <div className="flex items-start gap-5 p-5 pb-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h2 className="text-base font-bold text-foreground">{pkg.name}</h2>
-                    {pkg.is_public
-                      ? <span
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`/packages/${pkg.id}/public`, "_blank"); }}
-                          className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-600 hover:bg-blue-100 transition-colors cursor-pointer">
-                          <Globe className="h-2.5 w-2.5" />公開中 ↗
+                    {isLocked
+                      ? <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+                          <Lock className="h-2.5 w-2.5" />ロック中
                         </span>
-                      : <span className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                          <Lock className="h-2.5 w-2.5" />非公開
-                        </span>
+                      : pkg.is_public
+                        ? <span
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`/packages/${pkg.id}/public`, "_blank"); }}
+                            className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-600 hover:bg-blue-100 transition-colors cursor-pointer">
+                            <Globe className="h-2.5 w-2.5" />公開中 ↗
+                          </span>
+                        : <span className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            <Lock className="h-2.5 w-2.5" />非公開
+                          </span>
                     }
                   </div>
                   {pkg.description && (
@@ -247,29 +281,50 @@ export default function PackagesPage() {
               )}
 
               {/* フッターアクション */}
-              <div className="flex items-center justify-between border-t border-border px-5 py-3 bg-secondary/30">
-                <button
-                  onClick={(e) => handleShare(e, pkg.id, pkg.name, pkg.is_public)}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-secondary text-muted-foreground hover:text-foreground">
-                  {copiedId === pkg.id
-                    ? <><Check className="h-3.5 w-3.5 text-emerald-600" /><span className="text-emerald-600">リンクをコピーしました</span></>
-                    : <><Share2 className="h-3.5 w-3.5" />シェアする</>
-                  }
-                </button>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/packages/${pkg.id}/edit`); }}
-                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                    編集
-                  </button>
-                  <button
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/packages/${pkg.id}/checklist`); }}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
-                    荷造りチェック
-                    <ChevronRight className="h-3 w-3" />
-                  </button>
+              {isLocked ? (
+                <div className="flex items-center justify-center border-t border-amber-200/50 px-5 py-3 bg-amber-50/50">
+                  <p className="text-xs text-amber-700 flex items-center gap-1.5">
+                    <Lock className="h-3 w-3" />
+                    プランをアップグレードすると編集できます
+                  </p>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-center justify-between border-t border-border px-5 py-3 bg-secondary/30">
+                  <button
+                    onClick={(e) => handleShare(e, pkg.id, pkg.name, pkg.is_public)}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-secondary text-muted-foreground hover:text-foreground">
+                    {copiedId === pkg.id
+                      ? <><Check className="h-3.5 w-3.5 text-emerald-600" /><span className="text-emerald-600">リンクをコピーしました</span></>
+                      : <><Share2 className="h-3.5 w-3.5" />シェアする</>
+                    }
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/packages/${pkg.id}/edit`); }}
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+                      編集
+                    </button>
+                    <button
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/packages/${pkg.id}/checklist`); }}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+                      荷造りチェック
+                      <ChevronRight className="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          );
+
+          return isLocked ? (
+            <div key={pkg.id}
+              className="block rounded-xl border border-amber-200/50 bg-card overflow-hidden opacity-70 cursor-not-allowed">
+              {cardContent}
+            </div>
+          ) : (
+            <Link key={pkg.id} href={`/packages/${pkg.id}`}
+              className="block rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden">
+              {cardContent}
             </Link>
           );
         })}

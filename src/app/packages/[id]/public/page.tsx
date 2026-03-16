@@ -349,10 +349,10 @@ export default async function PublicPackagePage(
       </div>
 
       <div className="mt-4 mx-auto max-w-3xl px-4 sm:px-6 pb-12 flex flex-col gap-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center gap-2 sm:justify-between">
           <div className="flex items-center gap-2">
-            <LikeButton packageId={id} initialLikeCount={pkg.like_count ?? 0} />
-            <CopyPackageButton packageId={id} creatorId={creator.id} />
+            <LikeButton packageId={id} initialLikeCount={pkg.like_count ?? 0} compact />
+            <CopyPackageButton packageId={id} creatorId={creator.id} compact />
           </div>
           <ShareButtons
             packageId={id}

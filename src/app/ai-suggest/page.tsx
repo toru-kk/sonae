@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { usePackages } from "@/hooks/usePackages";
+import { MountainSuggest } from "@/components/MountainSuggest";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
@@ -351,11 +352,9 @@ export default function AiSuggestPage() {
             <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
               山名
             </label>
-            <input
-              type="text"
+            <MountainSuggest
               value={mountain}
-              onChange={(e) => setMountain(e.target.value)}
-              placeholder="例：槍ヶ岳、富士山、高尾山"
+              onChange={setMountain}
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
