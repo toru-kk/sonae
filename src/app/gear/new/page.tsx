@@ -49,6 +49,7 @@ const BRANDS: { display: string; search: string }[] = [
   { display: "patagonia",      search: "patagonia パタゴニア" },
   { display: "Arc'teryx",      search: "Arc'teryx アークテリクス" },
   { display: "MAMMUT",         search: "MAMMUT マムート" },
+  { display: "Millet",          search: "Millet ミレー" },
   { display: "Haglöfs",        search: "Haglöfs ホグロフス" },
   { display: "Rab",            search: "Rab ラブ" },
   { display: "Helly Hansen",   search: "Helly Hansen ヘリーハンセン" },
@@ -123,14 +124,16 @@ export default function GearNewPage() {
   const selected = categories.find((c) => c.id === selectedCategory);
   const style = selectedCategory ? categoryStyle[selectedCategory] : null;
 
-  const filteredBrands = BRANDS.filter((b) =>
-    brandInput.length > 0 &&
-    b.search.toLowerCase().includes(brandInput.toLowerCase())
-  );
-
   // ひらがな→カタカナ変換（「すとーむ」→「ストーム」で検索可能に）
   const toKatakana = (s: string) =>
     s.replace(/[\u3041-\u3096]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+
+  const filteredBrands = BRANDS.filter((b) => {
+    if (brandInput.length < 1) return false;
+    const q = brandInput.toLowerCase();
+    const target = b.search.toLowerCase();
+    return target.includes(q) || target.includes(toKatakana(q));
+  });
 
   const filteredGearSuggestions = GEAR_SUGGESTIONS
     .filter(g => !selectedCategory || g.category_id === selectedCategory)
@@ -329,13 +332,15 @@ export default function GearNewPage() {
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
             {showBrandList && filteredBrands.length > 0 && (
-              <ul className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-white shadow-lg overflow-hidden">
-                {filteredBrands.slice(0, 6).map((b) => (
+              <ul className="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto rounded-lg border border-border bg-white shadow-lg overscroll-contain"
+                onPointerDown={(e) => e.preventDefault()}
+              >
+                {filteredBrands.map((b) => (
                   <li key={b.display}>
                     <button
                       type="button"
-                      onPointerDown={(e) => { e.preventDefault(); handleBrandSelect(b.display); }}
-                      className="w-full px-3.5 py-3 text-left text-sm hover:bg-accent transition-colors"
+                      onClick={() => handleBrandSelect(b.display)}
+                      className="w-full px-3.5 py-3 text-left text-sm hover:bg-accent active:bg-accent/80 transition-colors"
                     >
                       {b.display}
                     </button>
@@ -376,6 +381,7 @@ export default function GearNewPage() {
                 <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
               </button>
             </div>
+            <p className="mt-1.5 text-[11px] text-muted-foreground">※ サジェストの重量は参考値です。サイズ等で異なるため、正確な値はメーカーサイト等でご確認ください。</p>
           </div>
 
           <div>
