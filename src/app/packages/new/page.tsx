@@ -228,13 +228,18 @@ export default function PackageNewPage() {
                             )}>
                               {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
                             </div>
-                            <CategoryIcon
-                              categoryId={item.category_id}
-                              iconName={categoryMap[item.category_id]?.icon}
-                              size="sm"
-                              variant="flat"
-                              className="shrink-0"
-                            />
+                            {item.image_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={item.image_url} alt={item.name} className="h-8 w-8 shrink-0 rounded-lg object-cover" />
+                            ) : (
+                              <CategoryIcon
+                                categoryId={item.category_id}
+                                iconName={categoryMap[item.category_id]?.icon}
+                                size="sm"
+                                variant="flat"
+                                className="shrink-0"
+                              />
+                            )}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
                                 <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
