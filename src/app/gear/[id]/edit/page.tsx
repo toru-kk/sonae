@@ -2,8 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { ArrowLeft, Check, ChevronDown, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Check, ChevronDown, Trash2, Camera, Loader2, X as XIcon } from "lucide-react";
 import {
   Tent, BedDouble, Shirt, Footprints, Backpack,
   Compass, ShieldCheck, Flame, Apple, Wrench,
@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { categoryStyle } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
+import { uploadGearPhoto, deleteGearPhoto } from "@/lib/upload-gear-photo";
 
 const categories: { id: string; label: string; icon: React.ComponentType<LucideProps> }[] = [
   { id: "shelter",    label: "シェルター",    icon: Tent        },
@@ -41,6 +42,9 @@ export default function GearEditPage() {
   const [weightUnit] = useState<"g">("g");
   const [notes, setNotes] = useState("");
   const [isEssential, setIsEssential] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const [saved, setSaved] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [initialized, setInitialized] = useState(false);
@@ -53,6 +57,7 @@ export default function GearEditPage() {
       setBrand(item.brand ?? "");
       setWeightValue(item.weight_g ? String(item.weight_g) : "");
       setNotes(item.notes ?? "");
+      setImageUrl(item.image_url ?? null);
       setIsEssential(item.is_essential ?? false);
       setInitialized(true);
     }
@@ -88,6 +93,7 @@ export default function GearEditPage() {
       brand: brand.trim() || null,
       weight_g: weightValue ? parseInt(weightValue, 10) : null,
       notes: notes.trim() || null,
+      image_url: imageUrl,
       is_essential: isEssential,
     });
 
@@ -99,6 +105,28 @@ export default function GearEditPage() {
     if (!confirming) { setConfirming(true); return; }
     await deleteGear(id);
     router.push("/gear");
+  };
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !item) return;
+    setUploading(true);
+    try {
+      const url = await uploadGearPhoto(item.user_id, id, file);
+      setImageUrl(url);
+    } catch { /* ignore – upload error */ }
+    setUploading(false);
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  };
+
+  const handlePhotoDelete = async () => {
+    if (!item) return;
+    setUploading(true);
+    try {
+      await deleteGearPhoto(item.user_id, id);
+      setImageUrl(null);
+    } catch { /* ignore */ }
+    setUploading(false);
   };
 
   return (
@@ -209,6 +237,42 @@ export default function GearEditPage() {
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)}
               placeholder="例：Mサイズ / 購入日：2024-05"
               className="w-full resize-none rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+          </div>
+
+          {/* 写真 */}
+          <div>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              <Camera className="inline h-3.5 w-3.5 mr-1 -mt-0.5" />
+              写真
+            </label>
+            <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} className="hidden" />
+            {imageUrl ? (
+              <div className="relative w-full rounded-lg overflow-hidden border border-border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="装備写真" className="w-full h-48 object-cover" />
+                <button
+                  type="button"
+                  onClick={handlePhotoDelete}
+                  disabled={uploading}
+                  className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors disabled:opacity-50"
+                >
+                  {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XIcon className="h-3.5 w-3.5" />}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={uploading}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-background py-8 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors disabled:opacity-50"
+              >
+                {uploading ? (
+                  <><Loader2 className="h-5 w-5 animate-spin" />アップロード中...</>
+                ) : (
+                  <><Camera className="h-5 w-5" />タップして写真を追加</>
+                )}
+              </button>
+            )}
           </div>
 
           <div className="flex items-center justify-between pt-1">

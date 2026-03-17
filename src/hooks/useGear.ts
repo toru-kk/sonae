@@ -11,6 +11,7 @@ export type GearItemInput = {
   brand?: string | null;
   weight_g?: number | null;
   notes?: string | null;
+  image_url?: string | null;
   is_essential: boolean;
 };
 

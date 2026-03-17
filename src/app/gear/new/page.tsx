@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, ChevronDown, AlertCircle } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown, AlertCircle, Camera, Loader2, X as XIcon } from "lucide-react";
 import {
   Tent, BedDouble, Shirt, Footprints, Backpack,
   Compass, ShieldCheck, Flame, Apple, Wrench,
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { categoryStyle } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
 import { GEAR_SUGGESTIONS } from "@/lib/gear-suggestions";
+import { uploadGearPhoto } from "@/lib/upload-gear-photo";
 
 const categories: { id: string; label: string; icon: React.ComponentType<LucideProps> }[] = [
   { id: "shelter",    label: "シェルター",    icon: Tent        },
@@ -100,7 +101,7 @@ const BRANDS: { display: string; search: string }[] = [
 
 export default function GearNewPage() {
   const router = useRouter();
-  const { addGear, error } = useGear();
+  const { addGear, updateGear, error } = useGear();
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [name, setName] = useState("");
@@ -114,6 +115,10 @@ export default function GearNewPage() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showGearSuggestions, setShowGearSuggestions] = useState(false);
+  const [pendingPhoto, setPendingPhoto] = useState<File | null>(null);
+  const [pendingPhotoPreview, setPendingPhotoPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const selected = categories.find((c) => c.id === selectedCategory);
   const style = selectedCategory ? categoryStyle[selectedCategory] : null;
@@ -153,6 +158,20 @@ export default function GearNewPage() {
     setShowBrandList(false);
   };
 
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPendingPhoto(file);
+    setPendingPhotoPreview(URL.createObjectURL(file));
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  };
+
+  const handlePhotoRemove = () => {
+    setPendingPhoto(null);
+    if (pendingPhotoPreview) URL.revokeObjectURL(pendingPhotoPreview);
+    setPendingPhotoPreview(null);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCategory || !name.trim()) return;
@@ -172,6 +191,19 @@ export default function GearNewPage() {
       notes: notes.trim() || null,
       is_essential: isEssential,
     });
+
+    if (id && pendingPhoto) {
+      setUploading(true);
+      try {
+        const supabase = (await import("@/lib/supabase/client")).createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const url = await uploadGearPhoto(user.id, id, pendingPhoto);
+          await updateGear(id, { image_url: url });
+        }
+      } catch { /* photo upload failed, gear still saved */ }
+      setUploading(false);
+    }
 
     setSaving(false);
     if (id) {
@@ -353,6 +385,36 @@ export default function GearNewPage() {
               className="w-full resize-none rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
 
+          {/* 写真 */}
+          <div>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              <Camera className="inline h-3.5 w-3.5 mr-1 -mt-0.5" />
+              写真
+            </label>
+            <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoSelect} className="hidden" />
+            {pendingPhotoPreview ? (
+              <div className="relative w-full rounded-lg overflow-hidden border border-border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={pendingPhotoPreview} alt="写真プレビュー" className="w-full h-48 object-cover" />
+                <button
+                  type="button"
+                  onClick={handlePhotoRemove}
+                  className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+                >
+                  <XIcon className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-background py-8 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+              >
+                <Camera className="h-5 w-5" />タップして写真を追加
+              </button>
+            )}
+          </div>
+
           {/* 必須トグル */}
           <div className="flex items-center justify-between pt-1">
             <div>
@@ -413,7 +475,7 @@ export default function GearNewPage() {
                 ? "bg-primary/40 text-primary-foreground cursor-not-allowed"
                 : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}>
-            {saved ? <><Check className="h-4 w-4" />保存しました</> : saving ? "保存中..." : "装備を登録する"}
+            {saved ? <><Check className="h-4 w-4" />保存しました</> : uploading ? "写真アップロード中..." : saving ? "保存中..." : "装備を登録する"}
           </button>
         </div>
 

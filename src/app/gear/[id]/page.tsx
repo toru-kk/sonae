@@ -69,7 +69,14 @@ export default function GearDetailPage() {
 
       {/* ヒーローエリア */}
       <div className={`relative h-48 bg-gradient-to-br ${gradient}`}>
-        <div className="absolute left-4 top-4">
+        {item.image_url && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.image_url} alt={item.name} className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-black/30" />
+          </>
+        )}
+        <div className="absolute left-4 top-4 z-10">
           <Link
             href="/gear"
             className="inline-flex items-center gap-1.5 rounded-lg bg-black/20 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm hover:bg-black/30 transition-colors"
@@ -78,7 +85,7 @@ export default function GearDetailPage() {
             マイ装備
           </Link>
         </div>
-        <div className="absolute right-4 top-4">
+        <div className="absolute right-4 top-4 z-10">
           <Link
             href={`/gear/${item.id}/edit`}
             className="inline-flex items-center gap-1.5 rounded-lg bg-black/20 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm hover:bg-black/30 transition-colors"
@@ -87,18 +94,20 @@ export default function GearDetailPage() {
             編集
           </Link>
         </div>
-        <div className="flex h-full items-center justify-center">
-          <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
-            {category && (
-              <CategoryIcon
-                categoryId={item.category_id}
-                iconName={category.icon}
-                size="lg"
-                className="h-20 w-20 rounded-2xl bg-white/30"
-              />
-            )}
+        {!item.image_url && (
+          <div className="flex h-full items-center justify-center">
+            <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
+              {category && (
+                <CategoryIcon
+                  categoryId={item.category_id}
+                  iconName={category.icon}
+                  size="lg"
+                  className="h-20 w-20 rounded-2xl bg-white/30"
+                />
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* コンテンツ */}

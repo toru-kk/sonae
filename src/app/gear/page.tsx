@@ -313,12 +313,17 @@ export default function GearPage() {
                   const isLocked = lockedGearIds.has(item.id);
                   const inner = (
                     <>
-                      <CategoryIcon
-                        categoryId={item.category_id}
-                        iconName={categoryMap[item.category_id]?.icon}
-                        size="lg"
-                        variant="gradient"
-                      />
+                      {item.image_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.image_url} alt={item.name} className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                      ) : (
+                        <CategoryIcon
+                          categoryId={item.category_id}
+                          iconName={categoryMap[item.category_id]?.icon}
+                          size="lg"
+                          variant="gradient"
+                        />
+                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start gap-1.5">
                           <p className="text-sm font-semibold text-foreground leading-snug truncate">{item.name}</p>
