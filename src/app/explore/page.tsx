@@ -13,6 +13,8 @@ import { CopyPackageButton } from "@/components/CopyPackageButton";
 import { LikeButton } from "@/components/LikeButton";
 import { cn } from "@/lib/utils";
 import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
+import { BRANDS, toKatakana } from "@/lib/brands";
+import { GEAR_SUGGESTIONS } from "@/lib/gear-suggestions";
 
 const PAGE_SIZE = 24;
 /** 重量プログレスバーの最大値（g） */
@@ -110,6 +112,32 @@ export default function ExplorePage() {
   const [gearPage, setGearPage] = useState(0);
   const [gearHasMore, setGearHasMore] = useState(false);
   const [gearError, setGearError] = useState<string | null>(null);
+  const [showGearSuggest, setShowGearSuggest] = useState(false);
+
+  // 装備サジェスト（ブランド + 装備名を統合）
+  const gearSuggestions = useMemo(() => {
+    if (gearQuery.length < 1) return [];
+    const q = gearQuery.toLowerCase();
+    const qKata = toKatakana(q);
+
+    const brandHits = BRANDS
+      .filter((b) => {
+        const t = b.search.toLowerCase();
+        return t.includes(q) || t.includes(qKata);
+      })
+      .map((b) => ({ label: b.display, sub: "ブランド", type: "brand" as const }));
+
+    const gearHits = GEAR_SUGGESTIONS
+      .filter((g) => {
+        const t = g.search.toLowerCase();
+        return t.includes(q) || t.includes(qKata);
+      })
+      .slice(0, 10)
+      .map((g) => ({ label: g.name, sub: `${g.brand} · ${g.weight_g}g`, type: "gear" as const }));
+
+    // ブランドを先に、装備名をあとに。合計最大15件
+    return [...brandHits.slice(0, 5), ...gearHits].slice(0, 15);
+  }, [gearQuery]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -403,23 +431,50 @@ export default function ExplorePage() {
                   <input
                     type="text"
                     value={gearQuery}
-                    onChange={(e) => setGearQuery(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") searchByGear(); }}
+                    onChange={(e) => { setGearQuery(e.target.value); setShowGearSuggest(true); }}
+                    onFocus={() => setShowGearSuggest(true)}
+                    onBlur={() => setTimeout(() => setShowGearSuggest(false), 150)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { setShowGearSuggest(false); searchByGear(); } }}
                     placeholder="装備名・ブランドで検索"
+                    autoComplete="off"
                     className="w-full rounded-lg border border-border bg-card pl-8 pr-16 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                   {gearQuery && (
-                    <button onClick={() => { setGearQuery(""); setGearPackages([]); setGearSearched(false); }} className="absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <button onClick={() => { setGearQuery(""); setGearPackages([]); setGearSearched(false); setShowGearSuggest(false); }} className="absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   )}
                   <button
-                    onClick={() => searchByGear()}
+                    onClick={() => { setShowGearSuggest(false); searchByGear(); }}
                     disabled={!gearQuery.trim() || gearSearchLoading}
                     className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-colors"
                   >
                     検索
                   </button>
+                  {/* サジェストドロップダウン */}
+                  {showGearSuggest && gearSuggestions.length > 0 && (
+                    <ul
+                      className="absolute z-20 mt-1 top-full left-0 w-full max-h-64 overflow-y-auto rounded-lg border border-border bg-card shadow-lg overscroll-contain"
+                      onPointerDown={(e) => e.preventDefault()}
+                    >
+                      {gearSuggestions.map((s, i) => (
+                        <li key={`${s.type}-${s.label}-${i}`}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGearQuery(s.label);
+                              setShowGearSuggest(false);
+                              searchByGear(s.label);
+                            }}
+                            className="w-full px-3.5 py-2.5 text-left hover:bg-accent active:bg-accent/80 transition-colors"
+                          >
+                            <span className="text-sm font-medium text-foreground">{s.label}</span>
+                            <span className="ml-2 text-xs text-muted-foreground">{s.sub}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </>
               ) : (
                 <>
