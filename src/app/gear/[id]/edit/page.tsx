@@ -245,7 +245,7 @@ export default function GearEditPage() {
               <Camera className="inline h-3.5 w-3.5 mr-1 -mt-0.5" />
               写真
             </label>
-            <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} className="hidden" />
+            <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
             {imageUrl ? (
               <div className="relative w-full rounded-lg overflow-hidden border border-border">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
