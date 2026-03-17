@@ -4,6 +4,7 @@ import { PlanCheckoutButton } from "@/components/PlanCheckoutButton";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { PlanPortalButton } from "@/components/PlanPortalButton";
 import { createClient } from "@/lib/supabase/server";
+import { isAdmin } from "@/lib/plan-limits";
 import Link from "next/link";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,6 +15,7 @@ async function getCurrentPlan(): Promise<"free" | "standard" | "premium" | null>
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
+    if (isAdmin(user.email)) return "premium";
     const { data } = await (supabase as AnyClient)
       .from("users")
       .select("plan, stripe_customer_id")
