@@ -311,8 +311,12 @@ export default async function PublicPackagePage(
               <div className="h-px flex-1 bg-border" />
             </div>
             <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-border">
-              {(catItems as { id: string; name: string; brand?: string | null; weight_g: number | null; is_essential: boolean }[]).map((item) => (
+              {(catItems as { id: string; name: string; brand?: string | null; weight_g: number | null; is_essential: boolean; image_url?: string | null }[]).map((item) => (
                 <div key={item.id} className="flex items-center gap-3 px-4 py-3">
+                  {item.image_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.image_url} alt={item.name} className="h-9 w-9 shrink-0 rounded-lg object-cover" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-foreground truncate">{item.name}</p>

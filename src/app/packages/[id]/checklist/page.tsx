@@ -347,6 +347,12 @@ export default function ChecklistPage() {
                           {checked && <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />}
                         </div>
 
+                        {/* サムネイル写真 */}
+                        {item.image_url && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={item.image_url} alt={item.name} className={cn("h-9 w-9 shrink-0 rounded-lg object-cover transition-opacity", checked && "opacity-40")} />
+                        )}
+
                         {/* アイテム情報 */}
                         <div className={cn("flex-1 min-w-0 transition-opacity", checked && "opacity-50")}>
                           <div className="flex items-center gap-2">

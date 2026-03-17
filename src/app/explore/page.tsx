@@ -27,6 +27,7 @@ type GearItem = {
   brand: string;
   weight_g: number;
   category: string | null;
+  image_url?: string | null;
 };
 
 type PublicPackage = {
@@ -128,7 +129,7 @@ export default function ExplorePage() {
 
     supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category))")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category, image_url))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(0, PAGE_SIZE - 1)
@@ -237,7 +238,7 @@ export default function ExplorePage() {
     const supabase = createClient();
     const { data } = await supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category))")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category, image_url))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
@@ -540,12 +541,16 @@ export default function ExplorePage() {
                                   <span
                                     key={i}
                                     className={cn(
-                                      "inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] leading-tight",
+                                      "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] leading-tight",
                                       item.name.toLowerCase().includes(gearQuery.toLowerCase()) || item.brand.toLowerCase().includes(gearQuery.toLowerCase())
                                         ? "bg-primary/10 text-primary font-semibold border border-primary/20"
                                         : "bg-secondary text-muted-foreground"
                                     )}
                                   >
+                                    {item.image_url && (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={item.image_url} alt="" className="h-3.5 w-3.5 rounded-sm object-cover" />
+                                    )}
                                     {item.name}
                                   </span>
                                 ))}
@@ -745,7 +750,11 @@ export default function ExplorePage() {
                         <div className="mb-2">
                           <div className="flex flex-wrap gap-1">
                             {items.slice(0, 6).map((item, i) => (
-                              <span key={i} className="inline-flex items-center rounded-md bg-secondary px-1.5 py-0.5 text-[10px] leading-tight text-muted-foreground">
+                              <span key={i} className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[10px] leading-tight text-muted-foreground">
+                                {item.image_url && (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img src={item.image_url} alt="" className="h-3.5 w-3.5 rounded-sm object-cover" />
+                                )}
                                 {item.name}
                               </span>
                             ))}

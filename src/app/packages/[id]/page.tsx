@@ -356,7 +356,12 @@ export default function PackageDetailPage() {
                     "flex items-center gap-3 px-4 py-3 hover:bg-secondary/50 transition-colors",
                     idx < catItems.length - 1 && "border-b border-border"
                   )}>
-                  <CategoryIcon categoryId={item.category_id} iconName={CATEGORY_META[item.category_id]?.icon} size="md" variant="gradient" className="shrink-0" />
+                  {item.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.image_url} alt={item.name} className="h-10 w-10 shrink-0 rounded-xl object-cover" />
+                  ) : (
+                    <CategoryIcon categoryId={item.category_id} iconName={CATEGORY_META[item.category_id]?.icon} size="md" variant="gradient" className="shrink-0" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
