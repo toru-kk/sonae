@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isAdmin } from "@/lib/plan-limits";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFrom = any;
 
@@ -46,7 +47,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ...cached.result, mountain, month, nights, cached: true });
   }
 
-  // プランに応じた月間制限
+  // プランに応じた月間制限（管理者はスキップ）
+  const adminUser = isAdmin(user.email);
+
   const PLAN_LIMITS: Record<string, number> = {
     free: 3,
     standard: 30,
@@ -59,7 +62,7 @@ export async function POST(req: NextRequest) {
     .eq("id", user.id)
     .maybeSingle() as { data: { plan: string } | null };
 
-  const userPlan = userRow?.plan ?? "free";
+  const userPlan = adminUser ? "premium" : (userRow?.plan ?? "free");
   const monthlyLimit = PLAN_LIMITS[userPlan] ?? 3;
 
   const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
@@ -71,7 +74,7 @@ export async function POST(req: NextRequest) {
     .maybeSingle() as { data: { count: number } | null };
 
   const currentCount = usage?.count ?? 0;
-  if (currentCount >= monthlyLimit) {
+  if (!adminUser && currentCount >= monthlyLimit) {
     return NextResponse.json(
       { error: `月間AI提案の上限（${monthlyLimit}回）に達しました。来月またご利用ください。`, limit_reached: true, plan: userPlan },
       { status: 429 }

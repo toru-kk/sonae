@@ -12,6 +12,13 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
   premium:  { gear: Infinity, packages: Infinity,  aiSuggest: 100 },
 };
 
+/** 管理者メールアドレス（全機能解放） */
+export const ADMIN_EMAILS = ["toru.kuri.kuri@gmail.com"];
+
+export function isAdmin(email: string | undefined | null): boolean {
+  return !!email && ADMIN_EMAILS.includes(email);
+}
+
 export function getPlanLimits(plan: string): PlanLimits {
   return PLAN_LIMITS[(plan as PlanType)] ?? PLAN_LIMITS.free;
 }

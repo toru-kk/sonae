@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { type PlanType, type PlanLimits, getPlanLimits } from "@/lib/plan-limits";
+import { type PlanType, type PlanLimits, getPlanLimits, isAdmin } from "@/lib/plan-limits";
 
 export function usePlan() {
   const [plan, setPlan] = useState<PlanType>("free");
@@ -14,6 +14,13 @@ export function usePlan() {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) { setPlan("free"); return; }
+
+        // 管理者は常にpremium扱い
+        if (isAdmin(user.email)) {
+          setPlan("premium");
+          return;
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data } = await (supabase as any)
           .from("users")
