@@ -13,7 +13,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
 };
 
 /** 管理者メールアドレス（全機能解放） */
-export const ADMIN_EMAILS = ["toru.kuri.kuri@gmail.com"];
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "").split(",").filter(Boolean);
 
 export function isAdmin(email: string | undefined | null): boolean {
   return !!email && ADMIN_EMAILS.includes(email);

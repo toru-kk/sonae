@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   let q = (supabase as any)
     .from("gear_packages")
     .select(
-      "id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category))"
+      "id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category_id, image_url))"
     )
     .eq("is_public", true)
     .in("user_id", followedIds)
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     q = q.eq("mountain_type", mountainType);
   }
 
-  if (query) {
+  if (query && query.length <= 100) {
     q = q.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
   }
 

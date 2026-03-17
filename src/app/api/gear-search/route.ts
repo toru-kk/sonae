@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const page = parseInt(req.nextUrl.searchParams.get("page") ?? "0", 10);
   const mountainType = req.nextUrl.searchParams.get("mountain_type");
 
-  if (!query || query.length < 1) {
+  if (!query || query.length < 1 || query.length > 100) {
     return NextResponse.json({ packages: [], hasMore: false });
   }
 
