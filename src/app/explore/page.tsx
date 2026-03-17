@@ -394,7 +394,7 @@ export default function ExplorePage() {
                     value={gearQuery}
                     onChange={(e) => setGearQuery(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") searchByGear(); }}
-                    placeholder="装備名・ブランドで検索（Enter）"
+                    placeholder="装備名・ブランドで検索"
                     className="w-full rounded-lg border border-border bg-card pl-8 pr-16 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                   {gearQuery && (
