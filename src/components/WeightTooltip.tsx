@@ -1,17 +1,31 @@
 "use client";
 
 import { HelpCircle, X } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 type Variant = "light" | "dark";
 
 export function WeightTooltip({ variant = "light" }: { variant?: Variant }) {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; right: number; openBelow: boolean }>({ top: 0, right: 16, openBelow: false });
   const ref = useRef<HTMLDivElement>(null);
+
+  const calcPos = useCallback(() => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const spaceAbove = rect.top;
+    const openBelow = spaceAbove < 220;
+    setPos({
+      top: openBelow ? rect.bottom + 8 : rect.top - 8,
+      right: Math.max(16, window.innerWidth - rect.right),
+      openBelow,
+    });
+  }, []);
 
   useEffect(() => {
     if (!open) return;
+    calcPos();
     const handler = (e: MouseEvent | TouchEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
@@ -21,7 +35,7 @@ export function WeightTooltip({ variant = "light" }: { variant?: Variant }) {
       document.removeEventListener("mousedown", handler);
       document.removeEventListener("touchstart", handler);
     };
-  }, [open]);
+  }, [open, calcPos]);
 
   const isDark = variant === "dark";
 
@@ -43,13 +57,17 @@ export function WeightTooltip({ variant = "light" }: { variant?: Variant }) {
       {open && (
         <div
           className={cn(
-            "absolute z-50 w-64 rounded-xl border p-3.5 shadow-lg text-left",
+            "fixed z-50 w-64 rounded-xl border p-3.5 shadow-lg text-left",
             "animate-in fade-in-0 zoom-in-95 duration-150",
             isDark
               ? "border-white/10 bg-gray-900 text-white/90"
               : "border-border bg-card text-foreground"
           )}
-          style={{ bottom: "calc(100% + 8px)", right: 0 }}
+          style={{
+            top: pos.top,
+            right: pos.right,
+            transform: pos.openBelow ? undefined : "translateY(-100%)",
+          }}
         >
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-bold">重量の定義</p>
