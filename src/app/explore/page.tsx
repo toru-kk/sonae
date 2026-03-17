@@ -436,13 +436,13 @@ export default function ExplorePage() {
                     onChange={(e) => { setGearQuery(e.target.value); setShowGearSuggest(true); }}
                     onFocus={() => setShowGearSuggest(true)}
                     onBlur={() => setTimeout(() => setShowGearSuggest(false), 150)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { setShowGearSuggest(false); searchByGear(); } }}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) { setShowGearSuggest(false); searchByGear(); } }}
                     placeholder="装備名・ブランドで検索"
                     autoComplete="off"
-                    className="w-full rounded-lg border border-border bg-card pl-8 pr-16 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="w-full rounded-lg border border-border bg-card pl-8 pr-20 py-1.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                   {gearQuery && (
-                    <button onClick={() => { setGearQuery(""); setGearPackages([]); setGearSearched(false); setShowGearSuggest(false); }} className="absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <button onClick={() => { setGearQuery(""); setGearPackages([]); setGearSearched(false); setShowGearSuggest(false); }} className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   )}
