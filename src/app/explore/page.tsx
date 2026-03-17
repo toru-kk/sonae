@@ -316,7 +316,8 @@ export default function ExplorePage() {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.description?.toLowerCase().includes(q) ||
-          p.users?.display_name?.toLowerCase().includes(q)
+          p.users?.display_name?.toLowerCase().includes(q) ||
+          p.items?.some((item) => item.name.toLowerCase().includes(q) || item.brand?.toLowerCase().includes(q))
       );
     }
     return list;
@@ -339,7 +340,8 @@ export default function ExplorePage() {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.description?.toLowerCase().includes(q) ||
-          p.users?.display_name?.toLowerCase().includes(q)
+          p.users?.display_name?.toLowerCase().includes(q) ||
+          p.items?.some((item) => item.name.toLowerCase().includes(q) || item.brand?.toLowerCase().includes(q))
       );
     }
 
