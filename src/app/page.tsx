@@ -479,12 +479,12 @@ export default function Home() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { name: "北アルプス縦走セット", mountain: "槍ヶ岳〜穂高", nights: "3泊4日", weight: "9.2kg", items: 22, tags: ["テント泊", "夏季"] },
-            { name: "富士山 弾丸セット",   mountain: "富士山",      nights: "日帰り", weight: "4.1kg", items: 12, tags: ["日帰り", "夏季"] },
-            { name: "冬期八ヶ岳セット",   mountain: "赤岳",        nights: "1泊2日", weight: "13.8kg", items: 28, tags: ["冬山", "テント泊"] },
-            { name: "低山ハイク軽量化",   mountain: "高尾山周辺",  nights: "日帰り", weight: "2.8kg", items: 9,  tags: ["日帰り", "UL"] },
-            { name: "南アルプス縦走",     mountain: "甲斐駒〜仙丈", nights: "2泊3日", weight: "11.4kg", items: 25, tags: ["テント泊", "秋季"] },
-            { name: "沢登りセット",       mountain: "奥多摩",      nights: "日帰り", weight: "6.3kg", items: 18, tags: ["沢登り", "夏季"] },
+            { name: "北アルプス縦走 UL装備", mountain: "槍ヶ岳〜穂高", nights: "3泊4日", weight: "8.4kg", baseWeight: "5.1kg", items: 24, tags: ["テント泊", "UL"] },
+            { name: "富士山 弾丸日帰り",    mountain: "富士山",      nights: "日帰り", weight: "3.8kg", baseWeight: "2.9kg", items: 14, tags: ["日帰り", "夏季"] },
+            { name: "厳冬期 八ヶ岳セット",  mountain: "赤岳",        nights: "1泊2日", weight: "14.2kg", baseWeight: "9.8kg", items: 30, tags: ["冬山", "テント泊"] },
+            { name: "高尾山ファストハイク",  mountain: "高尾山〜陣馬山", nights: "日帰り", weight: "2.4kg", baseWeight: "1.8kg", items: 10, tags: ["日帰り", "トレラン"] },
+            { name: "南アルプス秋の縦走",   mountain: "甲斐駒〜仙丈", nights: "2泊3日", weight: "10.8kg", baseWeight: "6.5kg", items: 26, tags: ["テント泊", "秋季"] },
+            { name: "奥秩父 小屋泊セット",  mountain: "雲取山〜甲武信", nights: "1泊2日", weight: "5.6kg", baseWeight: "4.2kg", items: 16, tags: ["小屋泊", "春季"] },
           ].map((pkg) => (
             <div key={pkg.name}
               className="group rounded-xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-md transition-all cursor-default">
@@ -498,7 +498,11 @@ export default function Home() {
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-2xl font-bold text-foreground tabular-nums">{pkg.weight}</p>
-                  <p className="text-xs text-muted-foreground">{pkg.items} 点</p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <Backpack className="h-3 w-3 text-emerald-500" />
+                    <span className="text-[11px] font-semibold text-emerald-600">BW {pkg.baseWeight}</span>
+                    <span className="text-[10px] text-muted-foreground">· {pkg.items}点</span>
+                  </div>
                 </div>
                 <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <ChevronRight className="h-4 w-4 text-primary" />
