@@ -56,6 +56,11 @@ export default function ChecklistPage() {
     consumable: { label: '消耗', class: 'border-amber-200 bg-amber-50 text-amber-600' },
   };
 
+  // ページ表示時にトップへスクロール
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // チェック変更時に自動保存
   useEffect(() => {
     if (typeof window === "undefined") return;
