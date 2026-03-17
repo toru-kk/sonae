@@ -82,6 +82,7 @@ export default function ExplorePage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [followedUserIds, setFollowedUserIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [sort, setSort] = useState<SortKey>("new");
@@ -133,7 +134,12 @@ export default function ExplorePage() {
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(0, PAGE_SIZE - 1)
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) {
+          setLoadError("パッケージの読み込みに失敗しました");
+          setLoading(false);
+          return;
+        }
         const pkgs = (data ?? []).map((pkg: Record<string, unknown>) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const gpi = (pkg.gear_package_items ?? []) as any[];
@@ -162,6 +168,7 @@ export default function ExplorePage() {
         setFeedFetched(true);
       })
       .catch(() => {
+        setFeedError("フォローフィードの読み込みに失敗しました");
         setFeedLoading(false);
         setFeedFetched(true);
       });
@@ -221,7 +228,8 @@ export default function ExplorePage() {
       .from("users")
       .select("id, display_name, avatar_url, bio, experience_level, home_area")
       .in("id", userIds)
-      .then(({ data }: { data: Omit<PublicUser, "packageCount">[] | null }) => {
+      .then(({ data, error }: { data: Omit<PublicUser, "packageCount">[] | null; error: unknown }) => {
+        if (error) { setUsersLoading(false); setUsersFetched(true); return; }
         const users: PublicUser[] = (data ?? []).map((u) => ({
           ...u,
           packageCount: pkgCountMap.get(u.id) ?? 0,
@@ -234,23 +242,26 @@ export default function ExplorePage() {
 
   const loadMore = async () => {
     setLoadingMore(true);
-    const nextPage = page + 1;
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category_id, image_url))")
-      .eq("is_public", true)
-      .order("created_at", { ascending: false })
-      .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
-    if (!data || data.length < PAGE_SIZE) setHasMore(false);
-    const morePkgs = (data ?? []).map((pkg: Record<string, unknown>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const gpi = (pkg.gear_package_items ?? []) as any[];
-      const items = gpi.map((pi) => pi.gear_items).filter(Boolean);
-      return { ...pkg, items, item_count: items.length } as unknown as PublicPackage;
-    });
-    setAllPackages(prev => [...prev, ...morePkgs]);
-    setPage(nextPage);
+    try {
+      const nextPage = page + 1;
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("gear_packages")
+        .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category_id, image_url))")
+        .eq("is_public", true)
+        .order("created_at", { ascending: false })
+        .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
+      if (error) { setLoadError("追加読み込みに失敗しました"); return; }
+      if (!data || data.length < PAGE_SIZE) setHasMore(false);
+      const morePkgs = (data ?? []).map((pkg: Record<string, unknown>) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const gpi = (pkg.gear_package_items ?? []) as any[];
+        const items = gpi.map((pi) => pi.gear_items).filter(Boolean);
+        return { ...pkg, items, item_count: items.length } as unknown as PublicPackage;
+      });
+      setAllPackages(prev => [...prev, ...morePkgs]);
+      setPage(nextPage);
+    } catch { setLoadError("追加読み込みに失敗しました"); }
     setLoadingMore(false);
   };
 
@@ -683,13 +694,19 @@ export default function ExplorePage() {
           </div>
         )}
 
+        {loadError && sort !== "follow" && sort !== "gear" && (
+          <div className="rounded-xl border border-red-200 bg-red-50 py-4 px-4 text-center mb-4">
+            <p className="text-sm text-red-700">{loadError}</p>
+          </div>
+        )}
+
         {feedError && sort === "follow" && (
           <div className="rounded-xl border border-red-200 bg-red-50 py-4 px-4 text-center mb-4">
             <p className="text-sm text-red-700">{feedError}</p>
           </div>
         )}
 
-        {sort !== "users" && sort !== "gear" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && !feedError && (
+        {sort !== "users" && sort !== "gear" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && !feedError && !loadError && (
           <div className="rounded-xl border border-dashed border-border py-24 text-center">
             <Compass className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
             {sort === "follow" ? (
