@@ -610,7 +610,7 @@ export default function ExplorePage() {
                                     key={i}
                                     className={cn(
                                       "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] leading-tight",
-                                      item.name.toLowerCase().includes(gearQuery.toLowerCase()) || item.brand.toLowerCase().includes(gearQuery.toLowerCase())
+                                      item.name.toLowerCase().includes(gearQuery.toLowerCase()) || item.brand?.toLowerCase().includes(gearQuery.toLowerCase())
                                         ? "bg-primary/10 text-primary font-semibold border border-primary/20"
                                         : "bg-secondary text-muted-foreground"
                                     )}
