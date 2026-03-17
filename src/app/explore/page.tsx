@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
 
 const PAGE_SIZE = 24;
+/** 重量プログレスバーの最大値（g） */
+const WEIGHT_BAR_MAX = 12000;
 
 function formatWeight(g: number) {
   return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
@@ -96,6 +98,7 @@ export default function ExplorePage() {
   const [feedLoading, setFeedLoading] = useState(false);
   const [feedFetched, setFeedFetched] = useState(false);
   const [feedLoadingMore, setFeedLoadingMore] = useState(false);
+  const [feedError, setFeedError] = useState<string | null>(null);
 
   // 装備で探す用の状態
   const [gearQuery, setGearQuery] = useState("");
@@ -104,6 +107,7 @@ export default function ExplorePage() {
   const [gearSearched, setGearSearched] = useState(false);
   const [gearPage, setGearPage] = useState(0);
   const [gearHasMore, setGearHasMore] = useState(false);
+  const [gearError, setGearError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -145,6 +149,7 @@ export default function ExplorePage() {
   useEffect(() => {
     if (sort !== "follow" || feedFetched || !currentUserId) return;
     setFeedLoading(true);
+    setFeedError(null);
     const params = new URLSearchParams({ page: "0" });
     fetch(`/api/feed?${params}`)
       .then((res) => res.json())
@@ -173,7 +178,7 @@ export default function ExplorePage() {
       setFeedPackages((prev) => [...prev, ...(data.packages ?? [])]);
       setFeedHasMore(data.hasMore ?? false);
       setFeedPage(nextPage);
-    } catch { /* ignore */ }
+    } catch { setFeedError("読み込みに失敗しました"); }
     setFeedLoadingMore(false);
   };
 
@@ -181,7 +186,7 @@ export default function ExplorePage() {
   const searchByGear = async (q?: string, p = 0) => {
     const searchText = q ?? gearQuery;
     if (!searchText.trim()) return;
-    if (p === 0) setGearSearchLoading(true);
+    if (p === 0) { setGearSearchLoading(true); setGearError(null); }
     const params = new URLSearchParams({ q: searchText.trim(), page: String(p) });
     if (selectedType) params.set("mountain_type", selectedType);
     try {
@@ -195,7 +200,7 @@ export default function ExplorePage() {
       setGearHasMore(data.hasMore ?? false);
       setGearPage(p);
       setGearSearched(true);
-    } catch { /* ignore */ }
+    } catch { setGearError("検索に失敗しました"); }
     setGearSearchLoading(false);
   };
 
@@ -487,7 +492,12 @@ export default function ExplorePage() {
                 ))}
               </div>
             )}
-            {gearSearched && !gearSearchLoading && gearPackages.length === 0 && (
+            {gearError && (
+              <div className="rounded-xl border border-red-200 bg-red-50 py-4 px-4 text-center mb-4">
+                <p className="text-sm text-red-700">{gearError}</p>
+              </div>
+            )}
+            {gearSearched && !gearSearchLoading && gearPackages.length === 0 && !gearError && (
               <div className="rounded-xl border border-dashed border-border py-24 text-center">
                 <Search className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
                 <p className="text-sm font-semibold text-foreground mb-1">「{gearQuery}」を含むパッケージが見つかりません</p>
@@ -573,7 +583,7 @@ export default function ExplorePage() {
                           </div>
                           {w > 0 && (
                             <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
-                              <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (w / 12000) * 100)}%` }} />
+                              <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (w / WEIGHT_BAR_MAX) * 100)}%` }} />
                             </div>
                           )}
                         </div>
@@ -668,7 +678,13 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {sort !== "users" && sort !== "gear" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && (
+        {feedError && sort === "follow" && (
+          <div className="rounded-xl border border-red-200 bg-red-50 py-4 px-4 text-center mb-4">
+            <p className="text-sm text-red-700">{feedError}</p>
+          </div>
+        )}
+
+        {sort !== "users" && sort !== "gear" && !(sort === "follow" ? feedLoading : loading) && packages.length === 0 && !feedError && (
           <div className="rounded-xl border border-dashed border-border py-24 text-center">
             <Compass className="mx-auto h-10 w-10 text-muted-foreground/40 mb-4" />
             {sort === "follow" ? (
@@ -767,7 +783,7 @@ export default function ExplorePage() {
                       </div>
                       {w > 0 && (
                         <div className="mt-2 h-1 overflow-hidden rounded-full bg-border">
-                          <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (w / 12000) * 100)}%` }} />
+                          <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (w / WEIGHT_BAR_MAX) * 100)}%` }} />
                         </div>
                       )}
                     </div>

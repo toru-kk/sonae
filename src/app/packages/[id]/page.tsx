@@ -12,6 +12,9 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+/** 重量プログレスバーの最大値（g） */
+const WEIGHT_BAR_MAX = 12000;
+
 const CATEGORY_META: Record<string, { name_ja: string; icon: string; sort_order: number }> = {
   shelter:    { name_ja: "シェルター",   icon: "Tent",        sort_order: 1 },
   sleeping:   { name_ja: "シュラフ",     icon: "BedDouble",   sort_order: 2 },
@@ -231,7 +234,7 @@ export default function PackageDetailPage() {
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (totalWeight / 12000) * 100)}%` }} />
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (totalWeight / WEIGHT_BAR_MAX) * 100)}%` }} />
                   </div>
                   {profile.display_name && (
                     <div className="shrink-0 flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 pl-1 pr-2.5 py-1">
