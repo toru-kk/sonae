@@ -21,6 +21,9 @@ function resizeImage(file: File): Promise<Blob> {
       canvas.height = height;
       const ctx = canvas.getContext("2d");
       if (!ctx) return reject(new Error("Canvas not supported"));
+      // 透過PNGの背景を白にする（JPEG変換時に黒くなるのを防止）
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
       ctx.drawImage(img, 0, 0, width, height);
       canvas.toBlob(
         (blob) => (blob ? resolve(blob) : reject(new Error("Blob conversion failed"))),
