@@ -26,7 +26,7 @@ type GearItem = {
   name: string;
   brand: string;
   weight_g: number;
-  category: string | null;
+  category_id: string | null;
   image_url?: string | null;
 };
 
@@ -129,7 +129,7 @@ export default function ExplorePage() {
 
     supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category, image_url))")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category_id, image_url))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(0, PAGE_SIZE - 1)
@@ -238,7 +238,7 @@ export default function ExplorePage() {
     const supabase = createClient();
     const { data } = await supabase
       .from("gear_packages")
-      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category, image_url))")
+      .select("id, name, description, mountain_type, total_weight_g, like_count, user_id, created_at, users(display_name, avatar_url), gear_package_items(gear_items(name, brand, weight_g, category_id, image_url))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .range(nextPage * PAGE_SIZE, (nextPage + 1) * PAGE_SIZE - 1);
