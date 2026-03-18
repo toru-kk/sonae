@@ -4,6 +4,7 @@ import Link from "next/link";
 import { NavBar } from "@/components/layout/NavBar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
+import { MaintenanceBanner } from "@/components/MaintenanceBanner";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NavBar />
           </div>
         </header>
+        <MaintenanceBanner />
         <div className="mobile-content-wrap">{children}</div>
         <MobileNav />
         <Analytics />

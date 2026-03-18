@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Check, Loader2, Plus } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Plus, Search } from "lucide-react";
 import { useGear } from "@/hooks/useGear";
+import { GEAR_SUGGESTIONS, type GearSuggestion } from "@/lib/gear-suggestions";
+import { toKatakana } from "@/lib/brands";
+import { cn } from "@/lib/utils";
 
 type PresetItem = {
   id: string;
@@ -126,14 +129,44 @@ const PRESET_CATEGORIES: { id: string; label: string; items: PresetItem[] }[] = 
   },
 ];
 
+const CATEGORY_LABELS: Record<string, string> = {
+  shelter: "シェルター",
+  sleeping: "シュラフ",
+  clothing: "衣類",
+  footwear: "靴・足回り",
+  backpack: "バックパック",
+  navigation: "ナビ",
+  safety: "安全装備",
+  cooking: "調理",
+  food: "食料",
+  tools: "道具・他",
+};
+
+const CATEGORY_IDS = Object.keys(CATEGORY_LABELS);
+
+function formatWeight(g: number) {
+  return g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`;
+}
+
+function gearKey(g: GearSuggestion) {
+  return `brand:${g.category_id}:${g.brand}:${g.name}`;
+}
+
 export default function GearPresetsPage() {
   const router = useRouter();
   const { addGear } = useGear();
+  const composingRef = useRef(false);
+
+  const [tab, setTab] = useState<"preset" | "brand">("brand");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
 
-  const toggle = (id: string) => {
+  // Brand tab state
+  const [brandQuery, setBrandQuery] = useState("");
+  const [brandCategory, setBrandCategory] = useState<string | null>(null);
+
+  const togglePreset = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -142,13 +175,44 @@ export default function GearPresetsPage() {
     });
   };
 
+  const toggleBrand = (g: GearSuggestion) => {
+    const key = gearKey(g);
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const filteredBrandGear = useMemo(() => {
+    let items = GEAR_SUGGESTIONS;
+    if (brandCategory) {
+      items = items.filter((g) => g.category_id === brandCategory);
+    }
+    if (brandQuery.length >= 1) {
+      const q = brandQuery.toLowerCase();
+      const qk = toKatakana(q);
+      items = items.filter((g) => {
+        const s = g.search.toLowerCase();
+        const n = g.name.toLowerCase();
+        const b = g.brand.toLowerCase();
+        return s.includes(q) || s.includes(qk) || n.includes(q) || b.includes(q);
+      });
+    }
+    return items.slice(0, 50);
+  }, [brandQuery, brandCategory]);
+
   const handleAdd = async () => {
-    const items = PRESET_CATEGORIES.flatMap((c) => c.items).filter((i) => selected.has(i.id));
-    if (items.length === 0) return;
+    const presetItems = PRESET_CATEGORIES.flatMap((c) => c.items).filter((i) => selected.has(i.id));
+    const brandItems = GEAR_SUGGESTIONS.filter((g) => selected.has(gearKey(g)));
+
+    const total = presetItems.length + brandItems.length;
+    if (total === 0) return;
 
     setSaving(true);
-    await Promise.all(
-      items.map((item) =>
+    await Promise.all([
+      ...presetItems.map((item) =>
         addGear({
           name: item.name,
           category_id: item.category_id,
@@ -157,8 +221,18 @@ export default function GearPresetsPage() {
           notes: null,
           is_essential: item.is_essential ?? false,
         })
-      )
-    );
+      ),
+      ...brandItems.map((item) =>
+        addGear({
+          name: item.name,
+          category_id: item.category_id,
+          brand: item.brand,
+          weight_g: item.weight_g,
+          notes: null,
+          is_essential: false,
+        })
+      ),
+    ]);
     setSaving(false);
     setDone(true);
     setTimeout(() => router.push("/gear"), 1000);
@@ -167,60 +241,179 @@ export default function GearPresetsPage() {
   const selectedCount = selected.size;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8 pb-24">
       <div className="mb-6 flex items-center gap-3">
         <Link href="/gear"
           className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card hover:bg-secondary transition-colors">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground">定番装備から追加</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">よく使われる装備をチェックしてまとめて登録</p>
+          <h1 className="text-xl font-bold text-foreground">装備をまとめて追加</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">チェックを入れて一括登録</p>
         </div>
       </div>
 
-      <div className="space-y-6">
-        {PRESET_CATEGORIES.map(({ id: catId, label, items }) => (
-          <div key={catId}>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{label}</h2>
+      {/* タブ切り替え */}
+      <div className="flex gap-1 rounded-lg bg-secondary p-1 mb-6">
+        <button
+          onClick={() => setTab("brand")}
+          className={cn(
+            "flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            tab === "brand" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          ブランド装備
+        </button>
+        <button
+          onClick={() => setTab("preset")}
+          className={cn(
+            "flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            tab === "preset" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          定番セット
+        </button>
+      </div>
+
+      {/* ブランド装備タブ */}
+      {tab === "brand" && (
+        <div className="space-y-4">
+          {/* 検索 */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={brandQuery}
+              onChange={(e) => setBrandQuery(e.target.value)}
+              onCompositionStart={() => { composingRef.current = true; }}
+              onCompositionEnd={(e) => { composingRef.current = false; setBrandQuery((e.target as HTMLInputElement).value); }}
+              placeholder="装備名・ブランドで検索..."
+              autoComplete="off"
+              className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          {/* カテゴリチップ */}
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setBrandCategory(null)}
+              className={cn(
+                "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                !brandCategory
+                  ? "border-primary bg-primary text-white"
+                  : "border-border bg-background text-muted-foreground hover:border-primary/50"
+              )}
+            >
+              すべて
+            </button>
+            {CATEGORY_IDS.map((catId) => (
+              <button
+                key={catId}
+                onClick={() => setBrandCategory(brandCategory === catId ? null : catId)}
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                  brandCategory === catId
+                    ? "border-primary bg-primary text-white"
+                    : "border-border bg-background text-muted-foreground hover:border-primary/50"
+                )}
+              >
+                {CATEGORY_LABELS[catId]}
+              </button>
+            ))}
+          </div>
+
+          {/* 装備リスト */}
+          {filteredBrandGear.length > 0 ? (
             <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-border">
-              {items.map((item) => {
-                const isSelected = selected.has(item.id);
+              {filteredBrandGear.map((g) => {
+                const key = gearKey(g);
+                const isSelected = selected.has(key);
                 return (
                   <button
-                    key={item.id}
+                    key={key}
                     type="button"
-                    onClick={() => toggle(item.id)}
+                    onClick={() => toggleBrand(g)}
                     className="flex w-full items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors text-left"
                   >
-                    <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                    <div className={cn(
+                      "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors",
                       isSelected ? "border-primary bg-primary" : "border-border bg-background"
-                    }`}>
+                    )}>
                       {isSelected && <Check className="h-3 w-3 text-white" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium text-foreground">{item.name}</span>
-                      {item.is_essential && (
-                        <span className="ml-2 rounded border border-red-200 bg-red-50 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-red-600">
-                          必須
-                        </span>
-                      )}
+                      <span className="text-sm font-medium text-foreground">{g.name}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">{g.brand}</span>
                     </div>
-                    {item.weight_g && (
-                      <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                        {item.weight_g >= 1000 ? `${(item.weight_g / 1000).toFixed(1)} kg` : `${item.weight_g} g`}
-                      </span>
-                    )}
+                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                      {formatWeight(g.weight_g)}
+                    </span>
                   </button>
                 );
               })}
             </div>
-          </div>
-        ))}
-      </div>
+          ) : (
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <p className="text-sm text-muted-foreground">
+                {brandQuery ? "該当する装備が見つかりません" : "カテゴリを選択するか、検索してください"}
+              </p>
+            </div>
+          )}
+
+          {filteredBrandGear.length === 50 && (
+            <p className="text-center text-xs text-muted-foreground">
+              最初の50件を表示中。検索で絞り込んでください。
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* 定番セットタブ */}
+      {tab === "preset" && (
+        <div className="space-y-6">
+          {PRESET_CATEGORIES.map(({ id: catId, label, items }) => (
+            <div key={catId}>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{label}</h2>
+              <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-border">
+                {items.map((item) => {
+                  const isSelected = selected.has(item.id);
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => togglePreset(item.id)}
+                      className="flex w-full items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors text-left"
+                    >
+                      <div className={cn(
+                        "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors",
+                        isSelected ? "border-primary bg-primary" : "border-border bg-background"
+                      )}>
+                        {isSelected && <Check className="h-3 w-3 text-white" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm font-medium text-foreground">{item.name}</span>
+                        {item.is_essential && (
+                          <span className="ml-2 rounded border border-red-200 bg-red-50 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-red-600">
+                            必須
+                          </span>
+                        )}
+                      </div>
+                      {item.weight_g && (
+                        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                          {formatWeight(item.weight_g)}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* スティッキーフッター */}
-      <div className="sticky bottom-4 mt-8">
+      <div className="fixed bottom-4 left-0 right-0 mx-auto max-w-2xl px-4 sm:px-6 z-10">
         <button
           onClick={handleAdd}
           disabled={selectedCount === 0 || saving || done}

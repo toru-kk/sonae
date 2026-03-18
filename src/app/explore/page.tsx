@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Globe, Weight, Compass, Search, X, Users, Loader2, Heart, Trophy, Backpack } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
@@ -78,6 +78,7 @@ type PublicUser = {
 
 export default function ExplorePage() {
   const router = useRouter();
+  const composingRef = useRef(false);
   const [allPackages, setAllPackages] = useState<PublicPackage[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -435,7 +436,9 @@ export default function ExplorePage() {
                     value={gearQuery}
                     onChange={(e) => { setGearQuery(e.target.value); setShowGearSuggest(true); }}
                     onFocus={() => setShowGearSuggest(true)}
-                    onBlur={() => setTimeout(() => setShowGearSuggest(false), 150)}
+                    onBlur={() => { if (!composingRef.current) setTimeout(() => setShowGearSuggest(false), 150); }}
+                    onCompositionStart={() => { composingRef.current = true; }}
+                    onCompositionEnd={(e) => { composingRef.current = false; setGearQuery((e.target as HTMLInputElement).value); setShowGearSuggest(true); }}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) { setShowGearSuggest(false); searchByGear(); } }}
                     placeholder="装備名・ブランドで検索"
                     autoComplete="off"
