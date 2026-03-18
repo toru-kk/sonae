@@ -56,7 +56,7 @@ export default function GearPage() {
     .filter((g) => g.items.length > 0);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 overflow-x-hidden">
 
       {/* ブランドヘッダー */}
       <div className="sticky top-0 z-10 mb-6 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-3 pt-1 bg-background/80 backdrop-blur-sm">

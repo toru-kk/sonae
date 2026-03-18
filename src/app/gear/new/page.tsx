@@ -49,6 +49,7 @@ export default function GearNewPage() {
   const [pendingPhotoPreview, setPendingPhotoPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const composingRef = useRef(false);
 
   const selected = categories.find((c) => c.id === selectedCategory);
   const style = selectedCategory ? categoryStyle[selectedCategory] : null;
@@ -215,7 +216,17 @@ export default function GearNewPage() {
             <input type="text" required value={name}
               onChange={(e) => { setName(e.target.value); setShowGearSuggestions(true); }}
               onFocus={() => setShowGearSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowGearSuggestions(false), 150)}
+              onBlur={() => { if (!composingRef.current) setTimeout(() => setShowGearSuggestions(false), 150); }}
+              onCompositionStart={() => { composingRef.current = true; }}
+              onCompositionEnd={(e) => { composingRef.current = false; setName((e.target as HTMLInputElement).value); setShowGearSuggestions(true); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  // IME確定のEnterはフォーム送信させない。サジェスト表示中も防止
+                  if (e.nativeEvent.isComposing || composingRef.current || filteredGearSuggestions.length > 0) {
+                    e.preventDefault();
+                  }
+                }
+              }}
               autoComplete="off"
               placeholder="例：ダウンハガー、ストームクルーザー"
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
@@ -251,7 +262,16 @@ export default function GearNewPage() {
                 setShowBrandList(true);
               }}
               onFocus={() => setShowBrandList(true)}
-              onBlur={() => setTimeout(() => setShowBrandList(false), 150)}
+              onBlur={() => { if (!composingRef.current) setTimeout(() => setShowBrandList(false), 150); }}
+              onCompositionStart={() => { composingRef.current = true; }}
+              onCompositionEnd={(e) => { composingRef.current = false; setBrandInput((e.target as HTMLInputElement).value); setBrand((e.target as HTMLInputElement).value); setShowBrandList(true); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  if (e.nativeEvent.isComposing || composingRef.current || filteredBrands.length > 0) {
+                    e.preventDefault();
+                  }
+                }
+              }}
               placeholder="例：mont-bell、THE NORTH FACE..."
               autoComplete="off"
               className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
