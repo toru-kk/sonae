@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
-import { Plus, Weight, Search, ChevronRight, X, AlertTriangle, Layers, Lock } from "lucide-react";
+import { Plus, Weight, Search, ChevronRight, X, AlertTriangle, Layers, Lock, ArrowUpDown } from "lucide-react";
 import { mockCategories } from "@/lib/mock-data";
 import { CategoryIcon } from "@/components/gear/CategoryIcon";
 import { useGear } from "@/hooks/useGear";
 import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
+import { toKatakana } from "@/lib/brands";
 import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
 
@@ -21,6 +22,7 @@ export default function GearPage() {
   const { limits, plan } = usePlan();
   const [query, setQuery] = useState("");
   const [filterCat, setFilterCat] = useState("");
+  const [sortMode, setSortMode] = useState<"default" | "name" | "weight-asc" | "weight-desc">("default");
   const [nudgeDismissed, setNudgeDismissed] = useState(true);
 
   useEffect(() => {
@@ -44,15 +46,26 @@ export default function GearPage() {
 
   const filtered = useMemo(() => {
     return gearItems.filter((g) => {
-      const matchQuery = query === "" ||
-        g.name.toLowerCase().includes(query.toLowerCase());
+      if (query) {
+        const q = query.toLowerCase();
+        const qKata = toKatakana(q);
+        const target = `${g.name} ${g.brand ?? ""}`.toLowerCase();
+        if (!target.includes(q) && !target.includes(qKata)) return false;
+      }
       const matchCat = filterCat === "" || g.category_id === filterCat;
-      return matchQuery && matchCat;
+      return matchCat;
     });
   }, [gearItems, query, filterCat]);
 
+  const sortItems = (items: typeof filtered) => {
+    if (sortMode === "name") return [...items].sort((a, b) => a.name.localeCompare(b.name, "ja"));
+    if (sortMode === "weight-asc") return [...items].sort((a, b) => (a.weight_g ?? 0) - (b.weight_g ?? 0));
+    if (sortMode === "weight-desc") return [...items].sort((a, b) => (b.weight_g ?? 0) - (a.weight_g ?? 0));
+    return items; // default: 登録順
+  };
+
   const grouped = mockCategories
-    .map((cat) => ({ ...cat, items: filtered.filter((g) => g.category_id === cat.id) }))
+    .map((cat) => ({ ...cat, items: sortItems(filtered.filter((g) => g.category_id === cat.id)) }))
     .filter((g) => g.items.length > 0);
 
   return (
@@ -167,7 +180,7 @@ export default function GearPage() {
         </div>
       )}
 
-      {/* 検索 + カテゴリフィルター */}
+      {/* 検索 + 並び替え */}
       <div className="mb-4 flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -175,7 +188,7 @@ export default function GearPage() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="装備名で検索..."
+            placeholder="装備名・ブランドで検索..."
             className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
           {query && (
@@ -185,6 +198,21 @@ export default function GearPage() {
             </button>
           )}
         </div>
+        <button
+          onClick={() => setSortMode((prev) => {
+            const modes: typeof sortMode[] = ["default", "name", "weight-asc", "weight-desc"];
+            return modes[(modes.indexOf(prev) + 1) % modes.length];
+          })}
+          className={cn(
+            "shrink-0 inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors",
+            sortMode !== "default"
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:border-primary/40"
+          )}
+        >
+          <ArrowUpDown className="h-3.5 w-3.5" />
+          {{ default: "登録順", name: "名前順", "weight-asc": "軽い順", "weight-desc": "重い順" }[sortMode]}
+        </button>
       </div>
 
       {/* カテゴリタブ */}
@@ -351,12 +379,12 @@ export default function GearPage() {
                   );
                   return isLocked ? (
                     <div key={item.id}
-                      className="group flex items-center gap-3.5 rounded-xl border border-border/50 bg-card/60 p-3.5 opacity-60 cursor-not-allowed">
+                      className="group flex items-center gap-3.5 rounded-xl border border-border/50 bg-card/60 p-3.5 opacity-60 cursor-not-allowed overflow-hidden">
                       {inner}
                     </div>
                   ) : (
                     <Link key={item.id} href={`/gear/${item.id}`}
-                      className="group flex items-center gap-3.5 rounded-xl border border-border bg-card p-3.5 hover:border-primary/40 hover:shadow-sm transition-all">
+                      className="group flex items-center gap-3.5 rounded-xl border border-border bg-card p-3.5 hover:border-primary/40 hover:shadow-sm transition-all overflow-hidden">
                       {inner}
                     </Link>
                   );
