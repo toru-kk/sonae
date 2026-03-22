@@ -8,19 +8,23 @@ type Variant = "light" | "dark";
 
 export function WeightTooltip({ variant = "light" }: { variant?: Variant }) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState<{ top: number; right: number; openBelow: boolean }>({ top: 0, right: 16, openBelow: false });
+  const [pos, setPos] = useState<{ top: number; left: number; openBelow: boolean }>({ top: 0, left: 0, openBelow: false });
   const ref = useRef<HTMLDivElement>(null);
+
+  const tooltipWidth = 256; // w-64 = 16rem = 256px
 
   const calcPos = useCallback(() => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    const spaceAbove = rect.top;
-    const openBelow = spaceAbove < 220;
-    setPos({
-      top: openBelow ? rect.bottom + 8 : rect.top - 8,
-      right: Math.max(16, window.innerWidth - rect.right),
-      openBelow,
-    });
+    const tooltipHeight = 200; // approximate tooltip height
+    const openBelow = rect.top < tooltipHeight + 12;
+    // Compute top, then clamp to viewport
+    let top = openBelow ? rect.bottom + 8 : rect.top - tooltipHeight - 8;
+    top = Math.max(12, Math.min(top, window.innerHeight - tooltipHeight - 12));
+    // Center tooltip on the button, then clamp to viewport
+    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+    left = Math.max(12, Math.min(left, window.innerWidth - tooltipWidth - 12));
+    setPos({ top, left, openBelow });
   }, []);
 
   useEffect(() => {
@@ -65,8 +69,7 @@ export function WeightTooltip({ variant = "light" }: { variant?: Variant }) {
           )}
           style={{
             top: pos.top,
-            right: pos.right,
-            transform: pos.openBelow ? undefined : "translateY(-100%)",
+            left: pos.left,
           }}
         >
           <div className="flex items-center justify-between mb-2">
