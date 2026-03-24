@@ -289,6 +289,70 @@ export function IconSawanobori({ className }: P) {
   );
 }
 
+// ─── Reaction Icons ─────────────────────────────────────────────────────────
+
+/** いいね: heart */
+export function IconReactionHeart({ className }: P) {
+  return (
+    <svg viewBox="0 0 16 16" fill="currentColor" className={cn("inline-block", className)} aria-hidden>
+      <path d="M8 14S1 9.5 1 5.5C1 3 3 1.5 5 2C6.5 2.3 7.5 3.5 8 4.5C8.5 3.5 9.5 2.3 11 2C13 1.5 15 3 15 5.5C15 9.5 8 14 8 14Z" />
+    </svg>
+  );
+}
+
+/** 参考になった: compass */
+export function IconReactionReference({ className }: P) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={cn("inline-block", className)} aria-hidden>
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8 3.5L8.8 7.2L12.5 8L8.8 8.8L8 12.5L7.2 8.8L3.5 8L7.2 7.2Z" fill="currentColor" />
+      <circle cx="8" cy="8" r="1" fill="currentColor" opacity="0.3" />
+    </svg>
+  );
+}
+
+/** 軽い！: feather */
+export function IconReactionLight({ className }: P) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeLinecap="round" className={cn("inline-block", className)} aria-hidden>
+      <path d="M12.5 2C14.5 5 14 10 9.5 12.5L4.5 15" strokeWidth="1.5" />
+      <path d="M12.5 2C11 4.5 9 9 9.5 12.5" strokeWidth="1" opacity="0.55" />
+      <path d="M11.5 5.5L9.5 8M11 9L9.5 11" strokeWidth="0.9" opacity="0.7" />
+    </svg>
+  );
+}
+
+/** すごい！: summit flag */
+export function IconReactionImpressive({ className }: P) {
+  return (
+    <svg viewBox="0 0 16 16" fill="currentColor" className={cn("inline-block", className)} aria-hidden>
+      <path d="M4 2V15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      <path d="M4 2.5L13 4.5L4 7.5Z" />
+    </svg>
+  );
+}
+
+/** 欲しい！: backpack */
+export function IconReactionWant({ className }: P) {
+  return (
+    <svg viewBox="0 0 16 16" fill="currentColor" className={cn("inline-block", className)} aria-hidden>
+      <rect x="4" y="4.5" width="8" height="10" rx="2" />
+      <rect x="5.5" y="2.5" width="5" height="3" rx="1" opacity="0.6" />
+      <path d="M6.5 7H9.5V10H6.5Z" fill="white" opacity="0.3" rx="0.5" />
+      <path d="M3 8.5C2 8.5 1.5 9 1.5 10V12C1.5 12.5 2 13 2.5 13H4" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+      <path d="M13 8.5C14 8.5 14.5 9 14.5 10V12C14.5 12.5 14 13 13.5 13H12" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export const REACTION_ICON_MAP: Record<string, (p: P) => ReactElement> = {
+  heart: IconReactionHeart,
+  reference: IconReactionReference,
+  light: IconReactionLight,
+  impressive: IconReactionImpressive,
+  want: IconReactionWant,
+};
+
 // ─── Lookup helpers ───────────────────────────────────────────────────────────
 
 const LEVEL_ICON_MAP: Record<string, (p: P) => ReactElement> = {

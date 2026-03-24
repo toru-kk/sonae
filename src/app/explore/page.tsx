@@ -10,7 +10,7 @@ import { SonaeLogoIcon } from "@/components/SonaeLogo";
 import { HeaderGradient } from "@/components/layout/HeaderGradient";
 import { ULScore } from "@/components/ULScore";
 import { CopyPackageButton } from "@/components/CopyPackageButton";
-import { LikeButton } from "@/components/LikeButton";
+import { ReactionButton } from "@/components/ReactionButton";
 import { cn } from "@/lib/utils";
 import { MOUNTAIN_TYPES } from "@/lib/mountain-types";
 import { BRANDS, toKatakana } from "@/lib/brands";
@@ -653,7 +653,7 @@ export default function ExplorePage() {
                               )}
                             </div>
                             <div className="flex items-center gap-1">
-                              <LikeButton packageId={pkg.id} initialLikeCount={pkg.like_count} compact />
+                              <ReactionButton packageId={pkg.id} initialLikeCount={pkg.like_count} compact />
                               <CopyPackageButton packageId={pkg.id} creatorId={pkg.user_id} compact />
                             </div>
                           </div>
@@ -863,7 +863,7 @@ export default function ExplorePage() {
                           )}
                         </div>
                         <div className="flex items-center gap-1">
-                          <LikeButton packageId={pkg.id} initialLikeCount={pkg.like_count} compact />
+                          <ReactionButton packageId={pkg.id} initialLikeCount={pkg.like_count} compact />
                           <CopyPackageButton packageId={pkg.id} creatorId={pkg.user_id} compact />
                         </div>
                       </div>
