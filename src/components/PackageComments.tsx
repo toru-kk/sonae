@@ -99,9 +99,10 @@ export function PackageComments({ packageId }: { packageId: string }) {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-6">
-          まだコメントがありません。最初のコメントを投稿しましょう！
-        </p>
+        <div className="text-sm text-muted-foreground text-center py-6">
+          <p>まだコメントがありません。</p>
+          <p>最初のコメントを投稿しましょう！</p>
+        </div>
       ) : (
         <div className="space-y-4 mb-6">
           {comments.map((comment) => {
