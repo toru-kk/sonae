@@ -356,7 +356,14 @@ export default async function PublicPackagePage(
       <div className="mt-4 mx-auto max-w-3xl px-4 sm:px-6 pb-12 flex flex-col gap-3">
         <ReactionButton packageId={id} initialLikeCount={pkg.like_count ?? 0} />
         <div className="flex flex-wrap items-center gap-2 sm:justify-between">
-          <CopyPackageButton packageId={id} creatorId={creator.id} compact />
+          <CopyPackageButton
+            packageId={id}
+            creatorId={creator.id}
+            compact
+            items={items.map((i: { id: string; name: string; brand?: string | null; weight_g: number | null; category_id: string }) => ({
+              id: i.id, name: i.name, brand: i.brand, weight_g: i.weight_g, category_id: i.category_id,
+            }))}
+          />
           <ShareButtons
             packageId={id}
             packageName={pkg.name}

@@ -5,13 +5,24 @@ import { createClient } from "@/lib/supabase/server";
 type AnyClient = any;
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // リクエストボディから選択されたアイテムIDを取得
+  let selectedGearItemIds: string[] | null = null;
+  try {
+    const body = await req.json();
+    if (Array.isArray(body.selected_gear_item_ids)) {
+      selectedGearItemIds = body.selected_gear_item_ids;
+    }
+  } catch {
+    // bodyが空の場合は全コピー
+  }
 
   // 公開パッケージを取得
   const { data: pkg, error: pkgErr } = await (supabase as AnyClient)
@@ -39,11 +50,18 @@ export async function POST(
 
   if (newPkgErr || !newPkg) return NextResponse.json({ error: "Failed to create package" }, { status: 500 });
 
-  // 装備品をコピーしてパッケージに紐付け
-  const gearItems = (pkg.gear_package_items ?? [])
+  // 装備品をコピーしてパッケージに紐付け（選択されたもののみ）
+  let gearItems = (pkg.gear_package_items ?? [])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((pi: any) => pi.gear_items)
     .filter(Boolean);
+
+  // 選択されたアイテムのみに絞り込み
+  if (selectedGearItemIds) {
+    const selectedSet = new Set(selectedGearItemIds);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    gearItems = gearItems.filter((item: any) => selectedSet.has(item.id));
+  }
 
   if (gearItems.length > 0) {
     const { data: newItems, error: itemsErr } = await (supabase as AnyClient)
