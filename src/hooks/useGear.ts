@@ -26,9 +26,12 @@ export function useGear() {
   const load = useCallback(async () => {
     setLoading(true);
     const supabase = createClient() as AnyClient;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setLoading(false); return; }
     const { data, error: err } = await supabase
       .from("gear_items")
       .select("*")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (err) { setError(err.message); }
