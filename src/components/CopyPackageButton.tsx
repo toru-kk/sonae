@@ -54,8 +54,9 @@ export function CopyPackageButton({ packageId, creatorId, compact = false, items
   const grouped = useMemo(() => {
     const map: Record<string, GearItemForCopy[]> = {};
     for (const item of items) {
-      if (!map[item.category_id]) map[item.category_id] = [];
-      map[item.category_id].push(item);
+      const key = item.category_id ?? "other";
+      if (!map[key]) map[key] = [];
+      map[key].push(item);
     }
     return Object.entries(map).sort(
       ([a], [b]) => (Object.keys(CATEGORY_NAMES).indexOf(a) - Object.keys(CATEGORY_NAMES).indexOf(b))
