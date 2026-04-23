@@ -11,7 +11,7 @@ type GearItemForCopy = {
   name: string;
   brand?: string | null;
   weight_g: number | null;
-  category_id: string;
+  category_id: string | null;
 };
 
 type Props = {
